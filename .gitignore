@@ -18,3 +18,8 @@
 *.pre_febe_bak
 *.bak
 UpgradeLog*.htm
+
+# Office documents (Keep locally only)
+*.xlsx
+*.docx
+*.doc
