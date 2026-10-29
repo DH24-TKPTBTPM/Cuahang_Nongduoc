@@ -1,0 +1,20 @@
+# Visual Studio / .NET Artifacts
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build Results (Keep the Access Database and external DLLs)
+**/[Oo]bj/
+**/[Bb]in/*
+!**/[Bb]in/Debug/cuahang.dll
+!**/[Bb]in/Debug/Microsoft.ReportViewer.Common.dll
+!**/[Bb]in/Debug/Microsoft.ReportViewer.WinForms.dll
+!**/[Bb]in/Debug/XPExplorerBar.dll
+
+# Temporary and backup files
+*.backup
+*.pre_febe_bak
+*.bak
+UpgradeLog*.htm
