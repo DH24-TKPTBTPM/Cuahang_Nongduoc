@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+//thang cuong xe co
 namespace CuahangNongduoc.BusinessObject
 {
     public class ChiTietPhieuBan
