@@ -1,7 +1,7 @@
 # KIẾN TRÚC & CẤU TRÚC THƯ MỤC – CỬA HÀNG NÔNG DƯỢC
 
 Mô hình: **WinForms C# 3 lớp**, tách 2 khối **Frontend (giao diện)** và **Backend (nghiệp vụ + dữ liệu)**, CSDL chuyển từ **Access (cuahang.dll) → SQL Server**.
-Nhóm: Team Lead + 3 FE + 3 BE + 2 QA. Kế hoạch chi tiết: `KeHoach_PhanCong_SuaDoAn.xlsx` (thư mục gốc, không commit).
+Nhóm: Team Lead + 3 FE + 3 BE + 2 QA. Báo cáo: 12/11/2026 (đóng băng code 20h 10/11). Kế hoạch chi tiết: `KeHoach_PhanCong_SuaDoAn.xlsx` (thư mục gốc, không commit).
 
 ```text
 Cuahang_Nongduoc/                         (repo)

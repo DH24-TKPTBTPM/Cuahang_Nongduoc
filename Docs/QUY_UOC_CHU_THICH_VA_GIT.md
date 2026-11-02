@@ -41,5 +41,5 @@ public class BanHangFacade { ... }
 - Commit: `fix(R12): ...`, `feat(D08): ...`, `refactor(R20): ...`, `test(QA): ...`.
 - Pull Request vào `develop` theo template; cần 1 review của Team Lead + QA xác nhận "Tested".
 - Trước khi tạo PR: Rebuild Solution 0 lỗi, chạy thử form liên quan.
-- Đổi tên lớp/enum dùng chung (R20 MaSanPhanFactory, R21 Controll) chỉ làm ở **Tuần 4**, báo cả nhóm trước để tránh xung đột.
+- Đổi tên lớp/enum dùng chung (R20 MaSanPhanFactory, R21 Controll) chỉ làm ở **giai đoạn 4 (10/11)**, báo cả nhóm trước để tránh xung đột.
 - Máy Windows: bật `git config core.autocrlf true` (repo lưu LF, máy làm việc CRLF).
