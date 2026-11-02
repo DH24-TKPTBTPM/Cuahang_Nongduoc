@@ -1,11 +1,12 @@
 @echo off
 REM Tao CSDL CuahangNongduoc tren SQL Server va nap du lieu tu Access.
 REM Can: SQL Server Express + sqlcmd. Doi ten instance o dong duoi neu khac.
+REM -C: tin chung chi tu ky cua SQL Server tren may (ODBC Driver 18 mac dinh bat ma hoa).
 set SERVER=.\SQLEXPRESS
 cd /d "%~dp0"
 for %%f in (01_CreateDatabase.sql 02_CreateTables.sql 03_SeedData.sql 04_KiemTraDuLieu.sql) do (
   echo === %%f ===
-  sqlcmd -S %SERVER% -E -b -f 65001 -i %%f || goto :loi
+  sqlcmd -S %SERVER% -E -C -b -f 65001 -i %%f || goto :loi
 )
 echo.
 echo XONG. Xem bang doi chieu o tren: tat ca phai la "Khop".
