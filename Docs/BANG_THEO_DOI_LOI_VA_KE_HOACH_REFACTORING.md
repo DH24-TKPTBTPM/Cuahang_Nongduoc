@@ -1,3 +1,5 @@
+> ⚠️ **Tài liệu cũ (kế hoạch 2 FE + 2 BE).** Đã thay bằng `KeHoach_PhanCong_SuaDoAn.xlsx` (3 FE + 3 BE + 2 QA). Giữ lại để tham khảo.
+
 # BẢNG TỔNG HỢP LỖI KIẾN TRÚC & KẾ HOẠCH SỬA CHỮA (REFACTORING)
 
 File Excel chính thức đã được xuất tại:  
