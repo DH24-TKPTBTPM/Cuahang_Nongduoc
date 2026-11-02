@@ -59,7 +59,13 @@ namespace CuahangNongduoc
             //    this.Close();
             //}
 
-            DataService.OpenConnection();
+            // [R01] Trước: DataService.OpenConnection(); (bỏ qua kết quả, lỗi kết nối bị lờ đi)
+            // Sau  : kiểm tra kết quả, báo lỗi rõ ràng. Tác giả: tuananh (TL, thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 | 02/11/2026
+            if (!DataService.OpenConnection())
+            {
+                string loi = DataService.LastError != null ? DataService.LastError.Message : "";
+                MessageBox.Show("Không thể kết nối cơ sở dữ liệu!\n" + loi, "Cửa hàng Nông dược", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             
         }
         frmSanPham SanPham = null;
