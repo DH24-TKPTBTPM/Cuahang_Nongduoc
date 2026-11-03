@@ -60,7 +60,7 @@ namespace CuahangNongduoc
             //}
 
             // [R01] Trước: DataService.OpenConnection(); (bỏ qua kết quả, lỗi kết nối bị lờ đi)
-            // Sau  : kiểm tra kết quả, báo lỗi rõ ràng. Tác giả: tuananh (TL, thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 | 02/11/2026
+            // Sau  : kiểm tra kết quả, báo lỗi rõ ràng. Tác giả: tuananh (TL, thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa | Ngày chỉnh sửa: 02/11/2026 | Ngày kiểm thử: 03/11/2026
             if (!DataService.OpenConnection())
             {
                 string loi = DataService.LastError != null ? DataService.LastError.Message : "";

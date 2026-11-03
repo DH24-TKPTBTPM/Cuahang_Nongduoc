@@ -15,7 +15,7 @@ namespace CuahangNongduoc
         {
             // [R02] Sau khi DataService thôi nuốt lỗi, mọi lỗi CSDL chưa được Form bắt
             // sẽ hiện thông báo ở đây thay vì làm tắt chương trình.
-            // Tác giả: tuananh (Team Lead, làm thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | 02/11/2026
+            // Tác giả: tuananh (Team Lead, làm thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa | Ngày chỉnh sửa: 02/11/2026 | Ngày kiểm thử: 03/11/2026
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 

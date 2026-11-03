@@ -44,8 +44,8 @@ HDR = (u"-- =============================================================\n"
        u"-- %s\n"
        u"-- Nguồn  : cuahang.dll (Access) -> SQL Server. Sinh bởi Database/tools/gen_sql.py\n"
        u"-- Việc   : %s\n"
-       u"-- Tác giả: tuananh (Team Lead, làm thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>\n"
-       u"-- Ngày   : 02/11/2026\n"
+       u"-- Tác giả: tuananh (Team Lead, làm thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa\n"
+       u"-- Ngày   : 02/11/2026 | Ngày kiểm thử : 03/11/2026\n"
        u"-- =============================================================\n")
 
 def write(name, text):
