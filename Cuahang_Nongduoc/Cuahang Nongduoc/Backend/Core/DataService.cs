@@ -18,8 +18,9 @@ namespace CuahangNongduoc
     //                    SqlCommand -> SQL Server, để BE2/BE3 chuyển từng Factory sang SqlClient (R28).
     // Tác giả          : tuananh (Team Lead, làm thay BE1)
     // Hỗ trợ           : Claude (AI)
-    // Kiểm tra         : QA2 – <Họ tên>
+    // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
     // Ngày chỉnh sửa   : 02/11/2026
+    // Ngày kiểm thử    : 03/11/2026
     // ===========================================================
     public class DataService : DataTable
     {
@@ -73,8 +74,9 @@ namespace CuahangNongduoc
         // Sau              : ném DataAccessException (giữ lỗi gốc ở InnerException) lên tầng trên
         // Tác giả          : tuananh (Team Lead, làm thay BE1)
         // Hỗ trợ           : Claude (AI)
-        // Kiểm tra         : QA2 – <Họ tên>
+        // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 02/11/2026
+        // Ngày kiểm thử    : 03/11/2026
         // ===========================================================
         public void Load(DbCommand command)
         {
@@ -106,8 +108,9 @@ namespace CuahangNongduoc
         //                    lỗi được giữ trong LastError để Form hiển thị.
         // Tác giả          : tuananh (Team Lead, làm thay BE1)
         // Hỗ trợ           : Claude (AI)
-        // Kiểm tra         : QA2 – <Họ tên>
+        // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 02/11/2026
+        // Ngày kiểm thử    : 03/11/2026
         // ===========================================================
         private static Exception m_LastError;
 
@@ -192,8 +195,9 @@ namespace CuahangNongduoc
         //                    Đã đổi lời gọi trong 13 lớp DataLayer/*Factory.cs.
         // Tác giả          : tuananh (Team Lead, làm thay BE1)
         // Hỗ trợ           : Claude (AI)
-        // Kiểm tra         : QA2 – <Họ tên>
+        // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 02/11/2026
+        // Ngày kiểm thử    : 03/11/2026
         // ===========================================================
         public int UpdateDataTable()
         {
@@ -263,8 +267,9 @@ namespace CuahangNongduoc
         // Sau              : bỏ AcceptChanges(); ExecuteScalar chỉ đọc 1 giá trị, không đụng vào DataTable.
         // Tác giả          : tuananh (Team Lead, làm thay BE1)
         // Hỗ trợ           : Claude (AI)
-        // Kiểm tra         : QA2 – <Họ tên>
+        // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 02/11/2026
+        // Ngày kiểm thử    : 03/11/2026
         // ===========================================================
         public object ExecuteScalar(DbCommand cmd)
         {
