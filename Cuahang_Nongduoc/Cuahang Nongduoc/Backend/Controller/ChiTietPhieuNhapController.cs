@@ -47,7 +47,17 @@ namespace CuahangNongduoc.Controller
                 item.SubItems.Add(ct.MaSanPham.Id);
                 item.SubItems.Add(ct.MaSanPham.GiaNhap.ToString("#,###0"));
                 item.SubItems.Add(ct.MaSanPham.SoLuong.ToString("#,###0"));
-                long thanhtien = (ct.MaSanPham.SoLuong + ct.MaSanPham.GiaNhap);
+                // ==================== [R13] REFACTORING ====================
+                // Lỗi (Code smell) : Wrong Arithmetic Operator – Thành tiền tính bằng phép cộng thay vì nhân
+                // Kỹ thuật         : Fix Bug
+                // Trước            : long thanhtien = (ct.MaSanPham.SoLuong + ct.MaSanPham.GiaNhap);
+                // Sau              : long thanhtien = (ct.MaSanPham.SoLuong * ct.MaSanPham.GiaNhap);
+                // Tác giả          : BE3 – Bùi Lê Tuấn Anh
+                // Hỗ trợ           : 
+                // Kiểm tra         : 
+                // Ngày chỉnh sửa   : 05/11/2026
+                // ==============================================================
+                long thanhtien = (ct.MaSanPham.SoLuong * ct.MaSanPham.GiaNhap);
                 item.SubItems.Add(thanhtien.ToString("#,###0"));
                 item.SubItems.Add(ct.MaSanPham.NgaySanXuat.ToString("dd/MM/yyyy"));
                 item.SubItems.Add(ct.MaSanPham.NgayHetHan.ToString("dd/MM/yyyy"));

@@ -75,6 +75,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\BusinessObject\ChiTietPhieuNhap.cs" />
+    <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
     <Compile Include="Backend\Patterns\Strategy\IBanHangStrategy.cs" />
