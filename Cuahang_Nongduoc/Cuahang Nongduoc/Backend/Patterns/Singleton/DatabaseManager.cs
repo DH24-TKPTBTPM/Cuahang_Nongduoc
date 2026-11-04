@@ -1,23 +1,32 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.Patterns.Singleton
 {
     /// <summary>
-    /// Singleton Pattern (Creational): Quản lý tập trung kết nối CSDL Microsoft Access (OLEDB),
-    /// đảm bảo duy nhất 1 thể hiện (Thread-safe) trong toàn bộ ứng dụng, tránh rò rỉ kết nối.
+    /// [REFACTORING GURU]
+    /// - Code Smell: Primitive Obsession & Hardcoded String
+    /// - Kỹ thuật Refactoring (1 trong 64 mẫu): Replace Magic Number with Symbolic Constant / Move Field
+    /// - Trước khi sửa: Dùng OleDbConnection, chuỗi kết nối gán cứng "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=cuahang.dll;"
+    /// - Sau khi sửa: Chuyển sang SqlConnection (SQL Server) để đáp ứng yêu cầu mới. Đổi tên chuỗi kết nối.
+    /// - Tác giả (Author): Bùi Lê Tuấn Anh
+    /// - Hỗ trợ (Supporter): 
+    /// - Kiểm tra (Reviewer/Tester): 
+    /// - Ngày chỉnh sửa (Date): 30/10/2026
     /// </summary>
     public sealed class DatabaseManager
     {
         private static volatile DatabaseManager _instance = null;
         private static readonly object _lock = new object();
-        private OleDbConnection _connection;
-        private string _connectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=cuahang.dll;";
+        private SqlConnection _connection;
+
+        // Cập nhật chuỗi kết nối cho SQL Server Express (Sửa lại Data Source nếu tên server khác)
+        private string _connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=CuahangNongduoc;Integrated Security=True;";
 
         private DatabaseManager()
         {
-            _connection = new OleDbConnection(_connectionString);
+            _connection = new SqlConnection(_connectionString);
         }
 
         public static DatabaseManager Instance
@@ -38,13 +47,13 @@ namespace CuahangNongduoc.Patterns.Singleton
             }
         }
 
-        public OleDbConnection Connection
+        public SqlConnection Connection
         {
             get
             {
                 if (_connection == null)
                 {
-                    _connection = new OleDbConnection(_connectionString);
+                    _connection = new SqlConnection(_connectionString);
                 }
                 if (_connection.State == ConnectionState.Closed)
                 {
@@ -60,11 +69,11 @@ namespace CuahangNongduoc.Patterns.Singleton
             set { _connectionString = value; }
         }
 
-        public OleDbConnection GetOpenConnection()
+        public SqlConnection GetOpenConnection()
         {
             if (_connection == null)
             {
-                _connection = new OleDbConnection(_connectionString);
+                _connection = new SqlConnection(_connectionString);
             }
             if (_connection.State == ConnectionState.Closed)
             {
