@@ -86,12 +86,24 @@ namespace CuahangNongduoc.Controller
         // Kiểm tra         : QA1 
         // Ngày chỉnh sửa   : 05/11/2026
         // ===========================================================
+        // ==================== [R22] REFACTORING ====================
+        // Lỗi (Code smell) : Type Mismatch (Convert.ToInt32) & tiềm ẩn lỗi chia cho 0 (DivideByZeroException)
+        // Kỹ thuật         : Introduce Assertion
+        // Trước            : long tong_so = Convert.ToInt32(tbl.Rows[0]["SO_LUONG"]);
+        //                    tbl.Rows[0]["DON_GIA_NHAP"] = thanh_tien / tong_so; // Chưa chặn tong_so <= 0
+        // Sau              : Đổi Convert.ToInt32 sang Convert.ToInt64 đồng bộ kiểu long;
+        //                    dùng Assertion và kiểm tra tong_so > 0 chặn triệt để lỗi chia cho 0.
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1 
+        // Ngày chỉnh sửa   : 05/11/2026
+        // ===========================================================
         public void CapNhatGiaNhap(String id, long gia_moi ,long so_luong)
         {
             DataTable tbl = factory.LaySanPham(id);
             if (tbl.Rows.Count > 0)
             {
-                long tong_so = Convert.ToInt32(tbl.Rows[0]["SO_LUONG"]);
+                long tong_so = Convert.ToInt64(tbl.Rows[0]["SO_LUONG"]);
                 long tong_gia = Convert.ToInt64(tbl.Rows[0]["DON_GIA_NHAP"]);
 
                 long thanh_tien = gia_moi * so_luong + tong_gia * tong_so;
@@ -99,7 +111,11 @@ namespace CuahangNongduoc.Controller
 
                 if (tong_gia != gia_moi)
                 {
-                    tbl.Rows[0]["DON_GIA_NHAP"] = thanh_tien / tong_so;
+                    System.Diagnostics.Debug.Assert(tong_so > 0, "Tổng số lượng sau khi nhập phải lớn hơn 0 để tính đơn giá bình quân.");
+                    if (tong_so > 0)
+                    {
+                        tbl.Rows[0]["DON_GIA_NHAP"] = thanh_tien / tong_so;
+                    }
                 }
                 tbl.Rows[0]["SO_LUONG"] = tong_so;
 
