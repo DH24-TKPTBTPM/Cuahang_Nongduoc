@@ -15,17 +15,6 @@ namespace CuahangNongduoc
         public frmSoLuongBan()
         {
             InitializeComponent();
-
-            // ==================== [FE-11] REFACTORING ====================
-            // L?i (Code smell) : L?i hi?n th? font ti?ng Vi?t trên form báo cáo
-            // Kythuat         : Clean UI Property (Set Font Programmatically)
-            // Tác giar          : FE3 - Nguy?n Th? Ngân Hu?
-            // H? tr?          : Không
-            // Ki?m tra        : QA2 - D? Th? Trúc Hoà
-            // Ngày ch?nh s?a  : 03/11/2026
-            // =============================================================
-            this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
-
             reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
         }
 

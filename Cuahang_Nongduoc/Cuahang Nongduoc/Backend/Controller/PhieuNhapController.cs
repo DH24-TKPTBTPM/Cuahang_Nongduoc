@@ -51,18 +51,8 @@ namespace CuahangNongduoc.Controller
                 ph.Id =Convert.ToString( tbl.Rows[0]["ID"]);
                 ph.NgayNhap = Convert.ToDateTime(tbl.Rows[0]["NGAY_NHAP"]);
                 ph.TongTien = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
-                // ==================== [R12] REFACTORING ====================
-                // Lỗi (Code smell) : Wrong Field Assignment – DaTra, ConNo đọc nhầm cột TONG_TIEN
-                // Kỹ thuật         : Fix Bug
-                // Trước            : ph.DaTra = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
-                // Sau              : ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                // Tác giả          : BE3 – Bùi Lê Tuấn Anh
-                // Hỗ trợ           : 
-                // Kiểm tra         : 
-                // Ngày chỉnh sửa   : 05/11/2026
-                // ==============================================================
-                ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                ph.ConNo = Convert.ToInt64(tbl.Rows[0]["CON_NO"]);
+                ph.DaTra = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
+                ph.ConNo = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
                 ph.NhaCungCap = ctrlNCC.LayNCC(Convert.ToString(tbl.Rows[0]["ID_NHA_CUNG_CAP"]));
                 MaSanPhamController ctrl = new MaSanPhamController();
                 ph.ChiTiet = ctrl.ChiTietPhieuNhap(ph.Id);
