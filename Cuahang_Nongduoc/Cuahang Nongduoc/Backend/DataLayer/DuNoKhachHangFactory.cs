@@ -190,7 +190,7 @@ namespace CuahangNongduoc.DataLayer
         public bool Save()
         {
 
-            return m_Ds.ExecuteNoneQuery() > 0;
+            return m_Ds.UpdateDataTable() > 0;
         }
     }
 }

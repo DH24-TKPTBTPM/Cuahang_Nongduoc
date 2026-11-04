@@ -75,7 +75,7 @@ namespace CuahangNongduoc.DataLayer
 /// </summary>
         public bool Save()
         {
-            return m_Ds.ExecuteNoneQuery() > 0;
+            return m_Ds.UpdateDataTable() > 0;
         }
     }
 }

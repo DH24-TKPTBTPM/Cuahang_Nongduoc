@@ -5,17 +5,6 @@ using CuahangNongduoc.Patterns.Singleton;
 
 namespace CuahangNongduoc
 {
-    /// <summary>
-    /// [REFACTORING GURU]
-    /// - Code Smell: Duplicated Connection Management & Swallowing Exceptions
-    /// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class (chuyển quản lý kết nối sang DatabaseManager) & Replace Error Code with Exception
-    /// - Trước khi sửa: Dùng OleDbConnection kết nối file Access cuahang.dll, khối catch nuốt lỗi (String str = e.Message;).
-    /// - Sau khi sửa: Chuyển sang SqlClient kết nối SQL Server qua Singleton DatabaseManager, xử lý Transaction và quăng lỗi rõ ràng.
-    /// - Tác giả (Author): Bùi Lê Tuấn Anh
-    /// - Hỗ trợ (Supporter): BE Team
-    /// - Kiểm tra (Reviewer/Tester): QA Team
-    /// - Ngày chỉnh sửa (Date): 30/10/2026
-    /// </summary>
     public class DataService : DataTable
     {
         private SqlCommand m_Command;
@@ -23,7 +12,7 @@ namespace CuahangNongduoc
 
         public DataService() { }
 
-        // Bổ sung thuộc tính ResultTable để tương thích với cả cách gọi m_Ds và m_Ds.ResultTable trong DataLayer
+        // Tương thích với cả cách gọi m_Ds và m_Ds.ResultTable trong DataLayer
         public DataTable ResultTable
         {
             get { return this; }
@@ -55,6 +44,7 @@ namespace CuahangNongduoc
 
         public void Load(SqlCommand command)
         {
+            if (command == null) throw new ArgumentNullException(nameof(command));
             m_Command = command;
             try
             {
@@ -67,10 +57,13 @@ namespace CuahangNongduoc
             {
                 throw new Exception("Lỗi truy vấn SQL Server: " + ex.Message, ex);
             }
-            }
+        }
 
         public int ExecuteNoneQuery()
         {
+            if (m_Command == null)
+                throw new InvalidOperationException("Phải nạp Command trước khi cập nhật.");
+
             int result = 0;
             SqlTransaction tr = null;
             try
@@ -97,6 +90,8 @@ namespace CuahangNongduoc
 
         public int ExecuteNoneQuery(SqlCommand cmd)
         {
+            if (cmd == null) throw new ArgumentNullException(nameof(cmd));
+
             int result = 0;
             SqlTransaction tr = null;
             try
@@ -109,7 +104,6 @@ namespace CuahangNongduoc
 
                 result = cmd.ExecuteNonQuery();
                 this.AcceptChanges();
-
                 tr.Commit();
             }
             catch (Exception ex)
@@ -122,6 +116,8 @@ namespace CuahangNongduoc
 
         public object ExecuteScalar(SqlCommand cmd)
         {
+            if (cmd == null) throw new ArgumentNullException(nameof(cmd));
+
             object result = null;
             SqlTransaction tr = null;
             try
@@ -133,7 +129,7 @@ namespace CuahangNongduoc
                 cmd.Transaction = tr;
 
                 result = cmd.ExecuteScalar();
-                this.AcceptChanges();
+                // Đã loại bỏ this.AcceptChanges() tại đây để không làm mất trạng thái thay đổi dữ liệu của DataTable
 
                 tr.Commit();
                 if (result == DBNull.Value) result = null;

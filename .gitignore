@@ -23,3 +23,5 @@ UpgradeLog*.htm
 *.xlsx
 *.docx
 *.doc
+Database/tools/access_dump.json
+Database/tools/export_log.txt
