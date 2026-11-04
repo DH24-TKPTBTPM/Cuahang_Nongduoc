@@ -51,16 +51,7 @@ namespace CuahangNongduoc
             }
             if (!ok)
             {
-                // ==================== [FE-11] REFACTORING ====================
-                // Lỗi (Code smell) : Sai tiêu đề thông báo MessageBox (không dấu)
-                // Kỹ thuật         : Fix Bug
-                // Trước            : MessageBox.Show("Thông tin năm không hợp lệ!", "Tong Hop Du No", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Sau              : MessageBox.Show("Thông tin năm không hợp lệ!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-                // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
-                // Ngày chỉnh sửa   : 03/11/2026
-                // ============================================================
-                MessageBox.Show("Thông tin năm không hợp lệ!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Thông tin năm không hợp lệ!", "Tong Hop Du No", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
             }
         }
