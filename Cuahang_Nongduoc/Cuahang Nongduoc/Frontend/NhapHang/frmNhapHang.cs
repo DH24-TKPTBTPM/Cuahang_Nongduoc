@@ -162,10 +162,24 @@ namespace CuahangNongduoc
 
             ctrl.Update();
         }
+        // ==================== [R16] REFACTORING ====================
+        // Lỗi (Code smell) : Long Method / Missing Validation Guard –  Kiểm tra mã phiếu trước khi thêm dòng; tách hàm nhỏ
+        // Kỹ thuật         : Decompose Conditional + Extract Method
+        // Trước            : Thêm row vào ctrl trước, kiểm tra mã trùng sau, gom chung logic vào 1 hàm ThemMoi()
+        // Sau              : Kiểm tra mã trùng trước (Guard Clause), tách KiemTraHopLePhieuNhap(), CapNhatMaPhieuTuDong(), CapNhatGiaVaTonKho()
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : <Không>
+        // Kiểm tra         : QA1 – <Họ_tên>
+        // Ngày chỉnh sửa   : 04/11/2026
+        // ===========================================================
         void ThemMoi()
         {
+            // Bước 1: Kiểm tra hợp lệ trước khi làm bất kỳ thao tác nào
+            if (!KiemTraHopLePhieuNhap()) return;
+
+            // Bước 2: Khởi tạo dữ liệu phiếu nhập
             DataRow row = ctrl.NewRow();
-            row["ID"] = txtMaPhieu.Text;
+            row["ID"] = txtMaPhieu.Text.Trim();
             row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
             row["TONG_TIEN"] = numTongTien.Value;
             row["ID_NHA_CUNG_CAP"] = cmbNhaCungCap.SelectedValue;
@@ -173,35 +187,62 @@ namespace CuahangNongduoc
             row["CON_NO"] = numConNo.Value;
             ctrl.Add(row);
 
-            PhieuNhapController ctrlPN = new PhieuNhapController();
+            // Bước 3: Tăng mã tự động & Lưu dữ liệu
+            CapNhatMaPhieuTuDong();
+            ctrl.Save();
+            ctrlMaSP.Save();
 
-            if (ctrlPN.LayPhieuNhap(txtMaPhieu.Text) != null)
+            // Bước 4: Cập nhật tồn kho & giá nhập
+            CapNhatGiaVaTonKho();
+        }
+
+        private bool KiemTraHopLePhieuNhap()
+        {
+            string maPhieu = txtMaPhieu.Text.Trim();
+            if (string.IsNullOrEmpty(maPhieu))
             {
-                MessageBox.Show("Mã Phiếu nhập này đã tồn tại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show("Mã phiếu nhập không được để trống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtMaPhieu.Focus();
+                return false;
             }
 
-            if (ThamSo.LaSoNguyen(txtMaPhieu.Text))
+            PhieuNhapController ctrlPN = new PhieuNhapController();
+            if (ctrlPN.LayPhieuNhap(maPhieu) != null)
             {
-                long so = Convert.ToInt64(txtMaPhieu.Text);
+                MessageBox.Show("Mã Phiếu nhập này đã tồn tại trong hệ thống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtMaPhieu.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private void CapNhatMaPhieuTuDong()
+        {
+            string maPhieu = txtMaPhieu.Text.Trim();
+            if (ThamSo.LaSoNguyen(maPhieu))
+            {
+                long so = Convert.ToInt64(maPhieu);
                 if (so >= ThamSo.LayMaPhieuNhap())
                 {
                     ThamSo.GanMaPhieuNhap(so + 1);
                 }
             }
+        }
 
-            ctrl.Save();
-            ctrlMaSP.Save();
-
+        private void CapNhatGiaVaTonKho()
+        {
             SanPhamController ctrlSP = new SanPhamController();
             foreach (DataGridViewRow view in dataGridView.Rows)
             {
-                ctrlSP.CapNhatGiaNhap(Convert.ToString(view.Cells["colSanPham"].Value),
-                    Convert.ToInt64(view.Cells["colDonGiaNhap"].Value),
-                Convert.ToInt64(view.Cells["colSoLuong"].Value));
+                if (view.IsNewRow || view.Cells["colSanPham"].Value == null) continue;
 
+                string idSanPham = Convert.ToString(view.Cells["colSanPham"].Value);
+                long donGia = Convert.ToInt64(view.Cells["colDonGiaNhap"].Value ?? 0);
+                long soLuong = Convert.ToInt64(view.Cells["colSoLuong"].Value ?? 0);
+
+                ctrlSP.CapNhatGiaNhap(idSanPham, donGia, soLuong);
             }
-
         }
 
         private void toolLuuThem_Click(object sender, EventArgs e)
