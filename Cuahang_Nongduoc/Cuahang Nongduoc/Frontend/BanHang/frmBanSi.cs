@@ -227,10 +227,22 @@ namespace CuahangNongduoc
 
         }
 
+        // ==================== [R18] REFACTORING ====================
+        // Lỗi (Code smell) : Xóa dòng khi đang Thêm mới vẫn đưa vào danh sách hoàn kho (deleted), dẫn đến hoàn kho sai khi chưa lưu xuống DB.
+        // Kỹ thuật : Fix Bug / Kiểm tra trạng thái status != Controll.AddNew trước khi add vào deleted và Clear deleted khi nhấn Thêm mới.
+        // Tác giả : FE1- Dương Thị Kim Anh
+        // Hỗ trợ : FE2 - Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra : QA
+        // Ngày chỉnh sửa : 05/11/2026
+        // ===========================================================
         private void toolLuu_Them_Click(object sender, EventArgs e)
         {
             ctrlPhieuBan = new PhieuBanController();
             status = Controll.AddNew;
+
+            // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
+            deleted.Clear();
+
             txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
             numTongTien.Value = 0;
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
@@ -239,20 +251,25 @@ namespace CuahangNongduoc
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Le", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Si", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 BindingSource bs = ((BindingSource)dgvDanhsachSP.DataSource);
                 DataRowView row = (DataRowView)bs.Current;
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
-                deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
-                bs.RemoveCurrent();
 
+                // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
+                if (status != Controll.AddNew)
+                {
+                    deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+                }
+
+                bs.RemoveCurrent();
             }
         }
 
         private void dgvDanhsachSP_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Le", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Si", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
             }
@@ -261,7 +278,12 @@ namespace CuahangNongduoc
                 BindingSource bs = ((BindingSource)dgvDanhsachSP.DataSource);
                 DataRowView row = (DataRowView)bs.Current;
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
-                deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+
+                // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
+                if (status != Controll.AddNew)
+                {
+                    deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+                }
             }
         }
 
