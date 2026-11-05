@@ -324,12 +324,34 @@ namespace CuahangNongduoc
             this.Allow(true);
         }
 
+        // ==================== [FE-07] REFACTORING ====================
+        // Lỗi (Code smell) : Wrong BindingSource – btnRemove ép kiểu sai làm crash & không xóa dòng
+        // Kỹ thuật         : Fix Bug
+        // Trước            : DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
+        // Sau              : Lấy CurrentRow từ dataGridView, trừ tiền và gọi dataGridView.Rows.Remove()
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : <Không>
+        // Kiểm tra         : QA1 – <Họ_tên>
+        // Ngày chỉnh sửa   : 04/11/2026
+        // ===========================================================
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Bạn chắc chắn xóa Phiếu Nhập này không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (dataGridView.CurrentRow == null || dataGridView.CurrentRow.IsNewRow)
             {
-                DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
-                numTongTien.Value -= Convert.ToInt64(row["DON_GIA_NHAP"]) * Convert.ToInt64(row["SO_LUONG"]);
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa khỏi danh sách nhập!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("Bạn chắc chắn xóa sản phẩm này khỏi danh sách nhập?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                DataGridViewRow currentRow = dataGridView.CurrentRow;
+
+                long donGia = Convert.ToInt64(currentRow.Cells["colDonGiaNhap"].Value ?? 0);
+                long soLuong = Convert.ToInt64(currentRow.Cells["colSoLuong"].Value ?? 0);
+
+                numTongTien.Value = Math.Max(0, numTongTien.Value - (donGia * soLuong));
+
+                dataGridView.Rows.Remove(currentRow);
             }
         }
 
