@@ -216,11 +216,25 @@ namespace CuahangNongduoc
             ctrlChiTiet.Save();
 
         }
+        // ==================== [R18] REFACTORING ====================
+        // Lỗi (Code smell) : Xóa dòng khi đang Thêm mới vẫn đưa vào danh sách hoàn kho (deleted)
+        // Kỹ thuật         : Fix Bug / State Validation
+        // Trước            : Xóa dòng ở trạng thái Thêm mới (AddNew) vẫn ghi nhận vào danh sách deleted và gọi hoàn kho, gây lỗi tồn kho sai lệch.
+        // Sau              : Kiểm tra trạng thái (status != Controll.AddNew) trước khi add vào deleted và gọi deleted.Clear() khi nhấn Thêm mới.
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA
+        // Ngày chỉnh sửa   : 05/11/2026
+        // ===========================================================
 
         private void toolLuu_Them_Click(object sender, EventArgs e)
         {
             ctrlPhieuBan = new PhieuBanController();
             status = Controll.AddNew;
+
+            // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
+            deleted.Clear();
+
             txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
             numTongTien.Value = 0;
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
@@ -234,7 +248,13 @@ namespace CuahangNongduoc
                 BindingSource bs = ((BindingSource)dgvDanhsachSP.DataSource);
                 DataRowView row = (DataRowView)bs.Current;
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
-                deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+
+                // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
+                if (status != Controll.AddNew)
+                {
+                    deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+                }
+
                 bs.RemoveCurrent();
             }
 
@@ -251,8 +271,12 @@ namespace CuahangNongduoc
                 BindingSource bs = ((BindingSource)dgvDanhsachSP.DataSource);
                 DataRowView row = (DataRowView)bs.Current;
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
-                deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
 
+                // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
+                if (status != Controll.AddNew)
+                {
+                    deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
+                }
             }
         }
 

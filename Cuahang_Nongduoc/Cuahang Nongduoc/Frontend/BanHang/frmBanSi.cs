@@ -43,9 +43,9 @@ namespace CuahangNongduoc
         // Kỹ thuật : Fix Bug / Thêm sự kiện thay đổi giá trị Số lượng
         // Trước : Form chỉ có sự kiện numDonGia_ValueChanged, dẫn đến khi người dùng thay đổi số lượng (numSoLuong), ô Thành tiền (numThanhTien) không được cập nhật lại tự động.
         // Sau : Bổ sung sự kiện numSoLuong_ValueChanged và gắn kết sự kiện để tự động tính lại numThanhTien = numDonGia * numSoLuong.
-        // Tác giả : BE3 – Nguyễn Văn A
-        // Hỗ trợ : BE1 – Trần Văn B
-        // Kiểm tra : QA1 – Lê Thị C (QA điền khi test đạt)
+        // Tác giả : FE1 - Dương thị Kim Anh
+        // Hỗ trợ : -
+        // Kiểm tra : QA
         // Ngày chỉnh sửa : 05/11/2026
         // ===========================================================
         private void frmNhapHang_Load(object sender, EventArgs e)
