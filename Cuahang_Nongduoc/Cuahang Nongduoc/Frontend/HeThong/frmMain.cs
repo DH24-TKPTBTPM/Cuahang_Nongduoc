@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using CuahangNongduoc.Patterns.Strategy;
 
 namespace CuahangNongduoc
 {
@@ -119,24 +120,35 @@ namespace CuahangNongduoc
             else
                 NhapHang.Activate();
         }
-        frmDanhsachPhieuBanLe BanLe = null;
+        // ==================== [R17] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Form - frmBanLe và frmBanSi lặp giao diện & logic
+        // Kỹ thuật : Extract Superclass + Strategy Pattern
+        // Trước : Gọi new frmBanLe() và new frmBanSi()
+        // Sau : Gọi chung new frmBanHang() và tiêm BanLeStrategy / BanSiStrategy
+        // Tác giả : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra : QA2 – <Họ tên QA>
+        // Ngày chỉnh sửa : 07/11/2026
+        // ===========================================================
+        frmBanHang BanLe = null;
         private void mnuBanHangKH_Click(object sender, EventArgs e)
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmDanhsachPhieuBanLe();
+                BanLe = new frmBanHang(new BanLeStrategy());
                 BanLe.MdiParent = this;
                 BanLe.Show();
             }
             else
                 BanLe.Activate();
         }
-        frmDanhsachPhieuBanSi BanSi = null;
+
+        frmBanHang BanSi = null;
         private void mnuBanHangDL_Click(object sender, EventArgs e)
         {
             if (BanSi == null || BanSi.IsDisposed)
             {
-                BanSi = new frmDanhsachPhieuBanSi();
+                BanSi = new frmBanHang(new BanSiStrategy());
                 BanSi.MdiParent = this;
                 BanSi.Show();
             }

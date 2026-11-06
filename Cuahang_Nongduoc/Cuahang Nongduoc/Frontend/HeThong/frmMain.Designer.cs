@@ -118,7 +118,7 @@
             this.mnuTrogiup});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1061, 28);
+            this.menuStrip.Size = new System.Drawing.Size(1061, 30);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -127,7 +127,7 @@
             this.mnuHeThong.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuThoat});
             this.mnuHeThong.Name = "mnuHeThong";
-            this.mnuHeThong.Size = new System.Drawing.Size(85, 24);
+            this.mnuHeThong.Size = new System.Drawing.Size(85, 26);
             this.mnuHeThong.Text = "Hệ thống";
             // 
             // mnuThoat
@@ -144,7 +144,7 @@
             this.mnuThanhCongCu,
             this.mnuThanhChucNang});
             this.mnuHienThi.Name = "mnuHienThi";
-            this.mnuHienThi.Size = new System.Drawing.Size(75, 24);
+            this.mnuHienThi.Size = new System.Drawing.Size(75, 26);
             this.mnuHienThi.Text = "Hiển thị";
             // 
             // mnuThanhCongCu
@@ -174,7 +174,7 @@
             this.mnuDaiLy,
             this.mnuNhaCungCap});
             this.mnuQuanLy.Name = "mnuQuanLy";
-            this.mnuQuanLy.Size = new System.Drawing.Size(73, 24);
+            this.mnuQuanLy.Size = new System.Drawing.Size(73, 26);
             this.mnuQuanLy.Text = "Quản lý";
             // 
             // mnuLyDoChi
@@ -240,7 +240,7 @@
             this.toolStripSeparator1,
             this.mnuTonghopDuno});
             this.mnuNghiepVu.Name = "mnuNghiepVu";
-            this.mnuNghiepVu.Size = new System.Drawing.Size(91, 24);
+            this.mnuNghiepVu.Size = new System.Drawing.Size(91, 26);
             this.mnuNghiepVu.Text = "Nghiệp vụ";
             // 
             // mnuNhapHang
@@ -313,7 +313,7 @@
             this.toolStripSeparator5,
             this.mnuSanphamHethan});
             this.mnuBaocao.Name = "mnuBaocao";
-            this.mnuBaocao.Size = new System.Drawing.Size(77, 24);
+            this.mnuBaocao.Size = new System.Drawing.Size(77, 26);
             this.mnuBaocao.Text = "Báo cáo";
             // 
             // mnuBaocaoSoluongton
@@ -350,7 +350,7 @@
             this.mnuTuychinh.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuTuychinhThongtin});
             this.mnuTuychinh.Name = "mnuTuychinh";
-            this.mnuTuychinh.Size = new System.Drawing.Size(85, 24);
+            this.mnuTuychinh.Size = new System.Drawing.Size(85, 26);
             this.mnuTuychinh.Text = "Tùy chỉnh";
             // 
             // mnuTuychinhThongtin
@@ -367,7 +367,7 @@
             this.mnuTrogiupHuongdan,
             this.mnuTrogiupLienhe});
             this.mnuTrogiup.Name = "mnuTrogiup";
-            this.mnuTrogiup.Size = new System.Drawing.Size(78, 24);
+            this.mnuTrogiup.Size = new System.Drawing.Size(78, 26);
             this.mnuTrogiup.Text = "Trợ giúp";
             // 
             // mnuTrogiupHuongdan
@@ -492,7 +492,7 @@
             this.toolThanhtoan,
             this.toolStripSeparator4,
             this.toolTonKho});
-            this.toolStrip.Location = new System.Drawing.Point(0, 28);
+            this.toolStrip.Location = new System.Drawing.Point(0, 30);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Size = new System.Drawing.Size(1061, 51);
             this.toolStrip.TabIndex = 2;
@@ -551,10 +551,10 @@
             this.expando1,
             this.expando2,
             this.expando3});
-            this.taskPane.Location = new System.Drawing.Point(0, 79);
-            this.taskPane.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.taskPane.Location = new System.Drawing.Point(0, 81);
+            this.taskPane.Margin = new System.Windows.Forms.Padding(4);
             this.taskPane.Name = "taskPane";
-            this.taskPane.Size = new System.Drawing.Size(257, 630);
+            this.taskPane.Size = new System.Drawing.Size(257, 628);
             this.taskPane.TabIndex = 11;
             this.taskPane.Text = "taskPane1";
             this.taskPane.Visible = false;
@@ -578,9 +578,9 @@
             this.itemSanPham,
             this.itemNhaCungCap});
             this.expando1.Location = new System.Drawing.Point(12, 12);
-            this.expando1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.expando1.Margin = new System.Windows.Forms.Padding(4);
             this.expando1.Name = "expando1";
-            this.expando1.Size = new System.Drawing.Size(233, 209);
+            this.expando1.Size = new System.Drawing.Size(233, 170);
             this.expando1.TabIndex = 0;
             this.expando1.Text = "Quản Lý";
             // 
@@ -594,7 +594,6 @@
             this.itemDaiLy.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemDaiLy.Image = ((System.Drawing.Image)(resources.GetObject("itemDaiLy.Image")));
             this.itemDaiLy.Location = new System.Drawing.Point(5, 98);
-            //this.itemDaiLy.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemDaiLy.Name = "itemDaiLy";
             this.itemDaiLy.Size = new System.Drawing.Size(123, 20);
             this.itemDaiLy.TabIndex = 12;
@@ -613,7 +612,6 @@
             this.itemKhachHang.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemKhachHang.Image = ((System.Drawing.Image)(resources.GetObject("itemKhachHang.Image")));
             this.itemKhachHang.Location = new System.Drawing.Point(5, 65);
-            //this.itemKhachHang.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemKhachHang.Name = "itemKhachHang";
             this.itemKhachHang.Size = new System.Drawing.Size(123, 20);
             this.itemKhachHang.TabIndex = 9;
@@ -633,7 +631,6 @@
             this.itemSanPham.Image = ((System.Drawing.Image)(resources.GetObject("itemSanPham.Image")));
             this.itemSanPham.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.itemSanPham.Location = new System.Drawing.Point(5, 32);
-            //this.itemSanPham.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemSanPham.Name = "itemSanPham";
             this.itemSanPham.Size = new System.Drawing.Size(123, 20);
             this.itemSanPham.TabIndex = 8;
@@ -652,7 +649,6 @@
             this.itemNhaCungCap.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemNhaCungCap.Image = ((System.Drawing.Image)(resources.GetObject("itemNhaCungCap.Image")));
             this.itemNhaCungCap.Location = new System.Drawing.Point(5, 132);
-            //this.itemNhaCungCap.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemNhaCungCap.Name = "itemNhaCungCap";
             this.itemNhaCungCap.Size = new System.Drawing.Size(123, 20);
             this.itemNhaCungCap.TabIndex = 13;
@@ -680,10 +676,10 @@
             this.itemBanLe,
             this.itemThanhToan,
             this.itemPhieuChi});
-            this.expando2.Location = new System.Drawing.Point(12, 233);
-            this.expando2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.expando2.Location = new System.Drawing.Point(12, 194);
+            this.expando2.Margin = new System.Windows.Forms.Padding(4);
             this.expando2.Name = "expando2";
-            this.expando2.Size = new System.Drawing.Size(233, 234);
+            this.expando2.Size = new System.Drawing.Size(233, 190);
             this.expando2.TabIndex = 1;
             this.expando2.Text = "Nghiệp vụ";
             // 
@@ -697,7 +693,6 @@
             this.itemNhapHang.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemNhapHang.Image = ((System.Drawing.Image)(resources.GetObject("itemNhapHang.Image")));
             this.itemNhapHang.Location = new System.Drawing.Point(9, 32);
-            //this.itemNhapHang.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemNhapHang.Name = "itemNhapHang";
             this.itemNhapHang.Size = new System.Drawing.Size(138, 20);
             this.itemNhapHang.TabIndex = 5;
@@ -716,7 +711,6 @@
             this.itemBanSi.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemBanSi.Image = ((System.Drawing.Image)(resources.GetObject("itemBanSi.Image")));
             this.itemBanSi.Location = new System.Drawing.Point(8, 65);
-            //this.itemBanSi.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemBanSi.Name = "itemBanSi";
             this.itemBanSi.Size = new System.Drawing.Size(138, 20);
             this.itemBanSi.TabIndex = 6;
@@ -735,7 +729,6 @@
             this.itemBanLe.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemBanLe.Image = ((System.Drawing.Image)(resources.GetObject("itemBanLe.Image")));
             this.itemBanLe.Location = new System.Drawing.Point(8, 100);
-            //this.itemBanLe.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemBanLe.Name = "itemBanLe";
             this.itemBanLe.Size = new System.Drawing.Size(138, 20);
             this.itemBanLe.TabIndex = 7;
@@ -754,7 +747,6 @@
             this.itemThanhToan.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemThanhToan.Image = ((System.Drawing.Image)(resources.GetObject("itemThanhToan.Image")));
             this.itemThanhToan.Location = new System.Drawing.Point(8, 133);
-            //this.itemThanhToan.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemThanhToan.Name = "itemThanhToan";
             this.itemThanhToan.Size = new System.Drawing.Size(138, 20);
             this.itemThanhToan.TabIndex = 8;
@@ -773,7 +765,6 @@
             this.itemPhieuChi.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemPhieuChi.Image = ((System.Drawing.Image)(resources.GetObject("itemPhieuChi.Image")));
             this.itemPhieuChi.Location = new System.Drawing.Point(8, 166);
-            //this.itemPhieuChi.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemPhieuChi.Name = "itemPhieuChi";
             this.itemPhieuChi.Size = new System.Drawing.Size(138, 20);
             this.itemPhieuChi.TabIndex = 9;
@@ -799,10 +790,10 @@
             this.itemTonghopDoanhthu,
             this.itemTonKho,
             this.taskItem1});
-            this.expando3.Location = new System.Drawing.Point(12, 479);
-            this.expando3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.expando3.Location = new System.Drawing.Point(12, 396);
+            this.expando3.Margin = new System.Windows.Forms.Padding(4);
             this.expando3.Name = "expando3";
-            this.expando3.Size = new System.Drawing.Size(233, 209);
+            this.expando3.Size = new System.Drawing.Size(233, 170);
             this.expando3.TabIndex = 2;
             this.expando3.Text = "Báo cáo";
             // 
@@ -816,7 +807,6 @@
             this.itemTonghopDoanhthu.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemTonghopDoanhthu.Image = ((System.Drawing.Image)(resources.GetObject("itemTonghopDoanhthu.Image")));
             this.itemTonghopDoanhthu.Location = new System.Drawing.Point(9, 32);
-            //this.itemTonghopDoanhthu.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemTonghopDoanhthu.Name = "itemTonghopDoanhthu";
             this.itemTonghopDoanhthu.Size = new System.Drawing.Size(138, 20);
             this.itemTonghopDoanhthu.TabIndex = 7;
@@ -835,7 +825,6 @@
             this.itemTonKho.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.itemTonKho.Image = ((System.Drawing.Image)(resources.GetObject("itemTonKho.Image")));
             this.itemTonKho.Location = new System.Drawing.Point(9, 65);
-            //this.itemTonKho.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.itemTonKho.Name = "itemTonKho";
             this.itemTonKho.Size = new System.Drawing.Size(138, 20);
             this.itemTonKho.TabIndex = 8;
@@ -853,7 +842,6 @@
             this.taskItem1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.taskItem1.Image = ((System.Drawing.Image)(resources.GetObject("taskItem1.Image")));
             this.taskItem1.Location = new System.Drawing.Point(8, 98);
-            //this.taskItem1.Margin = new XPExplorerBar.Margin(0, 4, 0, 0);
             this.taskItem1.Name = "taskItem1";
             this.taskItem1.Size = new System.Drawing.Size(138, 20);
             this.taskItem1.TabIndex = 9;
@@ -874,7 +862,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmMain";
             this.Text = "QUAN LY CUA HANG NONG DUOC";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;

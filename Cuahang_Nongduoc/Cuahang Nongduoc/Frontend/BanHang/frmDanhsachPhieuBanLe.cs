@@ -1,12 +1,13 @@
-﻿using System;
+﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Controller;
+using CuahangNongduoc.Patterns.Strategy;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using CuahangNongduoc.BusinessObject;
-using CuahangNongduoc.Controller;
 
 namespace CuahangNongduoc
 {
@@ -24,12 +25,22 @@ namespace CuahangNongduoc
             ctrlKH.HienthiKhachHangDataGridviewComboBox(colKhachhang);
             ctrl.HienthiPhieuBanLe(bindingNavigator, dataGridView);
         }
-        frmBanLe BanLe = null;
+        frmBanHang BanLe = null;
         private void dataGridView_DoubleClick(object sender, EventArgs e)
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmBanLe(ctrl);
+                // ==================== [FE-01] REFACTORING ====================
+                // Lỗi (Code smell) : Argument Type Mismatch – Truyền sai constructor cho frmBanHang
+                // Kỹ thuật : Strategy Injection
+                // Trước : BanLe = new frmBanSi(ctrl);
+                // Sau : BanLe = new frmBanHang(ctrl, new BanSiStrategy());
+                // Tác giả : FE1 – Dương Thị Kim Anh
+                // Hỗ trợ : FE2 - NgUyễn Huỳnh Ngọc Anh
+                // Kiểm tra : QA1 - Huỳnh Lư Anh Minh
+                // Ngày chỉnh sửa : 07/11/2026
+                // ===========================================================
+                BanLe = new frmBanHang(ctrl, new BanLeStrategy());
                 BanLe.Show();
             }
             else
@@ -40,7 +51,7 @@ namespace CuahangNongduoc
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmBanLe();
+                BanLe = new frmBanHang();
                 BanLe.Show();
             }
             else
