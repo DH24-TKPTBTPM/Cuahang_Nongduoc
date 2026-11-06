@@ -32,6 +32,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable DanhsachKhachHang(bool loai)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM KHACH_HANG WHERE LOAI_KH = " + loai);
@@ -51,6 +59,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable TimHoTen(String hoten, bool loai)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM KHACH_HANG WHERE HO_TEN LIKE '%' + @hoten + '%' AND LOAI_KH = " + loai);
@@ -73,6 +89,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable TimDiaChi(String diachi, bool loai)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM KHACH_HANG WHERE DIA_CHI LIKE '%' + @diachi + '%' AND LOAI_KH = " + loai);
@@ -95,6 +119,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable DanhsachKhachHang()
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM KHACH_HANG");
@@ -115,6 +147,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable LayKhachHang(String id)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM KHACH_HANG WHERE ID = @id");

@@ -32,6 +32,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public void LoadSchema()
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM CHI_TIET_PHIEU_NHAP WHERE ID_PHIEU_NHAP = '-1'");
@@ -50,6 +58,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable LayChiTietPhieuNhap(String id)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM CHI_TIET_PHIEU_NHAP WHERE ID_PHIEU_NHAP = @id");
@@ -71,6 +87,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public int XoaChiTietPhieuNhap(String id)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("DELETE FROM CHI_TIET_PHIEU_NHAP WHERE ID_PHIEU_NHAP = @id");

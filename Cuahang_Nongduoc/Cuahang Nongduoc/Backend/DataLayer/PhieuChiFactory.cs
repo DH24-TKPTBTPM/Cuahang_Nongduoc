@@ -32,6 +32,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable TimPhieuChi(int lydo, DateTime ngay)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
@@ -57,6 +65,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable DanhsachPhieuChi()
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI ");
@@ -77,6 +93,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public DataTable LayPhieuChi(String id)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID = @id");
@@ -99,6 +123,14 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public static long LayTongTien(String lydo, int thang, int nam)
         {
             DataService ds = new DataService();
