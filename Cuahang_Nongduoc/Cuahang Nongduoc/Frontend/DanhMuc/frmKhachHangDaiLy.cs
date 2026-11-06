@@ -15,7 +15,16 @@ namespace CuahangNongduoc
         // Biến cờ để phân biệt đang mở form cho Đại lý hay Khách hàng
         private bool _isDaiLy;
 
-        // Sửa hàm khởi tạo để nhận tham số phân biệt
+        // ==================== [R06] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code - frmKhachHang và frmDaiLy có giao diện và code giống hệt nhau
+        // Kỹ thuật : Parameterize (Tham số hóa) / Gộp Form
+        // Trước : Dùng 2 form riêng biệt không có tham số (new frmKhachHang() và new frmDaiLy())
+        // Sau : Gộp thành 1 form chung, truyền biến cờ bool isDaiLy qua constructor để phân biệt
+        // Tác giả : FE2 - Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ : <Không>
+        // Kiểm tra : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa : 06/11/2026
+        // ===========================================================
         public frmKhachHangDaiLy(bool isDaiLy)
         {
             InitializeComponent();
