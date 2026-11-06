@@ -98,11 +98,19 @@ namespace CuahangNongduoc.DataLayer
 /// - Kiểm tra (Reviewer/Tester): QA Team
 /// - Ngày chỉnh sửa (Date): 30/10/2026
 /// </summary>
+// ==================== [R29] REFACTORING ====================
+// Lỗi (Code smell) : Không kiểm tra giá trị DBNull khi hàm SUM() trả về rỗng
+// Kỹ thuật         : Introduce Null Object / Guard
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE2 - Trần Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// ==============================================================
         public static long LayTongTien(String kh, int thang, int nam)
         {
             DataService ds = new DataService();
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_THANH_TOAN WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_THANH_TOAN)=@thang AND YEAR(NGAY_THANH_TOAN)= @nam");
-            SqlCommand cmd = new SqlCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_THANH_TOAN WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_THANH_TOAN)=@thang AND YEAR(NGAY_THANH_TOAN)= @nam");
+            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(TONG_TIEN), 0) FROM PHIEU_THANH_TOAN WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_THANH_TOAN)=@thang AND YEAR(NGAY_THANH_TOAN)= @nam");
 // Code cũ: cmd.Parameters.Add("kh", OleDbType.VarChar, 50).Value = kh;
             cmd.Parameters.Add("kh", SqlDbType.VarChar, 50).Value = kh;
 // Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
@@ -112,7 +120,7 @@ namespace CuahangNongduoc.DataLayer
 
             object obj = ds.ExecuteScalar(cmd);
             
-            if (obj == null)
+            if (obj == null || Convert.IsDBNull(obj))
                 return 0;
             else
                 return Convert.ToInt64(obj);
