@@ -324,7 +324,7 @@ namespace CuahangNongduoc
 
         private void btnThemDaiLy_Click(object sender, EventArgs e)
         {
-            frmKhachHang KhachHang = new frmKhachHang();
+            frmKhachHangDaiLy KhachHang = new frmKhachHangDaiLy(false);
             KhachHang.ShowDialog();
             ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, false);
         }
@@ -336,6 +336,9 @@ namespace CuahangNongduoc
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
         }
 
+        private void bindingNavigator_RefreshItems(object sender, EventArgs e)
+        {
 
-     }
+        }
+    }
 }

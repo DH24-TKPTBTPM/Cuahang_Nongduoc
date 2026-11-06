@@ -1,6 +1,6 @@
 ﻿namespace CuahangNongduoc
 {
-    partial class frmDaiLy
+    partial class frmKhachHangDaiLy
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDaiLy));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmKhachHangDaiLy));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
@@ -90,7 +90,7 @@
             this.bindingNavigator.MovePreviousItem = this.bindingNavigatorMovePreviousItem;
             this.bindingNavigator.Name = "bindingNavigator";
             this.bindingNavigator.PositionItem = this.bindingNavigatorPositionItem;
-            this.bindingNavigator.Size = new System.Drawing.Size(646, 46);
+            this.bindingNavigator.Size = new System.Drawing.Size(642, 46);
             this.bindingNavigator.TabIndex = 0;
             this.bindingNavigator.Text = "bindingNavigator1";
             // 
@@ -200,8 +200,8 @@
             this.toolThoat.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolThoat.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolThoat.Name = "toolThoat";
-            this.toolThoat.Size = new System.Drawing.Size(45, 43);
-            this.toolThoat.Text = " Thoát";
+            this.toolThoat.Size = new System.Drawing.Size(42, 43);
+            this.toolThoat.Text = "Thoát";
             this.toolThoat.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolThoat.Click += new System.EventHandler(this.toolThoat_Click);
             // 
@@ -228,7 +228,7 @@
             this.toolTimHoTen.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolTimHoTen.Name = "toolTimHoTen";
             this.toolTimHoTen.Size = new System.Drawing.Size(110, 22);
-            this.toolTimHoTen.Text = "Đại lý";
+            this.toolTimHoTen.Text = "Họ tên";
             this.toolTimHoTen.Click += new System.EventHandler(this.toolTimHoTen_Click);
             // 
             // toolTimDiaChi
@@ -243,7 +243,7 @@
             this.toolTimKhachHang.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.toolTimKhachHang.Name = "toolTimKhachHang";
             this.toolTimKhachHang.Size = new System.Drawing.Size(150, 46);
-            this.toolTimKhachHang.Text = "Tìm theo Đại lý";
+            this.toolTimKhachHang.Text = "Tìm theo Họ tên";
             this.toolTimKhachHang.Leave += new System.EventHandler(this.toolTimKhachHang_Leave);
             this.toolTimKhachHang.Enter += new System.EventHandler(this.toolTimKhachHang_Enter);
             this.toolTimKhachHang.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.toolTimKhachHang_KeyPress);
@@ -262,7 +262,7 @@
             this.dataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView.Location = new System.Drawing.Point(0, 46);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(646, 403);
+            this.dataGridView.Size = new System.Drawing.Size(642, 344);
             this.dataGridView.TabIndex = 1;
             this.dataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dataGridView_UserDeletingRow);
             // 
@@ -275,9 +275,9 @@
             // colHoTen
             // 
             this.colHoTen.DataPropertyName = "HO_TEN";
-            this.colHoTen.HeaderText = "Tên đại lý";
+            this.colHoTen.HeaderText = "Họ tên";
             this.colHoTen.Name = "colHoTen";
-            this.colHoTen.Width = 200;
+            this.colHoTen.Width = 150;
             // 
             // colDiaChi
             // 
@@ -295,7 +295,7 @@
             // colLoaiKH
             // 
             this.colLoaiKH.DataPropertyName = "LOAI_KH";
-            dataGridViewCellStyle1.NullValue = "True";
+            dataGridViewCellStyle1.NullValue = "False";
             this.colLoaiKH.DefaultCellStyle = dataGridViewCellStyle1;
             this.colLoaiKH.HeaderText = "Loại KH";
             this.colLoaiKH.Name = "colLoaiKH";
@@ -303,17 +303,17 @@
             this.colLoaiKH.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.colLoaiKH.Visible = false;
             // 
-            // frmDaiLy
+            // frmKhachHang
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 449);
+            this.ClientSize = new System.Drawing.Size(642, 390);
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.bindingNavigator);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmDaiLy";
-            this.Text = "DAI LY";
-            this.Load += new System.EventHandler(this.frmKhachHang_Load);
+            this.Name = "frmKhachHang";
+            this.Text = "KHACH HANG";
+            this.Load += new System.EventHandler(this.frmKhachHangDaiLy_Load);
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
             this.bindingNavigator.ResumeLayout(false);
             this.bindingNavigator.PerformLayout();
