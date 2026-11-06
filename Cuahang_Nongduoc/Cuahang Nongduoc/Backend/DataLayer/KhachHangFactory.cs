@@ -6,32 +6,12 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
     public class KhachHangFactory
     {
         DataService m_Ds = new DataService();
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -48,17 +28,7 @@ namespace CuahangNongduoc.DataLayer
 
             return m_Ds.ResultTable;
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -78,17 +48,7 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -108,17 +68,6 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -136,17 +85,7 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -165,47 +104,17 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public DataRow NewRow()
         {
             return m_Ds.NewRow();
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public void Add(DataRow row)
         {
             m_Ds.Rows.Add(row);
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public bool Save()
         {
             return m_Ds.UpdateDataTable() > 0;
