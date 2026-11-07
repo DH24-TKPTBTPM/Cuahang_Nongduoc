@@ -38,13 +38,13 @@ namespace CuahangNongduoc
         }
 
 
-        // ==================== [FE08a]REFACTORING====================
+        // ==================== [FE-08a]REFACTORING====================
         // Lỗi (Code smell) : Thay đổi Số lượng không tự động tính lại Thành tiền (Thiếu sự kiện numSoLuong_ValueChanged)
         // Kỹ thuật : Fix Bug / Thêm sự kiện thay đổi giá trị Số lượng
         // Trước : Form chỉ có sự kiện numDonGia_ValueChanged, dẫn đến khi người dùng thay đổi số lượng (numSoLuong), ô Thành tiền (numThanhTien) không được cập nhật lại tự động.
         // Sau : Bổ sung sự kiện numSoLuong_ValueChanged và gắn kết sự kiện để tự động tính lại numThanhTien = numDonGia * numSoLuong.
-        // Tác giả : FE1 - Dương thị Kim Anh
-        // Hỗ trợ : -
+        // Tác giả : FE1 - Dương Thị Kim Anh
+        // Hỗ trợ : FE2 - Nguyễn Huỳnh Ngọc Anh
         // Kiểm tra : QA
         // Ngày chỉnh sửa : 05/11/2026
         // ===========================================================
@@ -63,6 +63,16 @@ namespace CuahangNongduoc
 
 
             ctrlPhieuBan.HienthiPhieuBan(bindingNavigator, cmbKhachHang, txtMaPhieu, dtNgayLapPhieu, numTongTien, numDaTra, numConNo);
+
+            // ==================== [FE-10] REFACTORING ====================
+            // Lỗi (Code smell) : Đăng ký trùng lặp sự kiện BindingSource.CurrentChanged gây gọi lặp
+            // Kỹ thuật : Fix Bug / Unsubscribe trước khi Subscribe
+            // Tác giả : FE1 - Dương Thị Kim Anh
+            // Hỗ trợ : FE2 - Nguyễn Huỳnh Ngọc Anh
+            // Kiểm tra : QA
+            // Ngày chỉnh sửa : 05/11/2026
+            // ===========================================================
+            bindingNavigator.BindingSource.CurrentChanged -= new EventHandler(BindingSource_CurrentChanged);
             bindingNavigator.BindingSource.CurrentChanged += new EventHandler(BindingSource_CurrentChanged);
 
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
@@ -155,7 +165,7 @@ namespace CuahangNongduoc
             numThanhTien.Value = numDonGia.Value * numSoLuong.Value;
         }
 
-        
+
 
         private void numTongTien_ValueChanged(object sender, EventArgs e)
         {
@@ -168,6 +178,15 @@ namespace CuahangNongduoc
             this.Luu();
             status = Controll.Normal;
 
+            // ==================== [FE-10] REFACTORING ====================
+            // Lỗi (Code smell) : Thiếu gọi Allow(false) sau khi lưu phiếu, giữ form ở chế độ mở khóa nhập liệu.
+            // Kỹ thuật : Fix Bug / Khóa các điều khiển sau khi lưu thành công.
+            // Tác giả : FE1 - Dương Thị Kim Anh
+            // Hỗ trợ : FE2 - Nguyễn Huỳnh Ngọc Anh
+            // Kiểm tra : QA
+            // Ngày chỉnh sửa : 05/11/2026
+            // ===========================================================
+            this.Allow(false);
         }
         void Luu()
         {
