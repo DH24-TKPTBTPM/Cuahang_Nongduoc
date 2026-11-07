@@ -10,7 +10,7 @@ using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc
 {
-    public partial class frmBanSi: Form
+    public partial class frmBanSi : Form
     {
         SanPhamController ctrlSanPham = new SanPhamController();
         KhachHangController ctrlKhachHang = new KhachHangController();
@@ -25,7 +25,7 @@ namespace CuahangNongduoc
         public frmBanSi()
         {
             InitializeComponent();
-            
+
             status = Controll.AddNew;
         }
 
@@ -37,6 +37,17 @@ namespace CuahangNongduoc
             status = Controll.Normal;
         }
 
+
+        // ==================== [FE08a]REFACTORING====================
+        // Lỗi (Code smell) : Thay đổi Số lượng không tự động tính lại Thành tiền (Thiếu sự kiện numSoLuong_ValueChanged)
+        // Kỹ thuật : Fix Bug / Thêm sự kiện thay đổi giá trị Số lượng
+        // Trước : Form chỉ có sự kiện numDonGia_ValueChanged, dẫn đến khi người dùng thay đổi số lượng (numSoLuong), ô Thành tiền (numThanhTien) không được cập nhật lại tự động.
+        // Sau : Bổ sung sự kiện numSoLuong_ValueChanged và gắn kết sự kiện để tự động tính lại numThanhTien = numDonGia * numSoLuong.
+        // Tác giả : BE3 – Nguyễn Văn A
+        // Hỗ trợ : BE1 – Trần Văn B
+        // Kiểm tra : QA1 – Lê Thị C (QA điền khi test đạt)
+        // Ngày chỉnh sửa : 05/11/2026
+        // ===========================================================
         private void frmNhapHang_Load(object sender, EventArgs e)
         {
 
@@ -44,13 +55,16 @@ namespace CuahangNongduoc
             ctrlMaSanPham.HienThiDataGridViewComboBox(colMaSanPham);
 
             cmbSanPham.SelectedIndexChanged += new EventHandler(cmbSanPham_SelectedIndexChanged);
+            // === THÊM DÒNG NÀY  ===
+            numSoLuong.ValueChanged += new EventHandler(numSoLuong_ValueChanged);
+            // =========================    
 
             ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, true);
 
-            
-            ctrlPhieuBan.HienthiPhieuBan(bindingNavigator,cmbKhachHang, txtMaPhieu, dtNgayLapPhieu, numTongTien, numDaTra, numConNo);
+
+            ctrlPhieuBan.HienthiPhieuBan(bindingNavigator, cmbKhachHang, txtMaPhieu, dtNgayLapPhieu, numTongTien, numDaTra, numConNo);
             bindingNavigator.BindingSource.CurrentChanged += new EventHandler(BindingSource_CurrentChanged);
-            
+
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
 
 
@@ -65,6 +79,12 @@ namespace CuahangNongduoc
 
 
         }
+        // === THÊM HÀM NÀY  ===
+        private void numSoLuong_ValueChanged(object sender, EventArgs e)
+        {
+            numThanhTien.Value = numDonGia.Value * numSoLuong.Value;
+        }
+        // ===================================
 
         void BindingSource_CurrentChanged(object sender, EventArgs e)
         {
@@ -135,6 +155,8 @@ namespace CuahangNongduoc
             numThanhTien.Value = numDonGia.Value * numSoLuong.Value;
         }
 
+        
+
         private void numTongTien_ValueChanged(object sender, EventArgs e)
         {
             numConNo.Value = numTongTien.Value - numDaTra.Value;
@@ -145,7 +167,7 @@ namespace CuahangNongduoc
             bindingNavigatorPositionItem.Focus();
             this.Luu();
             status = Controll.Normal;
-           
+
         }
         void Luu()
         {
@@ -224,7 +246,7 @@ namespace CuahangNongduoc
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
                 deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
                 bs.RemoveCurrent();
-                
+
             }
         }
 
@@ -239,7 +261,7 @@ namespace CuahangNongduoc
                 BindingSource bs = ((BindingSource)dgvDanhsachSP.DataSource);
                 DataRowView row = (DataRowView)bs.Current;
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
-                deleted.Add(new MaSanPham(Convert.ToString( row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])) );
+                deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
             }
         }
 
@@ -300,22 +322,22 @@ namespace CuahangNongduoc
 
         private void toolXoa_Click(object sender, EventArgs e)
         {
-             DataRowView view =  (DataRowView)bindingNavigator.BindingSource.Current;
-             if (view != null)
-             {
+            DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
+            if (view != null)
+            {
 
-                 if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Si", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                 {
-                     ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                     IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
-                     foreach (ChiTietPhieuBan ct in ds)
-                     {
-                         CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                     }
-                     bindingNavigator.BindingSource.RemoveCurrent();
-                     ctrlPhieuBan.Save();
-                 }
-             }
+                if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Si", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
+                    IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
+                    foreach (ChiTietPhieuBan ct in ds)
+                    {
+                        CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                    }
+                    bindingNavigator.BindingSource.RemoveCurrent();
+                    ctrlPhieuBan.Save();
+                }
+            }
         }
 
         private void toolXemLai_Click(object sender, EventArgs e)
@@ -330,7 +352,7 @@ namespace CuahangNongduoc
             frmDaiLy DaiLy = new frmDaiLy();
             DaiLy.ShowDialog();
             ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, true);
-            
+
         }
 
         private void btnThemSanPham_Click(object sender, EventArgs e)
@@ -339,7 +361,7 @@ namespace CuahangNongduoc
             SanPham.ShowDialog();
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
         }
-        
 
-     }
+
+    }
 }
