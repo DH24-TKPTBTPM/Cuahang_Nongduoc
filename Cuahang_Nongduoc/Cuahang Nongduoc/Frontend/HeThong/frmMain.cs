@@ -80,30 +80,32 @@ namespace CuahangNongduoc
             else
                 SanPham.Activate();
         }
-        frmKhachHang KhachHang = null;
+        frmKhachHangDaiLy KhachHang = null;
         private void mnuKhachHang_Click(object sender, EventArgs e)
         {
             if (KhachHang == null || KhachHang.IsDisposed)
             {
-                KhachHang = new frmKhachHang();
+                // Truyền false để mở chế độ Khách Hàng
+                KhachHang = new frmKhachHangDaiLy(false);
                 KhachHang.MdiParent = this;
                 KhachHang.Show();
             }
             else
                 KhachHang.Activate();
         }
-        frmDaiLy DaiLy = null;
+
+        frmKhachHangDaiLy DaiLy = null; // Đổi kiểu dữ liệu từ frmDaiLy sang frmKhachHangDaiLy
         private void mnuDaiLy_Click(object sender, EventArgs e)
         {
             if (DaiLy == null || DaiLy.IsDisposed)
             {
-                DaiLy = new frmDaiLy();
+                // Truyền true để mở chế độ Đại Lý
+                DaiLy = new frmKhachHangDaiLy(true);
                 DaiLy.MdiParent = this;
                 DaiLy.Show();
             }
             else
                 DaiLy.Activate();
-
         }
         frmDanhsachPhieuNhap NhapHang = null;
         private void mnuNhapHang_Click(object sender, EventArgs e)
