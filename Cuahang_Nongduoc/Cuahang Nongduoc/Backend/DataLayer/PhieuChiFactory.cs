@@ -73,11 +73,6 @@ namespace CuahangNongduoc.DataLayer
 
 
 
-// ==================== [R28-NH] REFACTORING ====================
-// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
-// Kỹ thuật         : Migrate Data Provider
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
 // ==============================================================
@@ -85,7 +80,7 @@ namespace CuahangNongduoc.DataLayer
         {
             DataService ds = new DataService();
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
-            SqlCommand cmd = new SqlCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
+            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(TONG_TIEN), 0) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
 // Code cũ: cmd.Parameters.Add("lydo", OleDbType.VarChar, 50).Value = lydo;
             cmd.Parameters.Add("lydo", SqlDbType.VarChar, 50).Value = lydo;
 // Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
@@ -95,7 +90,7 @@ namespace CuahangNongduoc.DataLayer
 
             object obj = ds.ExecuteScalar(cmd);
             
-            if (obj == null)
+            if (obj == null || Convert.IsDBNull(obj))
                 return 0;
             else
                 return Convert.ToInt64(obj);

@@ -77,11 +77,6 @@ namespace CuahangNongduoc.DataLayer
         }
 
 
-// ==================== [R28-NH] REFACTORING ====================
-// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
-// Kỹ thuật         : Migrate Data Provider
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
 // ==============================================================
@@ -98,7 +93,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
 
             object obj = ds.ExecuteScalar(cmd);
-            if (obj == null)
+            if (obj == null || Convert.IsDBNull(obj))
                 return 0;
             else
                 return Convert.ToInt64(obj);
