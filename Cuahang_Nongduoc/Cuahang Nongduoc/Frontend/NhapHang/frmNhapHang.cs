@@ -28,7 +28,7 @@ namespace CuahangNongduoc
             status = Controll.AddNew;
         }
         public frmNhapHang(PhieuNhapController ctrlPN)
-            : this()
+          : this()
         {
             this.ctrl = ctrlPN;
             status = Controll.Normal;
@@ -40,20 +40,20 @@ namespace CuahangNongduoc
             if (status == Controll.Normal)
                 ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
         }
-      
+
         private void frmNhapHang_Load(object sender, EventArgs e)
         {
-            
+
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
             ctrlSanPham.HienthiDataGridViewComboBoxColumn(colSanPham);
             ctrlNCC.HienthiAutoComboBox(cmbNhaCungCap);
 
 
-            
-            ctrl.HienthiPhieuNhap(bindingNavigator, txtMaPhieu,cmbNhaCungCap, dtNgayNhap, numTongTien, numDaTra, numConNo);
+
+            ctrl.HienthiPhieuNhap(bindingNavigator, txtMaPhieu, cmbNhaCungCap, dtNgayNhap, numTongTien, numDaTra, numConNo);
             bindingNavigator.BindingSource.CurrentChanged -= new EventHandler(BindingSource_CurrentChanged);
             bindingNavigator.BindingSource.CurrentChanged += new EventHandler(BindingSource_CurrentChanged);
-            
+
             ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
 
             if (status == Controll.AddNew)
@@ -69,14 +69,14 @@ namespace CuahangNongduoc
 
         }
 
-       
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            
+
 
             MaSanPhamController ctrl = new MaSanPhamController();
-            MaSanPham masp  = ctrl.LayMaSanPham(txtMaSo.Text.Trim());
+            MaSanPham masp = ctrl.LayMaSanPham(txtMaSo.Text.Trim());
             if (masp == null)
             {
                 foreach (DataGridViewRow view in dataGridView.Rows)
@@ -89,7 +89,7 @@ namespace CuahangNongduoc
 
                 }
 
-                if (txtMaSo.Text.Trim().Length <=0)
+                if (txtMaSo.Text.Trim().Length <= 0)
                 {
                     MessageBox.Show("Vui lòng nhập Mã sản phẩm !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -114,11 +114,23 @@ namespace CuahangNongduoc
                     row["ID"] = txtMaSo.Text;
                     row["DON_GIA_NHAP"] = numGiaNhap.Value;
                     row["SO_LUONG"] = numSoLuong.Value;
-                    row["NGAY_NHAP"] = dtNgaySanXuat.Value.Date;
+
+                    // ==================== [FE-08b] REFACTORING ====================
+                    // Lỗi (Code smell) : Wrong Field Assignment – NGAY_NHAP gán nhầm bằng dtNgaySanXuat
+                    // Kỹ thuật         : Fix Bug
+                    // Trước            : row["NGAY_NHAP"] = dtNgaySanXuat.Value.Date;
+                    // Sau              : row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
+                    // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+                    // Hỗ trợ           : <Không>
+                    // Kiểm tra         : QA1 – <Họ_tên>
+                    // Ngày chỉnh sửa   : 04/11/2026
+                    // ===========================================================
+                    row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
+
                     row["NGAY_SAN_XUAT"] = dtNgaySanXuat.Value.Date;
                     row["NGAY_HET_HAN"] = dtNgayHetHan.Value.Date;
                     ctrlMaSP.Add(row);
-                    
+
                 }
             }
             else
@@ -127,14 +139,14 @@ namespace CuahangNongduoc
             }
         }
 
-      
+
 
         private void numGiaNhap_ValueChanged(object sender, EventArgs e)
         {
             numThanhTien.Value = numGiaNhap.Value * numSoLuong.Value;
         }
 
-   
+
 
         private void toolLuuThoat_Click(object sender, EventArgs e)
         {
@@ -289,7 +301,7 @@ namespace CuahangNongduoc
                     this.Luu();
                 }
             }
-           
+
             this.Close();
         }
 
@@ -387,8 +399,8 @@ namespace CuahangNongduoc
             NCC.ShowDialog();
             ctrlNCC.HienthiAutoComboBox(cmbNhaCungCap);
         }
-    
-     
+
+
 
     }
 }
