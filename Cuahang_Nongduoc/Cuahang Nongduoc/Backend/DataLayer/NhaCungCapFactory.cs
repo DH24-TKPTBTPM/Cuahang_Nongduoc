@@ -19,6 +19,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable DanhsachNCC()
         {
@@ -36,6 +37,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable TimDiaChi(String diachi)
         {
@@ -55,6 +57,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable TimHoTen(String hoten)
         {
@@ -75,6 +78,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable LayNCC(String id)
         {

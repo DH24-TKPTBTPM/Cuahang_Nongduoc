@@ -19,6 +19,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable DanhsachPhieuThanhToan()
         {
@@ -36,6 +37,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable TimPhieuThanhToan(String kh, DateTime ngay)
         {
@@ -59,6 +61,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable LayPhieuThanhToan(String id)
         {
@@ -74,6 +77,7 @@ namespace CuahangNongduoc.DataLayer
 
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public static long LayTongTien(String kh, int thang, int nam)
         {

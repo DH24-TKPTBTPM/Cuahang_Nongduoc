@@ -7,32 +7,10 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
     public class LyDoChiFactory
     {
         DataService m_Ds = new DataService();
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -40,6 +18,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable DanhsachLyDo()
         {
@@ -50,17 +29,6 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -68,6 +36,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable LayLyDoChi(long id)
         {
@@ -78,17 +47,6 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
         public bool Save()
         {
             return m_Ds.UpdateDataTable() > 0;

@@ -19,6 +19,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable TimPhieuChi(int lydo, DateTime ngay)
         {
@@ -42,6 +43,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable DanhsachPhieuChi()
         {
@@ -60,6 +62,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable LayPhieuChi(String id)
         {
@@ -75,6 +78,7 @@ namespace CuahangNongduoc.DataLayer
 
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public static long LayTongTien(String lydo, int thang, int nam)
         {
