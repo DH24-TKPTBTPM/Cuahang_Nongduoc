@@ -6,134 +6,58 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+    // ==================== [R28-BH] REFACTORING ====================
+    // Lỗi (Code smell) : Tight Coupling với OleDb/Access cũ, không tương thích với SQL Server
+    // Kỹ thuật         : Migrate Data Provider
+    // Trước            : Dùng System.Data.OleDb (OleDbCommand, OleDbType), DataService.ExecuteNoneQuery()
+    // Sau              : Chuyển sang System.Data.SqlClient (SqlCommand, SqlDbType), DataService.UpdateDataTable()
+    // Tác giả          : BE2
+    // Hỗ trợ           : BE1
+    // Kiểm tra         : QA1
+    // Ngày chỉnh sửa   : 06/11/2026
+    // ==============================================================
     public class ChiTietPhieuBanFactory
     {
         DataService m_Ds = new DataService();
 
-      
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
         public DataTable LayChiTietPhieuBan(String idPhieuBan)
         {
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
             SqlCommand cmd = new SqlCommand("SELECT * FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
-// Code cũ: cmd.Parameters.Add("id", OleDbType.VarChar , 50).Value = idPhieuBan;
-            cmd.Parameters.Add("id", SqlDbType.VarChar , 50).Value = idPhieuBan;
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
             m_Ds.Load(cmd);
-            return m_Ds.ResultTable;
+            return m_Ds;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
         public DataTable LayChiTietPhieuBan(DateTime dtNgayBan)
         {
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
             SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE PB.NGAY_BAN = @ngayban");
-// Code cũ: cmd.Parameters.Add("ngayban", OleDbType.Date).Value = dtNgayBan;
-            cmd.Parameters.Add("ngayban", SqlDbType.DateTime).Value = dtNgayBan;
+                    " WHERE CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban)");
+            cmd.Parameters.Add("@ngayban", SqlDbType.DateTime).Value = dtNgayBan;
             m_Ds.Load(cmd);
-            return m_Ds.ResultTable;
+            return m_Ds;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
         public DataTable LayChiTietPhieuBan(int thang, int nam)
         {
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
             SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN)= @nam");
-// Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
-            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
-// Code cũ: cmd.Parameters.Add("nam", OleDbType.Integer).Value = nam;
-            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+                    " WHERE MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam");
+            cmd.Parameters.Add("@thang", SqlDbType.Int).Value = thang;
+            cmd.Parameters.Add("@nam", SqlDbType.Int).Value = nam;
             m_Ds.Load(cmd);
-            return m_Ds.ResultTable;
+            return m_Ds;
         }
 
-        
-        
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
         public DataRow NewRow()
         {
             return m_Ds.NewRow();
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public void Add(DataRow row)
         {
             m_Ds.Rows.Add(row);
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-       public bool Save()
+
+        public bool Save()
         {
             foreach (DataRow row in m_Ds.Rows)
             {
