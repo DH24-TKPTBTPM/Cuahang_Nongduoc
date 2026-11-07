@@ -59,6 +59,7 @@ namespace CuahangNongduoc
                 // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
                 // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
                 // Ngày chỉnh sửa   : 03/11/2026
+                // Ngày kiểm thử    : 07/11/2026
                 // ============================================================
                 MessageBox.Show("Thông tin năm không hợp lệ!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
