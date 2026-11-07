@@ -17,12 +17,13 @@ namespace CuahangNongduoc
             InitializeComponent();
 
             // ==================== [FE-11] REFACTORING ====================
-            // L?i (Code smell) : L?i hi?n th? font ti?ng Vi?t tr�n form b�o c�o
-            // Kythuat         : Clean UI Property (Set Font Programmatically)
-            // T�c giar          : FE3 - Nguy?n Th? Ng�n Hu?
-            // H? tr?          : Kh�ng
-            // Ki?m tra        : QA2 - D? Th? Tr�c Ho�
-            // Ng�y ch?nh s?a  : 03/11/2026
+            // Lỗi (Code smell) : Lỗi hiển thị font tiếng Việt trên form báo cáo
+            // Kỹ thuật         : Clean UI Property (Set Font Programmatically)
+            // Tác giả          : FE3 - Nguyễn Thị Ngân Huệ
+            // Hỗ trợ           : Không
+            // Kiểm tra         : QA2 - Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 03/11/2026
+            // Ngày kiểm thử    : 07/11/2026
             // =============================================================
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
 
@@ -41,7 +42,7 @@ namespace CuahangNongduoc
         private void btnXemNgay_Click(object sender, EventArgs e)
         {
             IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay", "Ng�y " + dtNgay.Value.Date.ToString("dd/MM/yyyy")));
+            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay", "Ng�y " + dtNgay.Value.Date.ToString("dd/MM/yyyy")));
 
             this.reportViewer.LocalReport.SetParameters(param);
 
@@ -53,7 +54,7 @@ namespace CuahangNongduoc
         {
             IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
             param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay",
-                "Th�ng " + Convert.ToString(cmbThang.SelectedIndex + 1) + "/" + numNam.Value.ToString()));
+                "Th�ng " + Convert.ToString(cmbThang.SelectedIndex + 1) + "/" + numNam.Value.ToString()));
 
             this.reportViewer.LocalReport.SetParameters(param);
 
