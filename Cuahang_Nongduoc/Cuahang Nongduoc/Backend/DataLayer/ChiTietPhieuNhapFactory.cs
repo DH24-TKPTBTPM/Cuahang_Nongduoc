@@ -19,6 +19,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public void LoadSchema()
         {
@@ -35,6 +36,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public DataTable LayChiTietPhieuNhap(String id)
         {
@@ -54,6 +56,7 @@ namespace CuahangNongduoc.DataLayer
 // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
 // ==============================================================
         public int XoaChiTietPhieuNhap(String id)
         {

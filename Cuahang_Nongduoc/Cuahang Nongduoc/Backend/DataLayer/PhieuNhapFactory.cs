@@ -18,6 +18,7 @@ namespace CuahangNongduoc.DataLayer
         // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
         // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 06/11/2026
+        // Ngày kiểm thử    : 07/11/2026
         // ==============================================================
         public void LoadSchema()
         {
@@ -34,6 +35,7 @@ namespace CuahangNongduoc.DataLayer
         // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
         // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 06/11/2026
+        // Ngày kiểm thử    : 07/11/2026
         // ==============================================================
         public DataTable DanhsachPhieuNhap()
         {
@@ -44,14 +46,15 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-// ==================== [R28-NH] REFACTORING ====================
-// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
-// Kỹ thuật         : Migrate Data Provider
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 06/11/2026
-// ==============================================================
+        // ==================== [R28-NH] REFACTORING ====================
+        // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+        // Kỹ thuật         : Migrate Data Provider
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 06/11/2026
+        // Ngày kiểm thử    : 07/11/2026
+        // ==============================================================
         public DataTable TimPhieuNhap(String maNCC, DateTime dt)
         {
             String sql = "SELECT * FROM PHIEU_NHAP WHERE NGAY_NHAP = @ngay AND ID_NHA_CUNG_CAP = @ncc";
@@ -75,6 +78,7 @@ namespace CuahangNongduoc.DataLayer
         // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
         // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 06/11/2026
+        // Ngày kiểm thử    : 07/11/2026
         // ==============================================================
         public DataTable LayPhieuNhap(String id)
         {
