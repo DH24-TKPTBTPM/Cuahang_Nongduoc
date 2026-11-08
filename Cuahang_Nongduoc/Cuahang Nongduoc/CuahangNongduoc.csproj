@@ -301,6 +301,7 @@
     <Compile Include="Frontend\ThuChi\frmTimPhieuThu.Designer.cs">
       <DependentUpon>frmTimPhieuThu.cs</DependentUpon>
     </Compile>
+    <Compile Include="Backend\Utilities\AppLogger.cs" />
     <Compile Include="Backend\Utilities\Num2Str.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
