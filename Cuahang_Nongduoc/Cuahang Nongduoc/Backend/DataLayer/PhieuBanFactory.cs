@@ -28,7 +28,7 @@ namespace CuahangNongduoc.DataLayer
 
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable DanhsachPhieuBanLe()
@@ -37,7 +37,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT PB.* FROM PHIEU_BAN PB INNER JOIN KHACH_HANG KH ON PB.ID_KHACH_HANG = KH.ID WHERE KH.LOAI_KH = 0");
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable DanhsachPhieuBanSi()
@@ -46,7 +46,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT PB.* FROM PHIEU_BAN PB INNER JOIN KHACH_HANG KH ON PB.ID_KHACH_HANG = KH.ID WHERE KH.LOAI_KH = 1");
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayPhieuBan(String id)
@@ -55,7 +55,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayChiTietPhieuBan(String idPhieuBan)
@@ -64,7 +64,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
 /// <summary>
