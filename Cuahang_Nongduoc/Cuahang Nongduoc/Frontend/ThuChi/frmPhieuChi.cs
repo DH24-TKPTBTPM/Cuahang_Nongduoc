@@ -22,7 +22,38 @@ namespace CuahangNongduoc
         {
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
             ctrlLyDo.HienthiDataGridviewComboBox(colLyDoChi);
-            ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+            HienThiPhieuChi(ctrl.HienthiPhieuChi());
+        }
+
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        private void HienThiPhieuChi(DataTable data)
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbLyDoChi.DataBindings.Clear();
+            cmbLyDoChi.DataBindings.Add("SelectedValue", bs, "ID_LY_DO_CHI");
+
+            dtNgayChi.DataBindings.Clear();
+            dtNgayChi.DataBindings.Add("Value", bs, "NGAY_CHI");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
@@ -97,8 +128,11 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                ctrl.TimPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu, Convert.ToInt32(Tim.cmbLyDo.SelectedValue), dtNgayChi.Value.Date);
-                
+                HienThiPhieuChi(ctrl.TimPhieuChi(new PhieuChiSearchParam
+                {
+                    LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
+                    Ngay = dtNgayChi.Value.Date
+                }));
             }
         }
     }

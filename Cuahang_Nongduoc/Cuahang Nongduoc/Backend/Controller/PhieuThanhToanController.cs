@@ -3,11 +3,24 @@ using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.BusinessObject;
-using System.Windows.Forms;
 using System.Data;
 
 namespace CuahangNongduoc.Controller
 {
+    // ==================== [R26] REFACTORING ====================
+    // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+    // Kỹ thuật         : Introduce Parameter Object
+    // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+    // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+    // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+    // Ngày chỉnh sửa   : 08/11/2026
+    // ==============================================================
+    public class PhieuThanhToanSearchParam
+    {
+        public String IdKhachHang { get; set; }
+        public DateTime Ngay { get; set; }
+    }
+
     
     public class PhieuThanhToanController
     {
@@ -44,55 +57,30 @@ namespace CuahangNongduoc.Controller
             return ph;
         }
         
-        public void HienthiPhieuThanhToan(BindingNavigator bn, DataGridView dg,ComboBox cmb, TextBox txt, DateTimePicker dt, NumericUpDown numTongTien, TextBox txtGhichu)
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        public DataTable HienthiPhieuThanhToan()
         {
-            BindingSource bs = new BindingSource();
-            bs.DataSource = factory.DanhsachPhieuThanhToan();
-            bn.BindingSource = bs;
-            dg.DataSource = bs;
-
-            
-            txt.DataBindings.Clear();
-            txt.DataBindings.Add("Text", bs, "ID");
-
-            cmb.DataBindings.Clear();
-            cmb.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
-
-            dt.DataBindings.Clear();
-            dt.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
-
-            numTongTien.DataBindings.Clear();
-            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
-
-            txtGhichu.DataBindings.Clear();
-            txtGhichu.DataBindings.Add("Text", bs, "GHI_CHU");
-
-
+            return factory.DanhsachPhieuThanhToan();
         }
-        public void TimPhieuThanhToan(BindingNavigator bn, DataGridView dg, ComboBox cmb, TextBox txt, DateTimePicker dt, NumericUpDown numTongTien, TextBox txtGhichu,
-            String idKH, DateTime dtNgayThu)
+
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        public DataTable TimPhieuThanhToan(PhieuThanhToanSearchParam param)
         {
-            
-            BindingSource bs = new BindingSource();
-            bs.DataSource = factory.TimPhieuThanhToan(idKH, dtNgayThu);
-            bn.BindingSource = bs;
-            dg.DataSource = bs;
-
-
-            txt.DataBindings.Clear();
-            txt.DataBindings.Add("Text", bs, "ID");
-
-            cmb.DataBindings.Clear();
-            cmb.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
-
-            dt.DataBindings.Clear();
-            dt.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
-
-            numTongTien.DataBindings.Clear();
-            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
-
-            txtGhichu.DataBindings.Clear();
-            txtGhichu.DataBindings.Add("Text", bs, "GHI_CHU");
+            return factory.TimPhieuThanhToan(param.IdKhachHang, param.Ngay);
         }
 
         

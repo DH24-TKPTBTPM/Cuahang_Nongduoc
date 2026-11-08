@@ -22,8 +22,39 @@ namespace CuahangNongduoc
         {
             ctrlKH.HienthiChungAutoComboBox(cmbKhachHang);
             ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
-            ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
+            HienThiPhieuThanhToan(ctrl.HienthiPhieuThanhToan());
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
+        }
+
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        private void HienThiPhieuThanhToan(DataTable data)
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbKhachHang.DataBindings.Clear();
+            cmbKhachHang.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
+
+            dtNgayThanhToan.DataBindings.Clear();
+            dtNgayThanhToan.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
         }
 
         void BindingSource_AddingNew(object sender, AddingNewEventArgs e)
@@ -96,8 +127,11 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                ctrl.TimPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu,
-                    Tim.cmbKhachHang.SelectedValue.ToString(), Tim.dtNgayThu.Value.Date);
+                HienThiPhieuThanhToan(ctrl.TimPhieuThanhToan(new PhieuThanhToanSearchParam
+                {
+                    IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
+                    Ngay = Tim.dtNgayThu.Value.Date
+                }));
             }
         }
 
