@@ -8,18 +8,43 @@ using System.Windows.Forms;
 
 namespace CuahangNongduoc
 {
-    public partial class frmDaiLy : Form
+    public partial class frmKhachHangDaiLy : Form
     {
         CuahangNongduoc.Controller.KhachHangController ctrl = new CuahangNongduoc.Controller.KhachHangController();
-        public frmDaiLy()
+
+        // Biến cờ để phân biệt đang mở form cho Đại lý hay Khách hàng
+        private bool _isDaiLy;
+
+        // ==================== [R06] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code - frmKhachHang và frmDaiLy có giao diện và code giống hệt nhau
+        // Kỹ thuật : Parameterize (Tham số hóa) / Gộp Form
+        // Trước : Dùng 2 form riêng biệt không có tham số (new frmKhachHang() và new frmDaiLy())
+        // Sau : Gộp thành 1 form chung, truyền biến cờ bool isDaiLy qua constructor để phân biệt
+        // Tác giả : FE2 - Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ : <Không>
+        // Kiểm tra : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa : 06/11/2026
+        // ===========================================================
+        public frmKhachHangDaiLy(bool isDaiLy)
         {
             InitializeComponent();
+            _isDaiLy = isDaiLy;
+
+            // Tự động đổi tên tiêu đề Form cho phù hợp
+            this.Text = _isDaiLy ? "Quản lý Đại Lý" : "Quản lý Khách Hàng";
         }
 
-        private void frmKhachHang_Load(object sender, EventArgs e)
+        private void frmKhachHangDaiLy_Load(object sender, EventArgs e)
         {
-
-            ctrl.HienthiDaiLyDataGridview(dataGridView, bindingNavigator);
+            // Kiểm tra biến cờ để load đúng dữ liệu
+            if (_isDaiLy)
+            {
+                ctrl.HienthiDaiLyDataGridview(dataGridView, bindingNavigator);
+            }
+            else
+            {
+                ctrl.HienthiKhachHangDataGridview(dataGridView, bindingNavigator);
+            }
         }
 
         private void toolLuu_Click(object sender, EventArgs e)
@@ -44,7 +69,8 @@ namespace CuahangNongduoc
 
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Dai Ly", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            string title = _isDaiLy ? "Đại Lý" : "Khách Hàng";
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
             }
@@ -52,7 +78,8 @@ namespace CuahangNongduoc
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Dai Ly", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            string title = _isDaiLy ? "Đại Lý" : "Khách Hàng";
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
             }
@@ -78,10 +105,11 @@ namespace CuahangNongduoc
         {
             if (e.KeyChar == 13)
             {
+                // Truyền trực tiếp biến _isDaiLy vào hàm tìm kiếm
                 if (toolTimHoTen.Checked)
-                    ctrl.TimHoTen(toolTimKhachHang.Text, true);
+                    ctrl.TimHoTen(toolTimKhachHang.Text, _isDaiLy);
                 else
-                    ctrl.TimDiaChi(toolTimKhachHang.Text, true);
+                    ctrl.TimDiaChi(toolTimKhachHang.Text, _isDaiLy);
             }
         }
 

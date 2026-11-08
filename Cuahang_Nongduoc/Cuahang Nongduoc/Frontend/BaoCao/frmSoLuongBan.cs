@@ -15,6 +15,18 @@ namespace CuahangNongduoc
         public frmSoLuongBan()
         {
             InitializeComponent();
+
+            // ==================== [FE-11] REFACTORING ====================
+            // Lỗi (Code smell) : Lỗi hiển thị font tiếng Việt trên form báo cáo
+            // Kỹ thuật         : Clean UI Property (Set Font Programmatically)
+            // Tác giả          : FE3 - Nguyễn Thị Ngân Huệ
+            // Hỗ trợ           : Không
+            // Kiểm tra         : QA2 - Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 03/11/2026
+            // Ngày kiểm thử    : 07/11/2026
+            // =============================================================
+            this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
+
             reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
         }
 
@@ -30,7 +42,7 @@ namespace CuahangNongduoc
         private void btnXemNgay_Click(object sender, EventArgs e)
         {
             IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay", "Ng�y " + dtNgay.Value.Date.ToString("dd/MM/yyyy")));
+            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay", "Ngày " + dtNgay.Value.Date.ToString("dd/MM/yyyy")));
 
             this.reportViewer.LocalReport.SetParameters(param);
 
@@ -42,7 +54,7 @@ namespace CuahangNongduoc
         {
             IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
             param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ngay",
-                "Th�ng " + Convert.ToString(cmbThang.SelectedIndex + 1) + "/" + numNam.Value.ToString()));
+                "Tháng " + Convert.ToString(cmbThang.SelectedIndex + 1) + "/" + numNam.Value.ToString()));
 
             this.reportViewer.LocalReport.SetParameters(param);
 

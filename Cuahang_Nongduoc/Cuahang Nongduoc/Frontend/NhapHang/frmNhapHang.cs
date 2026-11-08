@@ -28,7 +28,7 @@ namespace CuahangNongduoc
             status = Controll.AddNew;
         }
         public frmNhapHang(PhieuNhapController ctrlPN)
-            : this()
+          : this()
         {
             this.ctrl = ctrlPN;
             status = Controll.Normal;
@@ -40,20 +40,20 @@ namespace CuahangNongduoc
             if (status == Controll.Normal)
                 ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
         }
-      
+
         private void frmNhapHang_Load(object sender, EventArgs e)
         {
-            
+
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
             ctrlSanPham.HienthiDataGridViewComboBoxColumn(colSanPham);
             ctrlNCC.HienthiAutoComboBox(cmbNhaCungCap);
 
 
-            
-            ctrl.HienthiPhieuNhap(bindingNavigator, txtMaPhieu,cmbNhaCungCap, dtNgayNhap, numTongTien, numDaTra, numConNo);
+
+            ctrl.HienthiPhieuNhap(bindingNavigator, txtMaPhieu, cmbNhaCungCap, dtNgayNhap, numTongTien, numDaTra, numConNo);
             bindingNavigator.BindingSource.CurrentChanged -= new EventHandler(BindingSource_CurrentChanged);
             bindingNavigator.BindingSource.CurrentChanged += new EventHandler(BindingSource_CurrentChanged);
-            
+
             ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
 
             if (status == Controll.AddNew)
@@ -69,14 +69,14 @@ namespace CuahangNongduoc
 
         }
 
-       
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            
+
 
             MaSanPhamController ctrl = new MaSanPhamController();
-            MaSanPham masp  = ctrl.LayMaSanPham(txtMaSo.Text.Trim());
+            MaSanPham masp = ctrl.LayMaSanPham(txtMaSo.Text.Trim());
             if (masp == null)
             {
                 foreach (DataGridViewRow view in dataGridView.Rows)
@@ -89,7 +89,7 @@ namespace CuahangNongduoc
 
                 }
 
-                if (txtMaSo.Text.Trim().Length <=0)
+                if (txtMaSo.Text.Trim().Length <= 0)
                 {
                     MessageBox.Show("Vui lòng nhập Mã sản phẩm !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -114,11 +114,23 @@ namespace CuahangNongduoc
                     row["ID"] = txtMaSo.Text;
                     row["DON_GIA_NHAP"] = numGiaNhap.Value;
                     row["SO_LUONG"] = numSoLuong.Value;
-                    row["NGAY_NHAP"] = dtNgaySanXuat.Value.Date;
+
+                    // ==================== [FE-08b] REFACTORING ====================
+                    // Lỗi (Code smell) : Wrong Field Assignment – NGAY_NHAP gán nhầm bằng dtNgaySanXuat
+                    // Kỹ thuật         : Fix Bug
+                    // Trước            : row["NGAY_NHAP"] = dtNgaySanXuat.Value.Date;
+                    // Sau              : row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
+                    // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+                    // Hỗ trợ           : <Không>
+                    // Kiểm tra         : QA1 – <Họ_tên>
+                    // Ngày chỉnh sửa   : 04/11/2026
+                    // ===========================================================
+                    row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
+
                     row["NGAY_SAN_XUAT"] = dtNgaySanXuat.Value.Date;
                     row["NGAY_HET_HAN"] = dtNgayHetHan.Value.Date;
                     ctrlMaSP.Add(row);
-                    
+
                 }
             }
             else
@@ -127,14 +139,14 @@ namespace CuahangNongduoc
             }
         }
 
-      
+
 
         private void numGiaNhap_ValueChanged(object sender, EventArgs e)
         {
             numThanhTien.Value = numGiaNhap.Value * numSoLuong.Value;
         }
 
-   
+
 
         private void toolLuuThoat_Click(object sender, EventArgs e)
         {
@@ -162,10 +174,24 @@ namespace CuahangNongduoc
 
             ctrl.Update();
         }
+        // ==================== [R16] REFACTORING ====================
+        // Lỗi (Code smell) : Long Method / Missing Validation Guard –  Kiểm tra mã phiếu trước khi thêm dòng; tách hàm nhỏ
+        // Kỹ thuật         : Decompose Conditional + Extract Method
+        // Trước            : Thêm row vào ctrl trước, kiểm tra mã trùng sau, gom chung logic vào 1 hàm ThemMoi()
+        // Sau              : Kiểm tra mã trùng trước (Guard Clause), tách KiemTraHopLePhieuNhap(), CapNhatMaPhieuTuDong(), CapNhatGiaVaTonKho()
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : <Không>
+        // Kiểm tra         : QA1 – <Họ_tên>
+        // Ngày chỉnh sửa   : 04/11/2026
+        // ===========================================================
         void ThemMoi()
         {
+            // Bước 1: Kiểm tra hợp lệ trước khi làm bất kỳ thao tác nào
+            if (!KiemTraHopLePhieuNhap()) return;
+
+            // Bước 2: Khởi tạo dữ liệu phiếu nhập
             DataRow row = ctrl.NewRow();
-            row["ID"] = txtMaPhieu.Text;
+            row["ID"] = txtMaPhieu.Text.Trim();
             row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
             row["TONG_TIEN"] = numTongTien.Value;
             row["ID_NHA_CUNG_CAP"] = cmbNhaCungCap.SelectedValue;
@@ -173,35 +199,62 @@ namespace CuahangNongduoc
             row["CON_NO"] = numConNo.Value;
             ctrl.Add(row);
 
-            PhieuNhapController ctrlPN = new PhieuNhapController();
+            // Bước 3: Tăng mã tự động & Lưu dữ liệu
+            CapNhatMaPhieuTuDong();
+            ctrl.Save();
+            ctrlMaSP.Save();
 
-            if (ctrlPN.LayPhieuNhap(txtMaPhieu.Text) != null)
+            // Bước 4: Cập nhật tồn kho & giá nhập
+            CapNhatGiaVaTonKho();
+        }
+
+        private bool KiemTraHopLePhieuNhap()
+        {
+            string maPhieu = txtMaPhieu.Text.Trim();
+            if (string.IsNullOrEmpty(maPhieu))
             {
-                MessageBox.Show("Mã Phiếu nhập này đã tồn tại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show("Mã phiếu nhập không được để trống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtMaPhieu.Focus();
+                return false;
             }
 
-            if (ThamSo.LaSoNguyen(txtMaPhieu.Text))
+            PhieuNhapController ctrlPN = new PhieuNhapController();
+            if (ctrlPN.LayPhieuNhap(maPhieu) != null)
             {
-                long so = Convert.ToInt64(txtMaPhieu.Text);
+                MessageBox.Show("Mã Phiếu nhập này đã tồn tại trong hệ thống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtMaPhieu.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        private void CapNhatMaPhieuTuDong()
+        {
+            string maPhieu = txtMaPhieu.Text.Trim();
+            if (ThamSo.LaSoNguyen(maPhieu))
+            {
+                long so = Convert.ToInt64(maPhieu);
                 if (so >= ThamSo.LayMaPhieuNhap())
                 {
                     ThamSo.GanMaPhieuNhap(so + 1);
                 }
             }
+        }
 
-            ctrl.Save();
-            ctrlMaSP.Save();
-
+        private void CapNhatGiaVaTonKho()
+        {
             SanPhamController ctrlSP = new SanPhamController();
             foreach (DataGridViewRow view in dataGridView.Rows)
             {
-                ctrlSP.CapNhatGiaNhap(Convert.ToString(view.Cells["colSanPham"].Value),
-                    Convert.ToInt64(view.Cells["colDonGiaNhap"].Value),
-                Convert.ToInt64(view.Cells["colSoLuong"].Value));
+                if (view.IsNewRow || view.Cells["colSanPham"].Value == null) continue;
 
+                string idSanPham = Convert.ToString(view.Cells["colSanPham"].Value);
+                long donGia = Convert.ToInt64(view.Cells["colDonGiaNhap"].Value ?? 0);
+                long soLuong = Convert.ToInt64(view.Cells["colSoLuong"].Value ?? 0);
+
+                ctrlSP.CapNhatGiaNhap(idSanPham, donGia, soLuong);
             }
-
         }
 
         private void toolLuuThem_Click(object sender, EventArgs e)
@@ -248,7 +301,7 @@ namespace CuahangNongduoc
                     this.Luu();
                 }
             }
-           
+
             this.Close();
         }
 
@@ -283,12 +336,34 @@ namespace CuahangNongduoc
             this.Allow(true);
         }
 
+        // ==================== [FE-07] REFACTORING ====================
+        // Lỗi (Code smell) : Wrong BindingSource – btnRemove ép kiểu sai làm crash & không xóa dòng
+        // Kỹ thuật         : Fix Bug
+        // Trước            : DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
+        // Sau              : Lấy CurrentRow từ dataGridView, trừ tiền và gọi dataGridView.Rows.Remove()
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : <Không>
+        // Kiểm tra         : QA1 – <Họ_tên>
+        // Ngày chỉnh sửa   : 04/11/2026
+        // ===========================================================
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Bạn chắc chắn xóa Phiếu Nhập này không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (dataGridView.CurrentRow == null || dataGridView.CurrentRow.IsNewRow)
             {
-                DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
-                numTongTien.Value -= Convert.ToInt64(row["DON_GIA_NHAP"]) * Convert.ToInt64(row["SO_LUONG"]);
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa khỏi danh sách nhập!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("Bạn chắc chắn xóa sản phẩm này khỏi danh sách nhập?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                DataGridViewRow currentRow = dataGridView.CurrentRow;
+
+                long donGia = Convert.ToInt64(currentRow.Cells["colDonGiaNhap"].Value ?? 0);
+                long soLuong = Convert.ToInt64(currentRow.Cells["colSoLuong"].Value ?? 0);
+
+                numTongTien.Value = Math.Max(0, numTongTien.Value - (donGia * soLuong));
+
+                dataGridView.Rows.Remove(currentRow);
             }
         }
 
@@ -324,8 +399,8 @@ namespace CuahangNongduoc
             NCC.ShowDialog();
             ctrlNCC.HienthiAutoComboBox(cmbNhaCungCap);
         }
-    
-     
+
+
 
     }
 }

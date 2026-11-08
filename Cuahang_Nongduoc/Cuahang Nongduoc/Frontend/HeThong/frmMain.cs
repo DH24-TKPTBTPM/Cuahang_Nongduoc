@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using CuahangNongduoc.Patterns.Strategy;
 
 namespace CuahangNongduoc
 {
@@ -80,30 +81,32 @@ namespace CuahangNongduoc
             else
                 SanPham.Activate();
         }
-        frmKhachHang KhachHang = null;
+        frmKhachHangDaiLy KhachHang = null;
         private void mnuKhachHang_Click(object sender, EventArgs e)
         {
             if (KhachHang == null || KhachHang.IsDisposed)
             {
-                KhachHang = new frmKhachHang();
+                // Truyền false để mở chế độ Khách Hàng
+                KhachHang = new frmKhachHangDaiLy(false);
                 KhachHang.MdiParent = this;
                 KhachHang.Show();
             }
             else
                 KhachHang.Activate();
         }
-        frmDaiLy DaiLy = null;
+
+        frmKhachHangDaiLy DaiLy = null; // Đổi kiểu dữ liệu từ frmDaiLy sang frmKhachHangDaiLy
         private void mnuDaiLy_Click(object sender, EventArgs e)
         {
             if (DaiLy == null || DaiLy.IsDisposed)
             {
-                DaiLy = new frmDaiLy();
+                // Truyền true để mở chế độ Đại Lý
+                DaiLy = new frmKhachHangDaiLy(true);
                 DaiLy.MdiParent = this;
                 DaiLy.Show();
             }
             else
                 DaiLy.Activate();
-
         }
         frmDanhsachPhieuNhap NhapHang = null;
         private void mnuNhapHang_Click(object sender, EventArgs e)
@@ -117,24 +120,35 @@ namespace CuahangNongduoc
             else
                 NhapHang.Activate();
         }
-        frmDanhsachPhieuBanLe BanLe = null;
+        // ==================== [R17] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Form - frmBanLe và frmBanSi lặp giao diện & logic
+        // Kỹ thuật : Extract Superclass + Strategy Pattern
+        // Trước : Gọi new frmBanLe() và new frmBanSi()
+        // Sau : Gọi chung new frmBanHang() và tiêm BanLeStrategy / BanSiStrategy
+        // Tác giả : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra : QA2 – <Họ tên QA>
+        // Ngày chỉnh sửa : 07/11/2026
+        // ===========================================================
+        frmBanHang BanLe = null;
         private void mnuBanHangKH_Click(object sender, EventArgs e)
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmDanhsachPhieuBanLe();
+                BanLe = new frmBanHang(new BanLeStrategy());
                 BanLe.MdiParent = this;
                 BanLe.Show();
             }
             else
                 BanLe.Activate();
         }
-        frmDanhsachPhieuBanSi BanSi = null;
+
+        frmBanHang BanSi = null;
         private void mnuBanHangDL_Click(object sender, EventArgs e)
         {
             if (BanSi == null || BanSi.IsDisposed)
             {
-                BanSi = new frmDanhsachPhieuBanSi();
+                BanSi = new frmBanHang(new BanSiStrategy());
                 BanSi.MdiParent = this;
                 BanSi.Show();
             }
