@@ -27,6 +27,12 @@ namespace CuahangNongduoc
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Exception ex = e.Exception;
+            // [D02] Ghi lại lỗi chưa được Form bắt (lỗi CSDL đã được DataAccessException tự ghi)
+            // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | Ngày chỉnh sửa: 08/11/2026
+            if (!(ex is DataAccessException))
+            {
+                AppLogger.Instance.Error("Lỗi chưa được xử lý", ex);
+            }
             string chiTiet = ex.InnerException != null ? "\n\nChi tiết: " + ex.InnerException.Message : "";
             MessageBox.Show(ex.Message + chiTiet, "Cửa hàng Nông dược - Lỗi",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
