@@ -6,32 +6,21 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
     public class PhieuChiFactory
     {
         DataService m_Ds = new DataService();
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
+// ==============================================================
         public DataTable TimPhieuChi(int lydo, DateTime ngay)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
@@ -46,17 +35,16 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
+// ==============================================================
         public DataTable DanhsachPhieuChi()
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI ");
@@ -66,17 +54,16 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
       
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
+// ==================== [R28-NH] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
+// Kỹ thuật         : Migrate Data Provider
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
+// ==============================================================
         public DataTable LayPhieuChi(String id)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID = @id");
@@ -88,22 +75,16 @@ namespace CuahangNongduoc.DataLayer
         }
 
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 06/11/2026
+// Ngày kiểm thử    : 07/11/2026
+// ==============================================================
         public static long LayTongTien(String lydo, int thang, int nam)
         {
             DataService ds = new DataService();
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
-            SqlCommand cmd = new SqlCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
+            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(TONG_TIEN), 0) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
 // Code cũ: cmd.Parameters.Add("lydo", OleDbType.VarChar, 50).Value = lydo;
             cmd.Parameters.Add("lydo", SqlDbType.VarChar, 50).Value = lydo;
 // Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
@@ -113,53 +94,22 @@ namespace CuahangNongduoc.DataLayer
 
             object obj = ds.ExecuteScalar(cmd);
             
-            if (obj == null)
+            if (obj == null || Convert.IsDBNull(obj))
                 return 0;
             else
                 return Convert.ToInt64(obj);
         }
-        
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public DataRow NewRow()
         {
             return m_Ds.NewRow();
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
         public void Add(DataRow row)
         {
             m_Ds.Rows.Add(row);
         }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
+
        public bool Save()
         {
            

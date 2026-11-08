@@ -163,12 +163,6 @@
     <Compile Include="Frontend\BanHang\frmBanLe.Designer.cs">
       <DependentUpon>frmBanLe.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frontend\DanhMuc\frmDaiLy.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Frontend\DanhMuc\frmDaiLy.Designer.cs">
-      <DependentUpon>frmDaiLy.cs</DependentUpon>
-    </Compile>
     <Compile Include="Backend\DataLayer\KhachHangFactory.cs" />
     <Compile Include="Backend\DataLayer\SanPhamFactory.cs" />
     <Compile Include="Backend\DataLayer\DonViTinhFactory.cs" />
@@ -217,11 +211,11 @@
     <Compile Include="Frontend\InAn\frmInPhieuNhap.Designer.cs">
       <DependentUpon>frmInPhieuNhap.cs</DependentUpon>
     </Compile>
-    <Compile Include="Frontend\DanhMuc\frmKhachHang.cs">
+    <Compile Include="Frontend\DanhMuc\frmKhachHangDaiLy.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frontend\DanhMuc\frmKhachHang.Designer.cs">
-      <DependentUpon>frmKhachHang.cs</DependentUpon>
+    <Compile Include="Frontend\DanhMuc\frmKhachHangDaiLy.Designer.cs">
+      <DependentUpon>frmKhachHangDaiLy.cs</DependentUpon>
     </Compile>
     <Compile Include="Frontend\HeThong\frmMain.cs">
       <SubType>Form</SubType>
@@ -344,10 +338,6 @@
       <DependentUpon>frmBanLe.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frontend\DanhMuc\frmDaiLy.resx">
-      <DependentUpon>frmDaiLy.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Frontend\NhapHang\frmDanhsachPhieuNhap.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmDanhsachPhieuNhap.cs</DependentUpon>
@@ -376,9 +366,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>frmInPhieuNhap.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frontend\DanhMuc\frmKhachHang.resx">
+    <EmbeddedResource Include="Frontend\DanhMuc\frmKhachHangDaiLy.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>frmKhachHang.cs</DependentUpon>
+      <DependentUpon>frmKhachHangDaiLy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Frontend\HeThong\frmMain.resx">
       <SubType>Designer</SubType>
