@@ -71,148 +71,99 @@ namespace CuahangNongduoc
             }
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long LayMaPhieuNhap()
+
+        // ==================== [R07] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code – 6 hàm LayMa/GanMa + 4 property SanPham/NhaCungCap/KhachHang/PhieuChi
+        //                    lặp cùng 1 câu SQL, chỉ khác tên cột; 2 người lưu cùng lúc có thể lấy trùng mã
+        // Kỹ thuật         : Extract Method + Parameterize Method
+        // Trước            : public static long LayMaPhieuNhap() { ... ExecuteScalar("SELECT PHIEU_NHAP FROM THAM_SO") ... }
+        //                    (lặp lại cho PHIEU_BAN, PHIEU_THANH_TOAN, SAN_PHAM, NHA_CUNG_CAP, KHACH_HANG, PHIEU_CHI)
+        // Sau              : dồn về GetThamSo(cot) / SetThamSo(cot, giaTri) có lock; các hàm cũ giữ tên
+        //                    (gọi 1 dòng) để form không phải sửa – đổi tên dùng chung để dành GĐ4.
+        // Tác giả          : BE1 – Nguyễn Tuấn Anh
+        // Hỗ trợ           : Claude (AI)
+        // Kiểm tra         : QA2 – <Họ tên>
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ===========================================================
+        private static readonly object m_Khoa = new object();
+
+        // Tên cột không truyền được bằng tham số SQL nên chỉ cho phép các cột có thật trong THAM_SO
+        private static readonly List<string> m_CotHopLe = new List<string>(new string[]
         {
-            DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT PHIEU_NHAP FROM THAM_SO"));
-            object obj = ds.ExecuteScalar(new SqlCommand("SELECT PHIEU_NHAP FROM THAM_SO"));
-            return Convert.ToInt64(obj);
-        }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static void GanMaPhieuNhap(long id)
+            "PHIEU_NHAP", "PHIEU_BAN", "PHIEU_THANH_TOAN", "SAN_PHAM", "NHA_CUNG_CAP", "KHACH_HANG", "PHIEU_CHI"
+        });
+
+        private static string KiemTraCot(string cot)
         {
-            DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET PHIEU_NHAP = " + id));
-            ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET PHIEU_NHAP = " + id));
-            
+            if (!m_CotHopLe.Contains(cot))
+                throw new ArgumentException("Cột tham số không hợp lệ: " + cot, "cot");
+            return cot;
         }
 
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long LayMaPhieuBan()
+        public static long GetThamSo(string cot)
         {
-            DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT PHIEU_BAN FROM THAM_SO"));
-            object obj = ds.ExecuteScalar(new SqlCommand("SELECT PHIEU_BAN FROM THAM_SO"));
-            return Convert.ToInt64(obj);
-        }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static void GanMaPhieuBan(long id)
-        {
-            DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET PHIEU_BAN = " + id));
-            ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET PHIEU_BAN = " + id));
-
-        }
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long LayMaPhieuThanhToan()
-        {
-            DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT PHIEU_THANH_TOAN FROM THAM_SO"));
-            object obj = ds.ExecuteScalar(new SqlCommand("SELECT PHIEU_THANH_TOAN FROM THAM_SO"));
-            return Convert.ToInt64(obj);
-        }
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static void GanMaPhieuThanhToan(long id)
-        {
-            DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET PHIEU_THANH_TOAN = " + id));
-            ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET PHIEU_THANH_TOAN = " + id));
-
-        }
-
-
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long SanPham
-        {
-            get 
+            lock (m_Khoa)
             {
                 DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT SAN_PHAM FROM THAM_SO"));
-                object obj = ds.ExecuteScalar(new SqlCommand("SELECT SAN_PHAM FROM THAM_SO"));
+                object obj = ds.ExecuteScalar(new SqlCommand("SELECT " + KiemTraCot(cot) + " FROM THAM_SO"));
                 return Convert.ToInt64(obj);
             }
-            set 
+        }
+
+        // ==================== [R08] REFACTORING ====================
+        // Lỗi (Code smell) : SQL nối chuỗi (nguy cơ SQL Injection, sai kiểu dữ liệu)
+        // Kỹ thuật         : Parameterize Method
+        // Trước            : ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET PHIEU_NHAP = " + id));
+        // Sau              : giá trị truyền qua tham số @giatri (SqlDbType.BigInt)
+        // Tác giả          : BE1 – Nguyễn Tuấn Anh
+        // Hỗ trợ           : Claude (AI)
+        // Kiểm tra         : QA2 – <Họ tên>
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ===========================================================
+        public static void SetThamSo(string cot, long giaTri)
+        {
+            lock (m_Khoa)
             {
                 DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET SAN_PHAM = " + value));
-                ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET SAN_PHAM = " + value));
+                SqlCommand cmd = new SqlCommand("UPDATE THAM_SO SET " + KiemTraCot(cot) + " = @giatri");
+                cmd.Parameters.Add("@giatri", SqlDbType.BigInt).Value = giaTri;
+                ds.ExecuteNoneQuery(cmd);
             }
         }
-	
-        
+
+        public static long LayMaPhieuNhap() { return GetThamSo("PHIEU_NHAP"); }
+        public static void GanMaPhieuNhap(long id) { SetThamSo("PHIEU_NHAP", id); }
+
+        public static long LayMaPhieuBan() { return GetThamSo("PHIEU_BAN"); }
+        public static void GanMaPhieuBan(long id) { SetThamSo("PHIEU_BAN", id); }
+
+        public static long LayMaPhieuThanhToan() { return GetThamSo("PHIEU_THANH_TOAN"); }
+        public static void GanMaPhieuThanhToan(long id) { SetThamSo("PHIEU_THANH_TOAN", id); }
+
+        public static long SanPham
+        {
+            get { return GetThamSo("SAN_PHAM"); }
+            set { SetThamSo("SAN_PHAM", value); }
+        }
+
+        public static long NhaCungCap
+        {
+            get { return GetThamSo("NHA_CUNG_CAP"); }
+            set { SetThamSo("NHA_CUNG_CAP", value); }
+        }
+
+        public static long KhachHang
+        {
+            get { return GetThamSo("KHACH_HANG"); }
+            set { SetThamSo("KHACH_HANG", value); }
+        }
+
+        public static long PhieuChi
+        {
+            get { return GetThamSo("PHIEU_CHI"); }
+            set { SetThamSo("PHIEU_CHI", value); }
+        }
+
 /// <summary>
 /// [REFACTORING GURU]
 /// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
@@ -264,92 +215,5 @@ namespace CuahangNongduoc
             ds.ExecuteNoneQuery(cmd);
         }
 
-        
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long NhaCungCap
-        {
-            get
-            {
-                DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT NHA_CUNG_CAP FROM THAM_SO"));
-                object obj = ds.ExecuteScalar(new SqlCommand("SELECT NHA_CUNG_CAP FROM THAM_SO"));
-                return Convert.ToInt64(obj);
-            }
-            set
-            {
-                DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET NHA_CUNG_CAP = " + value));
-                ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET NHA_CUNG_CAP = " + value));
-            }
-        }
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long KhachHang
-        {
-            get
-            {
-                DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT KHACH_HANG FROM THAM_SO"));
-                object obj = ds.ExecuteScalar(new SqlCommand("SELECT KHACH_HANG FROM THAM_SO"));
-                return Convert.ToInt64(obj);
-            }
-            set
-            {
-                DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET KHACH_HANG = " + value));
-                ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET KHACH_HANG = " + value));
-            }
-        }
-
-/// <summary>
-/// [REFACTORING GURU]
-/// - Code Smell: Tight Coupling với OleDb và Primitive Obsession trong tầng truy cập dữ liệu
-/// - Kỹ thuật Refactoring (1 trong 64 mẫu): Extract Class
-/// - Trước khi sửa: Dùng OleDbCommand và OleDbType của Access
-/// - Sau khi sửa: Chuyển sang SqlCommand và SqlDbType chuẩn SQL Server
-/// - Tác giả (Author): Bùi Lê Tuấn Anh
-/// - Hỗ trợ (Supporter): BE Team
-/// - Kiểm tra (Reviewer/Tester): QA Team
-/// - Ngày chỉnh sửa (Date): 30/10/2026
-/// </summary>
-        public static long PhieuChi
-        {
-            get
-            {
-                DataService ds = new DataService();
-// Code cũ: object obj = ds.ExecuteScalar(new OleDbCommand("SELECT PHIEU_CHI FROM THAM_SO"));
-                object obj = ds.ExecuteScalar(new SqlCommand("SELECT PHIEU_CHI FROM THAM_SO"));
-                return Convert.ToInt64(obj);
-            }
-            set
-            {
-                DataService ds = new DataService();
-// Code cũ: ds.ExecuteNoneQuery(new OleDbCommand("UPDATE THAM_SO SET PHIEU_CHI = " + value));
-                ds.ExecuteNoneQuery(new SqlCommand("UPDATE THAM_SO SET PHIEU_CHI = " + value));
-            }
-        }
-
-       
     }
 }
