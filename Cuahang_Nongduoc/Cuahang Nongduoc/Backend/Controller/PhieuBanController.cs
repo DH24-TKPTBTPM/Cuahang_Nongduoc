@@ -33,20 +33,27 @@ namespace CuahangNongduoc.Controller
             bs.MoveNext();
             factory.Save();
         }
-        public void Save()
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        public bool Save()
         {
             int n = PhieuBanFactory.LaySoPhieu();
             if (n >= 50)
             {
                 MessageBox.Show("Đây là bản dùng thử! Chỉ lưu được 50 phiếu bán!", "Phieu Ban", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                return false;
             }
             else
             {
                 MessageBox.Show("Đây là bản dùng thử! Chỉ lưu được thêm " + Convert.ToString(50-n) + " phiếu bán!", "Phieu Ban", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                factory.Save();
+                return factory.Save();
             }
-            
         }
         public void HienthiPhieuBanLe(BindingNavigator bn, DataGridView dg)
         {
