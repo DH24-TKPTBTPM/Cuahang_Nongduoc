@@ -32,7 +32,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = sp;
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable DanhsachChiTiet(String sp)
@@ -41,7 +41,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = sp;
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LaySanPham(String idMaSanPham)
@@ -49,7 +49,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT SP.* FROM SAN_PHAM SP INNER JOIN MA_SAN_PHAM MSP ON SP.ID = MSP.ID_SAN_PHAM WHERE MSP.ID = @id");
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idMaSanPham;
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayMaSanPham(String idMaSanPham)
@@ -57,7 +57,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM MSP WHERE MSP.ID = @id");
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idMaSanPham;
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable DanhsachMaSanPhamHetHan(DateTime dt)
@@ -66,7 +66,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@ngay", SqlDbType.DateTime).Value = dt;
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable DanhsachMaSanPham()
@@ -74,7 +74,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE SO_LUONG > 0");
             m_Ds.Load(cmd);
 
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public static void CapNhatSoLuong(String masp, int so_luong)

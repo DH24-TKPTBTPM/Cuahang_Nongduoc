@@ -25,7 +25,7 @@ namespace CuahangNongduoc.DataLayer
             SqlCommand cmd = new SqlCommand("SELECT * FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayChiTietPhieuBan(DateTime dtNgayBan)
@@ -34,7 +34,7 @@ namespace CuahangNongduoc.DataLayer
                     " WHERE CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban)");
             cmd.Parameters.Add("@ngayban", SqlDbType.DateTime).Value = dtNgayBan;
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayChiTietPhieuBan(int thang, int nam)
@@ -44,7 +44,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@thang", SqlDbType.Int).Value = thang;
             cmd.Parameters.Add("@nam", SqlDbType.Int).Value = nam;
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataRow NewRow()

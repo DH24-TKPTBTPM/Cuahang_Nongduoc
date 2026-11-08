@@ -16,29 +16,30 @@ namespace CuahangNongduoc.DataLayer
     // Kiểm tra         : QA1
     // Ngày chỉnh sửa   : 06/11/2026
     // ==============================================================
-    public class DonViTinhFactory
+    //
+    // ==================== [D03] REFACTORING ====================
+    // Lỗi (Code smell) : Duplicate Code – DAO nào cũng tự khai báo DataService m_Ds và tự viết Save()
+    // Kỹ thuật         : Pull Up Method (kế thừa BaseFactory – Template Method)
+    // Trước            : DataService m_Ds = new DataService(); ... m_Ds.Load(cmd); return m_Ds;
+    //                    public bool Save() { return m_Ds.UpdateDataTable() > 0; }
+    // Sau              : : BaseFactory, dùng Query(cmd); Save() lấy từ lớp cha (DAO mẫu cho BE2/BE3 làm theo)
+    // Tác giả          : BE1 – Nguyễn Tuấn Anh
+    // Hỗ trợ           : Claude (AI)
+    // Kiểm tra         : QA2 – <Họ tên>
+    // Ngày chỉnh sửa   : 08/11/2026
+    // ===========================================================
+    public class DonViTinhFactory : BaseFactory
     {
-        DataService m_Ds = new DataService();
-
         public DataTable DanhsachDVT()
         {
-            SqlCommand cmd = new SqlCommand("SELECT * FROM DON_VI_TINH");
-            m_Ds.Load(cmd);
-
-            return m_Ds;
+            return Query(new SqlCommand("SELECT * FROM DON_VI_TINH"));
         }
 
         public DataTable LayDVT(int id)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM DON_VI_TINH WHERE ID = @id");
             cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
-            m_Ds.Load(cmd);
-            return m_Ds;
-        }
-
-        public bool Save()
-        {
-            return m_Ds.UpdateDataTable() > 0;
+            return Query(cmd);
         }
     }
 }
