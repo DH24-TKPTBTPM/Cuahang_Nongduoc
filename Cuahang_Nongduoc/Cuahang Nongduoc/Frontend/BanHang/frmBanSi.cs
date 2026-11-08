@@ -390,7 +390,7 @@ namespace CuahangNongduoc
 
         private void btnThemDaiLy_Click(object sender, EventArgs e)
         {
-            frmDaiLy DaiLy = new frmDaiLy();
+            frmKhachHangDaiLy DaiLy = new frmKhachHangDaiLy(true); // frmDaiLy đã gộp vào frmKhachHangDaiLy (PR #36)
             DaiLy.ShowDialog();
             ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, true);
 

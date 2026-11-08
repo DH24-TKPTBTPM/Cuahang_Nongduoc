@@ -410,5 +410,12 @@ namespace CuahangNongduoc
             }
         }
 
+        // Đẩy giá trị ô vừa sửa xuống DataTable ngay để CellValueChanged tính lại Thành tiền
+        // (hàm bị mất khi giải quyết xung đột ở 013d74e, khôi phục từ 1789e88)
+        private void dgvDanhsachSP_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            dgvDanhsachSP.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
      }
 }
