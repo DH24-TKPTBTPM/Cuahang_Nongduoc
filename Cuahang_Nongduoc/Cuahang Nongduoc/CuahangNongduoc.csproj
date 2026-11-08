@@ -84,6 +84,8 @@
     <Compile Include="Backend\Patterns\Strategy\BanSiStrategy.cs" />
     <Compile Include="Backend\Patterns\Facade\BanHangFacade.cs" />
     <Compile Include="Backend\Patterns\Factory\PhieuFactory.cs" />
+    <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhBanHang.cs" />
+    <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhNhapHang.cs" />
     <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhXuLyPhieuBase.cs" />
     <Compile Include="Backend\BusinessObject\ChiTietPhieuBan.cs" />
     <Compile Include="Backend\BusinessObject\PhieuChi.cs" />
