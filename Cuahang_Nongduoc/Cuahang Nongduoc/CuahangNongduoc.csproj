@@ -112,6 +112,11 @@
     <Compile Include="Backend\Controller\SanPhamController.cs" />
     <Compile Include="Backend\Controller\DonViTinhController.cs" />
     <Compile Include="Backend\DataLayer\PhieuChiFactory.cs" />
+    <Compile Include="Frontend\DungChung\Statess\IFrmState.cs" />
+    <Compile Include="Frontend\DungChung\Statess\IStateableForm.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateSua.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateThem.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateXem.cs" />
     <Compile Include="Frontend\InAn\frmInPhieuChi.cs">
       <SubType>Form</SubType>
     </Compile>
