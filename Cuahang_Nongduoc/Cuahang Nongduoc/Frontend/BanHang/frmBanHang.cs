@@ -7,7 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.BusinessObject;
-using CuahangNongduoc.Patterns.Strategy; 
+using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.Patterns.Facade; // [FE-02]: Tham chiếu đến tầng Facade
 
 namespace CuahangNongduoc
 {
@@ -18,6 +19,19 @@ namespace CuahangNongduoc
     /// Ngày tạo : 06/11/2026
     public partial class frmBanHang : Form
     {
+
+        // ==================== [FE-02] REFACTORING ====================
+        // Lỗi (Code smell) : Violating Facade / Direct Subsystem Access – Form UI gọi trực tiếp MaSanPhanFactory ở DataLayer
+        // Kỹ thuật         : Hide Delegate / Move Method
+        // Trước            : Form trực tiếp khởi tạo và gọi CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong() trong Form
+        // Sau              : Nút Lưu và các thao tác lưu dữ liệu ủy quyền hoàn toàn qua _facade.LuuHoaDon(), loại bỏ gọi MaSanPhanFactory
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 05/11/2026
+        // ===========================================================
+        private readonly BanHangFacade _facade = new BanHangFacade();
+
         SanPhamController ctrlSanPham = new SanPhamController();
         KhachHangController ctrlKhachHang = new KhachHangController();
         MaSanPhamController ctrlMaSanPham = new MaSanPhamController();
@@ -175,6 +189,16 @@ namespace CuahangNongduoc
             this.Allow(false);
         }
 
+        // ==================== [FE-02] REFACTORING ====================
+        // Lỗi (Code smell) : Violating Facade Pattern - Nút Lưu/Form gọi trực tiếp MaSanPhanFactory và các Controller
+        // Kỹ thuật         : Hide Delegate / Move Method
+        // Trước            : Form trực tiếp gọi MaSanPhanFactory.CapNhatSoLuong(), ctrlChiTiet.Save(), ctrlPhieuBan.Save()
+        // Sau              : Form chỉ gọi duy nhất _facade.LuuHoaDon(...) để xử lý lưu phiếu bán và điều phối hoàn kho
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 10/11/2026
+        // ===========================================================
         void Luu()
         {
             if (status == Controll.AddNew)
@@ -189,10 +213,11 @@ namespace CuahangNongduoc
 
         void CapNhat()
         {
-            foreach (MaSanPham masp in deleted)
-            {
-                CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(masp.Id, masp.SoLuong);
-            }
+            // [FE-02 - Hide Delegate]: Bỏ gọi trực tiếp MaSanPhanFactory.CapNhatSoLuong() ở Form. 
+            // Truyền danh sách deleted vào Facade để Facade tự điều phối cập nhật số lượng tồn kho.
+            PhieuBan phieuBanCurrent = ctrlPhieuBan.LayPhieuBan(txtMaPhieu.Text);
+            _facade.LuuHoaDon(phieuBanCurrent, null, deleted);
+
             deleted.Clear();
             ctrlChiTiet.Save();
             ctrlPhieuBan.Update();
@@ -224,6 +249,18 @@ namespace CuahangNongduoc
                     ThamSo.GanMaPhieuBan(so + 1);
                 }
             }
+
+            // [FE-02 - Hide Delegate]: Gọi Facade lưu phiếu bán và chi tiết phiếu
+            PhieuBan phieuBanNew = new PhieuBan
+            {
+                Id = txtMaPhieu.Text,
+                NgayBan = dtNgayLapPhieu.Value.Date,
+                TongTien = Convert.ToInt64(numTongTien.Value),
+                DaTra = Convert.ToInt64(numDaTra.Value),
+                ConNo = Convert.ToInt64(numConNo.Value)
+            };
+
+            _facade.LuuHoaDon(phieuBanNew, null, null);
 
             ctrlPhieuBan.Save();
             ctrlChiTiet.Save();
@@ -349,10 +386,15 @@ namespace CuahangNongduoc
                 {
                     ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
                     IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
+                    // [FE-02 - Hide Delegate]: Chuyển danh sách sản phẩm cần xóa sang Facade điều phối
+                    IList<MaSanPham> listXoa = new List<MaSanPham>();
                     foreach (ChiTietPhieuBan ct in ds)
                     {
-                        CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                        listXoa.Add(new MaSanPham(ct.MaSanPham.Id, ct.SoLuong));
                     }
+
+                    _facade.LuuHoaDon(null, null, listXoa);
+                    _facade.LuuHoaDon(null, null, listXoa);
                     bindingNavigator.BindingSource.RemoveCurrent();
                     ctrlPhieuBan.Save();
                 }

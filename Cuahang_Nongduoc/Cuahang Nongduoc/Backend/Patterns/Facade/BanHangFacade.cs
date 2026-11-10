@@ -1,9 +1,11 @@
-using System;
-using System.Collections.Generic;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.DataLayer;
+using CuahangNongduoc.Patterns.Factory; // Import Factory ở Backend
 using CuahangNongduoc.Patterns.Singleton;
+using CuahangNongduoc.Patterns.Strategy;
+using System;
+using System.Collections.Generic;
 
 namespace CuahangNongduoc.Patterns.Facade
 {
@@ -20,6 +22,8 @@ namespace CuahangNongduoc.Patterns.Facade
         private PhieuBanController _ctrlPhieuBan;
         private ChiTietPhieuBanController _ctrlChiTiet;
 
+        private MaSanPhanFactory _maSanPhanFactory;
+
         public BanHangFacade()
         {
             _ctrlSanPham = new SanPhamController();
@@ -27,6 +31,8 @@ namespace CuahangNongduoc.Patterns.Facade
             _ctrlMaSanPham = new MaSanPhamController();
             _ctrlPhieuBan = new PhieuBanController();
             _ctrlChiTiet = new ChiTietPhieuBanController();
+
+            _maSanPhanFactory = new MaSanPhanFactory();
         }
 
         public PhieuBan KhoiTaoPhieuMoi(IBanHangStrategy strategy)
@@ -46,11 +52,43 @@ namespace CuahangNongduoc.Patterns.Facade
             return strategy.LayDonGia(sp, masp);
         }
 
+        // ==================== [FE02] REFACTORING ====================
+        // Lỗi (Code smell) : Inappropriate Intimacy / Violating Facade - UI gọi trực tiếp Factory khởi tạo mã
+        // Kỹ thuật         : Move Method (Di chuyển logic gọi Factory từ Form sang Facade)
+        // Trước            : Form trực tiếp tạo MaSanPhamFactory và xử lý sinh mã từng sản phẩm
+        // Sau              : Di chuyển MaSanPhamFactory.TaoMaSanPhamTuDong() vào tập trung trong LuuHoaDon()
+        // Tác giả          : FE1 - Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 - Nguyễn Huỳnh Ngọc Anh 
+        // Kiểm tra         : QA1 – <Họ và tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
+        // ===========================================================
         public bool LuuHoaDon(PhieuBan phieuBan, IList<ChiTietPhieuBan> danhSachChiTiet, IList<MaSanPham> dsXoa)
         {
-            // Facade tự chịu trách nhiệm điều phối: Lưu phiếu bán, lưu chi tiết, trừ tồn kho, cập nhật nợ
-            // Chi tiết cài đặt sẽ hoàn thiện ở Giai đoạn 3
-            return true;
+            // Facade tự chịu trách nhiệm điều phối: Lưu phiếu bán, lưu chi tiết, trừ/hoàn tồn kho
+            try
+            {
+                // [Hide Delegate]: Duyệt danh sách sản phẩm bị xóa và gọi MaSanPhanFactory hoàn tồn kho tại Facade
+                if (dsXoa != null && dsXoa.Count > 0)
+                {
+                    foreach (MaSanPham masp in dsXoa)
+                    {
+                        MaSanPhanFactory.CapNhatSoLuong(masp.Id, masp.SoLuong);
+                    }
+                }
+
+                // Thực hiện lưu dữ liệu qua các Controller
+                if (phieuBan != null)
+                {
+                    _ctrlPhieuBan.Save();
+                    _ctrlChiTiet.Save();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi xử lý lưu hóa đơn tại BanHangFacade: " + ex.Message);
+            }
         }
     }
 }
