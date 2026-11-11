@@ -62,7 +62,6 @@ namespace CuahangNongduoc.Controller
                 // Ngày chỉnh sửa   : 05/11/2026
                 // ==============================================================
                 ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                ph.ConNo = Convert.ToInt64(tbl.Rows[0]["CON_NO"]);
                 ph.NhaCungCap = ctrlNCC.LayNCC(Convert.ToString(tbl.Rows[0]["ID_NHA_CUNG_CAP"]));
                 MaSanPhamController ctrl = new MaSanPhamController();
                 ph.ChiTiet = ctrl.ChiTietPhieuNhap(ph.Id);
