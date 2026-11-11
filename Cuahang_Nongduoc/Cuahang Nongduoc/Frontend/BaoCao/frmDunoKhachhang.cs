@@ -26,7 +26,11 @@ namespace CuahangNongduoc
 
             this.toolThang.SelectedIndex = DateTime.Now.Month - 1;
             this.toolNam.Text = DateTime.Now.Year.ToString();
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
 
         }
 

@@ -74,7 +74,9 @@ namespace CuahangNongduoc
             cmbSanPham.SelectedIndexChanged += new EventHandler(cmbSanPham_SelectedIndexChanged);
 
             // Dùng IsDaiLy từ Strategy để lọc danh sách khách hàng / đại lý
-            ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, _strategy != null && _strategy.IsDaiLy);
+            cmbKhachHang.DataSource = ctrlKhachHang.HienthiAutoComboBox(_strategy != null && _strategy.IsDaiLy);
+            cmbKhachHang.DisplayMember = "HO_TEN";
+            cmbKhachHang.ValueMember = "ID";
 
             ctrlPhieuBan.HienthiPhieuBan(bindingNavigator, cmbKhachHang, txtMaPhieu, dtNgayLapPhieu, numTongTien, numDaTra, numConNo);
 
@@ -363,7 +365,9 @@ namespace CuahangNongduoc
         {
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
             ctrlMaSanPham.HienThiDataGridViewComboBox(colMaSanPham);
-            ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, _strategy != null && _strategy.IsDaiLy);
+            cmbKhachHang.DataSource = ctrlKhachHang.HienthiAutoComboBox(_strategy != null && _strategy.IsDaiLy);
+            cmbKhachHang.DisplayMember = "HO_TEN";
+            cmbKhachHang.ValueMember = "ID";
         }
 
         private void btnThemDaiLy_Click(object sender, EventArgs e)
@@ -372,7 +376,9 @@ namespace CuahangNongduoc
             bool isDaiLy = _strategy != null ? _strategy.IsDaiLy : false;
             frmKhachHangDaiLy KhachHang = new frmKhachHangDaiLy(isDaiLy);
             KhachHang.ShowDialog();
-            ctrlKhachHang.HienthiAutoComboBox(cmbKhachHang, isDaiLy);
+            cmbKhachHang.DataSource = ctrlKhachHang.HienthiAutoComboBox(isDaiLy);
+            cmbKhachHang.DisplayMember = "HO_TEN";
+            cmbKhachHang.ValueMember = "ID";
         }
 
         private void btnThemSanPham_Click(object sender, EventArgs e)

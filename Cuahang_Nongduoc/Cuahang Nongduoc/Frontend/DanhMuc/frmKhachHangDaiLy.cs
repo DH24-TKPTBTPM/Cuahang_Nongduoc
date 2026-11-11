@@ -39,11 +39,19 @@ namespace CuahangNongduoc
             // Kiểm tra biến cờ để load đúng dữ liệu
             if (_isDaiLy)
             {
-                ctrl.HienthiDaiLyDataGridview(dataGridView, bindingNavigator);
+                DataTable tbl = ctrl.HienthiDaiLyDataGridview(true);
+                BindingSource bs = new BindingSource();
+                bs.DataSource = tbl;
+                bindingNavigator.BindingSource = bs;
+                dataGridView.DataSource = bs;
             }
             else
             {
-                ctrl.HienthiKhachHangDataGridview(dataGridView, bindingNavigator);
+                DataTable tbl = ctrl.HienthiKhachHangDataGridview(false);
+                BindingSource bs = new BindingSource();
+                bs.DataSource = tbl;
+                bindingNavigator.BindingSource = bs;
+                dataGridView.DataSource = bs;
             }
         }
 

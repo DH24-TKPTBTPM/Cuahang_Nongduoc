@@ -54,8 +54,14 @@ namespace CuahangNongduoc
         }
         private void frmThanhToan_Load(object sender, EventArgs e)
         {
-            ctrlKH.HienthiChungAutoComboBox(cmbKhachHang);
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
+            cmbKhachHang.DataSource = ctrlKH.HienthiChungAutoComboBox();
+            cmbKhachHang.DisplayMember = "HO_TEN";
+            cmbKhachHang.ValueMember = "ID";
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
             //ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
             HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
