@@ -20,24 +20,24 @@ namespace CuahangNongduoc
         PhieuNhap m_PhieuNhap = null;
 
 
-        Controll status = Controll.Normal;
+        FormEditState status = FormEditState.View;
 
         public frmNhapHang()
         {
             InitializeComponent();
-            status = Controll.AddNew;
+            status = FormEditState.AddNew;
         }
         public frmNhapHang(PhieuNhapController ctrlPN)
           : this()
         {
             this.ctrl = ctrlPN;
-            status = Controll.Normal;
+            status = FormEditState.View;
         }
 
 
         void BindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            if (status == Controll.Normal)
+            if (status == FormEditState.View)
                 ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
         }
 
@@ -56,7 +56,7 @@ namespace CuahangNongduoc
 
             ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
 
-            if (status == Controll.AddNew)
+            if (status == FormEditState.AddNew)
             {
                 txtMaPhieu.Text = ThamSo.LayMaPhieuNhap().ToString();
                 Allow(true);
@@ -152,13 +152,13 @@ namespace CuahangNongduoc
         {
             bindingNavigatorPositionItem.Focus();
             this.Luu();
-            status = Controll.Normal;
+            status = FormEditState.View;
             this.Allow(false);
         }
 
         void Luu()
         {
-            if (status == Controll.AddNew)
+            if (status == FormEditState.AddNew)
             {
                 ThemMoi();
 
@@ -261,7 +261,7 @@ namespace CuahangNongduoc
         {
             ctrl = new PhieuNhapController();
 
-            status = Controll.AddNew;
+            status = FormEditState.AddNew;
 
             txtMaPhieu.Text = ThamSo.LayMaPhieuNhap().ToString();
             numTongTien.Value = 0;
@@ -273,7 +273,7 @@ namespace CuahangNongduoc
 
         private void toolSavePrint_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (status != FormEditState.View)
             {
                 MessageBox.Show("Vui lòng lưu lại Phiếu nhập hiện tại!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -294,7 +294,7 @@ namespace CuahangNongduoc
 
         private void toolThoat_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (status != FormEditState.View)
             {
                 if (MessageBox.Show("Bạn có muốn lưu lại Phiếu nhập này không?", "Phieu Nhap Hang", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -332,7 +332,7 @@ namespace CuahangNongduoc
 
         private void toolChinhsua_Click(object sender, EventArgs e)
         {
-            status = Controll.Edit;
+            status = FormEditState.Edit;
             this.Allow(true);
         }
 

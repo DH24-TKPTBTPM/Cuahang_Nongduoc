@@ -6,9 +6,17 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc
 {
-    public enum Controll
+// ==================== [R21] REFACTORING ====================
+// Lỗi (Code smell) : Tên Enum sai chính tả và không rõ nghĩa (Controll)
+// Kỹ thuật         : Rename Type
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE1 - Dương Thị Kim Anh, FE2 - Nguyễn Huỳnh Ngọc Anh
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+    public enum FormEditState
     {
-        Normal,
+        View,
         AddNew,
         Edit
     }

@@ -24,7 +24,7 @@ namespace CuahangNongduoc
         PhieuBanController ctrlPhieuBan = new PhieuBanController();
         ChiTietPhieuBanController ctrlChiTiet = new ChiTietPhieuBanController();
         IList<MaSanPham> deleted = new List<MaSanPham>();
-        Controll status = Controll.Normal;
+        FormEditState status = FormEditState.View;
 
         // Biến lưu trữ Strategy
         private IBanHangStrategy _strategy;
@@ -52,7 +52,7 @@ namespace CuahangNongduoc
         public frmBanHang(IBanHangStrategy strategy) : this()
         {
             _strategy = strategy;
-            status = Controll.AddNew;
+            status = FormEditState.AddNew;
             if (_strategy != null)
             {
                 this.Text = "Phiếu " + _strategy.TenChienLuoc;
@@ -63,7 +63,7 @@ namespace CuahangNongduoc
             : this(strategy)
         {
             this.ctrlPhieuBan = ctrlPB;
-            status = Controll.Normal;
+            status = FormEditState.View;
         }
 
         private void frmNhapHang_Load(object sender, EventArgs e)
@@ -83,7 +83,7 @@ namespace CuahangNongduoc
 
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
 
-            if (status == Controll.AddNew)
+            if (status == FormEditState.AddNew)
             {
                 txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
             }
@@ -95,7 +95,7 @@ namespace CuahangNongduoc
 
         void BindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            if (status == Controll.Normal)
+            if (status == FormEditState.View)
             {
                 ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
             }
@@ -171,13 +171,13 @@ namespace CuahangNongduoc
         {
             bindingNavigatorPositionItem.Focus();
             this.Luu();
-            status = Controll.Normal;
+            status = FormEditState.View;
             this.Allow(false);
         }
 
         void Luu()
         {
-            if (status == Controll.AddNew)
+            if (status == FormEditState.AddNew)
             {
                 ThemMoi();
             }
@@ -232,7 +232,7 @@ namespace CuahangNongduoc
         // Lỗi (Code smell) : Xóa dòng khi đang Thêm mới vẫn đưa vào danh sách hoàn kho (deleted)
         // Kỹ thuật         : Fix Bug / State Validation
         // Trước            : Xóa dòng ở trạng thái Thêm mới (AddNew) vẫn ghi nhận vào danh sách deleted và gọi hoàn kho, gây lỗi tồn kho sai lệch.
-        // Sau              : Kiểm tra trạng thái (status != Controll.AddNew) trước khi add vào deleted và gọi deleted.Clear() khi nhấn Thêm mới.
+        // Sau              : Kiểm tra trạng thái (status != FormEditState.AddNew) trước khi add vào deleted và gọi deleted.Clear() khi nhấn Thêm mới.
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : -
         // Kiểm tra         : QA
@@ -242,7 +242,7 @@ namespace CuahangNongduoc
         private void toolLuu_Them_Click(object sender, EventArgs e)
         {
             ctrlPhieuBan = new PhieuBanController();
-            status = Controll.AddNew;
+            status = FormEditState.AddNew;
 
             // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
             deleted.Clear();
@@ -262,7 +262,7 @@ namespace CuahangNongduoc
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
 
                 // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
-                if (status != Controll.AddNew)
+                if (status != FormEditState.AddNew)
                 {
                     deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
                 }
@@ -284,7 +284,7 @@ namespace CuahangNongduoc
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
 
                 // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
-                if (status != Controll.AddNew)
+                if (status != FormEditState.AddNew)
                 {
                     deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
                 }
@@ -293,7 +293,7 @@ namespace CuahangNongduoc
 
         private void toolLuuIn_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (status != FormEditState.View)
             {
                 MessageBox.Show("Vui lòng lưu lại Phiếu bán hiện tại!", "Phiếu Bán", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -314,7 +314,7 @@ namespace CuahangNongduoc
 
         private void toolChinhSua_Click(object sender, EventArgs e)
         {
-            status = Controll.Edit;
+            status = FormEditState.Edit;
             this.Allow(true);
         }
 
@@ -330,7 +330,7 @@ namespace CuahangNongduoc
 
         private void toolThoat_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (status != FormEditState.View)
             {
                 if (MessageBox.Show("Bạn có muốn lưu lại Phiếu bán này không?", "Phiếu Bán", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
