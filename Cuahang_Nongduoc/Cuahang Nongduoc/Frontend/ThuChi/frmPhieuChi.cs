@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.DataLayer;//FE3-[FE-TC] Dùng PhieuChiFactory cho Form tự binding
 
 namespace CuahangNongduoc
 {
@@ -13,28 +14,64 @@ namespace CuahangNongduoc
     {
         LyDoChiController ctrlLyDo = new LyDoChiController();
         PhieuChiController ctrl = new PhieuChiController();
+        PhieuChiFactory factory = new PhieuChiFactory();//FE3-[FE-TC] Khởi tạo Factory
         public frmPhieuChi()
         {
             InitializeComponent();
         }
 
-        private void frmThanhToan_Load(object sender, EventArgs e)
+        // ==================== [FE-TC] REFACTORING ====================
+        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (BindingNavigator, DataGridView, TextBox...) để binding
+        // Kỹ thuật         : Move Method (Chuyển logic binding dữ liệu từ Controller về Form giao diện)
+        // Trước            : ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+        // Sau              : HienthiPhieuChi(factory.DanhsachPhieuChi());
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : BE2 (Task R26)
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 08/11/2026
+        // =============================================================
+
+        private void HienthiPhieuChi(DataTable dt)
         {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = dt;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbLyDoChi.DataBindings.Clear();
+            cmbLyDoChi.DataBindings.Add("SelectedValue", bs, "ID_LY_DO_CHI");
+
+            dtNgayChi.DataBindings.Clear();
+            dtNgayChi.DataBindings.Add("Value", bs, "NGAY_CHI");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
+        }
+        private void frmThanhToan_Load(object sender, EventArgs e)
+        { 
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
             ctrlLyDo.HienthiDataGridviewComboBox(colLyDoChi);
-            ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+            HienthiPhieuChi(factory.DanhsachPhieuChi());
+            //ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
             long maphieu = ThamSo.PhieuChi;
             ThamSo.PhieuChi=maphieu+1;
-
-            DataRow row = ctrl.NewRow();
+            // FE3-[FE-TC] Thay cho ctrl.NewRow()
+            DataRow row = factory.NewRow();//DataRow row = ctrl.NewRow();
             row["ID"] = maphieu;
             row["NGAY_CHI"] = dtNgayChi.Value.Date;
             row["TONG_TIEN"] = numTongTien.Value;
-            ctrl.Add(row);
+            // FE3-[FE-TC] Thay cho ctrl.Add(row)
+            factory.Add(row);//ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
         }
 
@@ -51,7 +88,8 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu chi này không?", "Phieu Chi", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                ctrl.Save();
+                // FE3-[FE-TC] Thay cho ctrl.Save()
+                factory.Save();//ctrl.Save();
             }
         }
 
@@ -59,7 +97,8 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            ctrl.Save();
+            // FE3-[FE-TC] Thay cho ctrl.Save()
+            factory.Save();//ctrl.Save();
         }
 
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -97,8 +136,9 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                ctrl.TimPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu, Convert.ToInt32(Tim.cmbLyDo.SelectedValue), dtNgayChi.Value.Date);
-                
+                HienthiPhieuChi(factory.TimPhieuChi(Convert.ToInt32(Tim.cmbLyDo.SelectedValue), Tim.dtNgayChi.Value.Date));
+                // ctrl.TimPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu, Convert.ToInt32(Tim.cmbLyDo.SelectedValue), dtNgayChi.Value.Date);
+
             }
         }
     }
