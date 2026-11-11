@@ -5,8 +5,9 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using CuahangNongduoc.Patterns.Strategy;// [FE-03] Dùng cho BanLeStrategy, BanSiStrategy
 using Microsoft.Win32;
-using CuahangNongduoc.Patterns.Strategy;
+
 
 namespace CuahangNongduoc
 {
@@ -33,6 +34,17 @@ namespace CuahangNongduoc
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            // ==================== [FE-03] REFACTORING ====================
+            // Lỗi (Code smell) : Form giao diện gọi trực tiếp DataService.OpenConnection()
+            // Kỹ thuật         : Move Method (chuyển việc quản lý kết nối về tầng cơ sở dữ liệu)
+            // Trước            : DataService.OpenConnection();
+            // Sau              : // Đã loại bỏ việc gọi trực tiếp OpenConnection() tại tầng giao diện frmMain
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Hỗ trợ           : Không
+            // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+            // Ngày chỉnh sửa   : 06/11/2026
+            // ===========================================================
+
             //RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\CoolSoft\\CuahangNongduoc");
 
             //if (regKey == null)
@@ -120,6 +132,7 @@ namespace CuahangNongduoc
             else
                 NhapHang.Activate();
         }
+
         // ==================== [R17] REFACTORING ====================
         // Lỗi (Code smell) : Duplicate Form - frmBanLe và frmBanSi lặp giao diện & logic
         // Kỹ thuật : Extract Superclass + Strategy Pattern
@@ -130,12 +143,30 @@ namespace CuahangNongduoc
         // Kiểm tra : QA2 – <Họ tên QA>
         // Ngày chỉnh sửa : 07/11/2026
         // ===========================================================
+        
+
+        // ==================== [FE-03] REFACTORING ====================
+        // Lỗi (Code smell) : Khai báo và khởi tạo form bán lẻ trực tiếp, chưa áp dụng Strategy Pattern
+        // Kỹ thuật         : Introduce Strategy Pattern
+        // Trước            : frmDanhsachPhieuBanLe BanLe = null;
+        //                    BanLe = new frmDanhsachPhieuBanLe();
+        // Sau              : frmBanHang BanLe = null;
+        //                    BanLe = new frmBanHang(new BanLeStrategy());
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : FE1 – Dương Thị Kim Anh
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 07/11/2026
+        // =============================================================
         frmBanHang BanLe = null;
+        //frmDanhsachPhieuBanLe BanLe = null;
+
         private void mnuBanHangKH_Click(object sender, EventArgs e)
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmBanHang(new BanLeStrategy());
+
+                BanLe = new frmBanHang(new BanLeStrategy());//BanLe = new frmDanhsachPhieuBanLe();
+
                 BanLe.MdiParent = this;
                 BanLe.Show();
             }
@@ -143,12 +174,31 @@ namespace CuahangNongduoc
                 BanLe.Activate();
         }
 
+
+       
+
+        // ==================== [FE-03] REFACTORING ====================
+        // Lỗi (Code smell) : Khai báo và khởi tạo form bán sỉ trực tiếp, chưa áp dụng Strategy Pattern
+        // Kỹ thuật         : Introduce Strategy Pattern
+        // Trước            : frmDanhsachPhieuBanSi BanSi = null;
+        //                    BanSi = new frmDanhsachPhieuBanSi();
+        // Sau              : frmBanHang BanSi = null;
+        //                    BanSi = new frmBanHang(new BanSiStrategy());
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : FE1 – Dương Thị Kim Anh
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 07/11/2026
+        // =============================================================
         frmBanHang BanSi = null;
+        //frmDanhsachPhieuBanSi BanSi = null;
+
         private void mnuBanHangDL_Click(object sender, EventArgs e)
-        {
+        {       
             if (BanSi == null || BanSi.IsDisposed)
             {
-                BanSi = new frmBanHang(new BanSiStrategy());
+
+                BanSi = new frmBanHang(new BanSiStrategy());//BanSi = new frmDanhsachPhieuBanSi();
+
                 BanSi.MdiParent = this;
                 BanSi.Show();
             }
