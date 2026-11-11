@@ -170,6 +170,10 @@
     <Compile Include="Backend\DataLayer\DonViTinhFactory.cs" />
     <Compile Include="Backend\DataLayer\IUnitOfWork.cs" />
     <Compile Include="Backend\DataLayer\UnitOfWork.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\ISpecification.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\CompositeSpecifications.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\SanPhamSpecifications.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\CongNoSpecifications.cs" />
     <Compile Include="Backend\Core\DataService.cs">
       <SubType>Component</SubType>
     </Compile>
