@@ -77,6 +77,16 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
+        // ==================== [D07] REFACTORING ====================
+        // Lỗi (Code smell) : Thiếu cơ chế thông báo khi tồn kho thay đổi (cập nhật kho, cảnh báo hết hàng/hết hạn)
+        // Kỹ thuật         : Observer Pattern (GoF)
+        // Trước            : Chỉ chạy SQL UPDATE MA_SAN_PHAM, không phát sự kiện tồn kho thay đổi
+        // Sau              : Gọi InventoryService.Instance.NotifyInventoryChanged(masp, so_luong) sau khi cập nhật kho
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public static void CapNhatSoLuong(String masp, int so_luong)
         {
             DataService ds = new DataService();
@@ -84,6 +94,7 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("@so", SqlDbType.Int).Value = so_luong;
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = masp;
             ds.ExecuteNoneQuery(cmd);
+            CuahangNongduoc.Controller.InventoryService.Instance.NotifyInventoryChanged(masp, so_luong);
         }
 
         public DataRow NewRow()
