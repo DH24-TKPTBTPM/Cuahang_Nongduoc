@@ -56,18 +56,28 @@ namespace CuahangNongduoc.Controller
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : N+1 query khi nạp chi tiết phiếu bán (mỗi dòng gọi lại MaSanPham -> SanPham -> DonViTinh)
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : Dùng LayChiTietPhieuBan() + ToChiTietPhieuBan nên với N dòng chi tiết phát sinh thêm tới 3N truy vấn phụ
+        // Sau              : Gọi LayChiTietPhieuBanDayDu() + EntityMapper.ToChiTietPhieuBanDayDu để nạp toàn bộ chỉ trong 1 truy vấn
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(String idPhieuBan)
         {
-            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(idPhieuBan), EntityMapper.ToChiTietPhieuBan);
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBanDayDu(idPhieuBan), EntityMapper.ToChiTietPhieuBanDayDu);
         }
 
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(DateTime dtNgayBan)
         {
-            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(dtNgayBan), EntityMapper.ToChiTietPhieuBan);
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBanDayDu(dtNgayBan), EntityMapper.ToChiTietPhieuBanDayDu);
         }
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(int thang, int nam)
         {
-            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(thang, nam), EntityMapper.ToChiTietPhieuBan);
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBanDayDu(thang, nam), EntityMapper.ToChiTietPhieuBanDayDu);
         }
 
     }

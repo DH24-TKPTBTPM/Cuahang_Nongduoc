@@ -14,7 +14,7 @@ namespace CuahangNongduoc.DataLayer.Mappers
     // Trước            : Mỗi Controller tự đọc từng cột (ID, TEN_SAN_PHAM, SO_LUONG...) để tạo SanPham, MaSanPham, PhieuBan, ChiTietPhieuBan và dễ lỗi khi gặp DBNull
     // Sau              : Gom hết phần chuyển đổi DataRow -> Entity (có kiểm tra DBNull an toàn) về một chỗ là EntityMapper để các Controller gọi lại gọn gàng
     // Tác giả          : BE2
-    // Hỗ trợ           : 
+    // Hỗ trợ           : BE3
     // Kiểm tra         : QA1
     // Ngày chỉnh sửa   : 12/11/2026
     // ==============================================================
@@ -92,6 +92,56 @@ namespace CuahangNongduoc.DataLayer.Mappers
                 SoLuong = ToInt(row, "SO_LUONG"),
                 ThanhTien = ToLong(row, "THANH_TIEN"),
                 MaSanPham = new MaSanPhamController().LayMaSanPham(ToStr(row, "ID_MA_SAN_PHAM"))
+            };
+        }
+
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : ToMaSanPham() và ToChiTietPhieuBan() gọi lồng Controller khác cho từng dòng gây N+1 query
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : Mỗi dòng lại truy vấn thêm MaSanPham -> SanPham -> DonViTinh
+        // Sau              : Bổ sung ToMaSanPhamDayDu() và ToChiTietPhieuBanDayDu() đọc trực tiếp từ kết quả JOIN sẵn
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
+        public static MaSanPham ToMaSanPhamDayDu(DataRow row)
+        {
+            if (row.IsNull("MSP_ID")) return null;
+            int soLuong = ToInt(row, "MSP_SO_LUONG");
+            long giaNhap = ToLong(row, "MSP_DON_GIA_NHAP");
+            DonViTinh dvt = row.IsNull("DVT_ID") ? null : new DonViTinh(ToInt(row, "DVT_ID"), ToStr(row, "TEN_DON_VI"));
+            SanPham sp = row.IsNull("SP_ID") ? null : new SanPham
+            {
+                Id = ToStr(row, "SP_ID"),
+                TenSanPham = ToStr(row, "TEN_SAN_PHAM"),
+                SoLuong = ToInt(row, "SP_SO_LUONG"),
+                DonGiaNhap = ToLong(row, "SP_DON_GIA_NHAP"),
+                GiaBanLe = ToLong(row, "GIA_BAN_LE"),
+                GiaBanSi = ToLong(row, "GIA_BAN_SI"),
+                DonViTinh = dvt
+            };
+            return new MaSanPham
+            {
+                Id = ToStr(row, "MSP_ID"),
+                SoLuong = soLuong,
+                GiaNhap = giaNhap,
+                ThanhTien = (long)soLuong * giaNhap,
+                NgayNhap = ToDate(row, "MSP_NGAY_NHAP"),
+                NgaySanXuat = ToDate(row, "MSP_NGAY_SAN_XUAT"),
+                NgayHetHan = ToDate(row, "MSP_NGAY_HET_HAN"),
+                SanPham = sp
+            };
+        }
+
+        public static ChiTietPhieuBan ToChiTietPhieuBanDayDu(DataRow row)
+        {
+            return new ChiTietPhieuBan
+            {
+                DonGia = ToLong(row, "DON_GIA"),
+                SoLuong = ToInt(row, "SO_LUONG"),
+                ThanhTien = ToLong(row, "THANH_TIEN"),
+                MaSanPham = ToMaSanPhamDayDu(row)
             };
         }
 

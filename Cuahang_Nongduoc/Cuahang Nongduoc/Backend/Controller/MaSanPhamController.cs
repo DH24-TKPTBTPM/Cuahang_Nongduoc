@@ -52,15 +52,25 @@ namespace CuahangNongduoc.Controller
             return tbl.Rows.Count > 0 ? EntityMapper.ToSanPham(tbl.Rows[0]) : null;
         }
 
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : N+1 query khi nạp danh sách MaSanPham (mỗi dòng gọi lại LaySanPham -> LayDVT)
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : LayMaSanPham(), LayMaSanPhamHetHan(), ChiTietPhieuNhap() dùng ToMaSanPham nên sinh N+1 query
+        // Sau              : Gọi các hàm *DayDu() (JOIN sẵn 3 bảng) kết hợp EntityMapper.ToMaSanPhamDayDu trong 1 truy vấn
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public MaSanPham LayMaSanPham(String idMaSanPham)
         {
-            DataTable tbl = new MaSanPhanFactory().LayMaSanPham(idMaSanPham);
-            return tbl.Rows.Count > 0 ? EntityMapper.ToMaSanPham(tbl.Rows[0]) : null;
+            DataTable tbl = new MaSanPhanFactory().LayMaSanPhamDayDu(idMaSanPham);
+            return tbl.Rows.Count > 0 ? EntityMapper.ToMaSanPhamDayDu(tbl.Rows[0]) : null;
         }
 
         public static IList<MaSanPham> LayMaSanPhamHetHan(DateTime dt)
         {
-            return EntityMapper.MapList<MaSanPham>(new MaSanPhanFactory().DanhsachMaSanPhamHetHan(dt), EntityMapper.ToMaSanPham);
+            return EntityMapper.MapList<MaSanPham>(new MaSanPhanFactory().DanhsachMaSanPhamHetHanDayDu(dt), EntityMapper.ToMaSanPhamDayDu);
         }
 
         public void HienThiAutoComboBox(String sp, ComboBox cmb)
@@ -96,7 +106,7 @@ namespace CuahangNongduoc.Controller
         // ==============================================================
         public IList<MaSanPham> ChiTietPhieuNhap(String id)
         {
-            return EntityMapper.MapList<MaSanPham>(factory.DanhsachChiTiet(id), EntityMapper.ToMaSanPham);
+            return EntityMapper.MapList<MaSanPham>(factory.DanhsachChiTietDayDu(id), EntityMapper.ToMaSanPhamDayDu);
         }
 
     }
