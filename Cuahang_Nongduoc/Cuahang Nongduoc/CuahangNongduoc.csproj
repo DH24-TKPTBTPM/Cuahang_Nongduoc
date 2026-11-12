@@ -119,6 +119,7 @@
     <Compile Include="Backend\Controller\SanPhamController.cs" />
     <Compile Include="Backend\Controller\DonViTinhController.cs" />
     <Compile Include="Backend\DataLayer\PhieuChiFactory.cs" />
+    <Compile Include="Frontend\BanHang\LoaiPhieuBan.cs" />
     <Compile Include="Frontend\InAn\frmInPhieuChi.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,17 +142,11 @@
     <Compile Include="Backend\DataLayer\NhaCungCapFactory.cs" />
     <Compile Include="Backend\DataLayer\DuNoKhachHangFactory.cs" />
     <Compile Include="Backend\DataLayer\PhieuThanhToanFactory.cs" />
-    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBanSi.cs">
+    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBan.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBanSi.Designer.cs">
-      <DependentUpon>frmDanhsachPhieuBanSi.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBanLe.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBanLe.Designer.cs">
-      <DependentUpon>frmDanhsachPhieuBanLe.cs</DependentUpon>
+    <Compile Include="Frontend\BanHang\frmDanhsachPhieuBan.Designer.cs">
+      <DependentUpon>frmDanhsachPhieuBan.cs</DependentUpon>
     </Compile>
     <Compile Include="Backend\DataLayer\ChiTietPhieuBanFactory.cs" />
     <Compile Include="Backend\DataLayer\ChiTietPhieuNhapFactory.cs" />
@@ -327,12 +322,8 @@
       <DependentUpon>frmLyDoChi.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Frontend\BanHang\frmDanhsachPhieuBanSi.resx">
-      <DependentUpon>frmDanhsachPhieuBanSi.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Frontend\BanHang\frmDanhsachPhieuBanLe.resx">
-      <DependentUpon>frmDanhsachPhieuBanLe.cs</DependentUpon>
+    <EmbeddedResource Include="Frontend\BanHang\frmDanhsachPhieuBan.resx">
+      <DependentUpon>frmDanhsachPhieuBan.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Frontend\BanHang\frmBanHang.resx">
