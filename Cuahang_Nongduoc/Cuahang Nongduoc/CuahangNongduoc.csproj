@@ -119,6 +119,7 @@
     <Compile Include="Backend\Controller\SanPhamController.cs" />
     <Compile Include="Backend\Controller\DonViTinhController.cs" />
     <Compile Include="Backend\DataLayer\PhieuChiFactory.cs" />
+    <Compile Include="Frontend\Common\BaseReportForm.cs" />
     <Compile Include="Frontend\InAn\frmInPhieuChi.cs">
       <SubType>Form</SubType>
     </Compile>
