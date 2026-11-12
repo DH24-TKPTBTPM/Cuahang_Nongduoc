@@ -84,6 +84,7 @@
     <Compile Include="Backend\BusinessObject\Validation\ValidatorContext.cs" />
     <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
     <Compile Include="Backend\Controller\InventoryService.cs" />
+    <Compile Include="Backend\DataLayer\Mappers\EntityMapper.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
     <Compile Include="Backend\Patterns\State\SuaState.cs" />

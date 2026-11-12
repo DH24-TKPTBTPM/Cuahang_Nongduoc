@@ -7,10 +7,10 @@ using CuahangNongduoc.BusinessObject.Events;
 namespace CuahangNongduoc.Controller
 {
     // ==================== [D07] REFACTORING ====================
-    // Lỗi (Code smell) : Tight Coupling – Tầng dữ liệu không có Subject trung tâm để thông báo thay đổi tồn kho tới các bộ xử lý liên quan
+    // Lỗi (Code smell) : Không có nơi trung tâm để phát thông báo tự động mỗi khi tồn kho thay đổi
     // Kỹ thuật         : Observer Pattern (GoF)
-    // Trước            : Chưa có lớp quản lý danh sách Observer và phát sự kiện tồn kho
-    // Sau              : Viết mới InventoryService (Subject) quản lý Attach/Detach/Notify và truy vấn tồn kho/HSD để phát sự kiện
+    // Trước            : Chưa có lớp trung gian cho phép đăng ký và phát thông báo khi kho thay đổi
+    // Sau              : Tạo InventoryService để đăng ký/hủy Observer (Attach/Detach/Notify), tự lấy số tồn & HSD mới nhất để phát cảnh báo khi kho thay đổi
     // Tác giả          : BE2
     // Hỗ trợ           : BE3
     // Kiểm tra         : QA1

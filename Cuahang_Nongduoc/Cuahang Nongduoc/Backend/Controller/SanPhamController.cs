@@ -5,6 +5,7 @@ using System.Data;
 using System.Windows.Forms;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.DataLayer;
+using CuahangNongduoc.DataLayer.Mappers;
 
 
 namespace CuahangNongduoc.Controller
@@ -124,51 +125,35 @@ namespace CuahangNongduoc.Controller
 
         }
     
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Code đọc từng cột DataRow để tạo SanPham bị viết thủ công trong Controller
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Lấy từng cột ID, TEN_SAN_PHAM, SO_LUONG, DON_GIA_NHAP... gán tay vào đối tượng SanPham
+        // Sau              : Chỉ cần gọi EntityMapper.ToSanPham(tbl.Rows[0]) để chuyển đổi nhanh và đồng nhất
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public SanPham LaySanPham(String id)
         {
             DataTable tbl = factory.LaySanPham(id);
-            SanPham sp = new SanPham();
-            DonViTinhController ctrlDVT = new DonViTinhController();
-            if (tbl.Rows.Count > 0)
-            {
-                sp.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                sp.TenSanPham =  Convert.ToString(tbl.Rows[0]["TEN_SAN_PHAM"]);
-                sp.SoLuong = Convert.ToInt32(tbl.Rows[0]["SO_LUONG"]);
-                sp.DonGiaNhap = Convert.ToInt64(tbl.Rows[0]["DON_GIA_NHAP"]);
-                sp.GiaBanLe = Convert.ToInt64(tbl.Rows[0]["GIA_BAN_LE"]);
-                sp.GiaBanSi = Convert.ToInt64(tbl.Rows[0]["GIA_BAN_SI"]);
-                sp.DonViTinh = ctrlDVT.LayDVT(Convert.ToInt32(tbl.Rows[0]["ID_DON_VI_TINH"]));
-            }
-            return sp;
-
+            return tbl.Rows.Count > 0 ? EntityMapper.ToSanPham(tbl.Rows[0]) : new SanPham();
         }
 
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Lặp lại toàn bộ đoạn code tạo SanPham ngay trong vòng lặp lấy tồn kho
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Dùng vòng lặp foreach tự đọc từng cột tạo SanPham rồi mới gán vào SoLuongTon
+        // Sau              : Gọi EntityMapper.MapList<SoLuongTon>(..., EntityMapper.ToSoLuongTon) chỉ trong 1 dòng
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public static IList<SoLuongTon> LaySoLuongTon()
         {
-            SanPhamFactory f = new SanPhamFactory();
-            DataTable tbl = f.LaySoLuongTon();
-
-            IList<SoLuongTon> ds = new List<SoLuongTon>();
-            
-
-            DonViTinhController ctrlDVT = new DonViTinhController();
-            foreach(DataRow row in tbl.Rows)
-            {
-                SoLuongTon slt = new SoLuongTon();
-                SanPham sp = new SanPham();
-                sp.Id = Convert.ToString(row["ID"]);
-                sp.TenSanPham = Convert.ToString(row["TEN_SAN_PHAM"]);
-                sp.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                sp.DonGiaNhap = Convert.ToInt64(row["DON_GIA_NHAP"]);
-                sp.GiaBanLe = Convert.ToInt64(row["GIA_BAN_LE"]);
-                sp.GiaBanSi = Convert.ToInt64(row["GIA_BAN_SI"]);
-                sp.DonViTinh = ctrlDVT.LayDVT(Convert.ToInt32(row["ID_DON_VI_TINH"]));
-                slt.SanPham = sp;
-                slt.SoLuong = Convert.ToInt32(row["SO_LUONG_TON"]);
-                ds.Add(slt);
-            }
-            return ds;
-
+            return EntityMapper.MapList<SoLuongTon>(new SanPhamFactory().LaySoLuongTon(), EntityMapper.ToSoLuongTon);
         }
 
         // ==================== FE-DM  REFACTORING ====================

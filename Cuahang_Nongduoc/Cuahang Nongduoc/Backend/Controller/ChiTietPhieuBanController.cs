@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
+using CuahangNongduoc.DataLayer.Mappers;
 using CuahangNongduoc.BusinessObject;
 using System.Windows.Forms;
 using System.Data;
@@ -35,60 +36,28 @@ namespace CuahangNongduoc.Controller
         }
 
 
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Cả 3 hàm lấy chi tiết phiếu bán đều copy y hệt nhau đoạn đọc DataRow
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Viết lặp lại 3 vòng foreach để đọc DON_GIA, SO_LUONG, THANH_TIEN, ID_MA_SAN_PHAM cho 3 kiểu lọc khác nhau
+        // Sau              : Mỗi hàm chỉ cần gọi EntityMapper.MapList(..., EntityMapper.ToChiTietPhieuBan) rất ngắn gọn
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(String idPhieuBan)
         {
-            IList<ChiTietPhieuBan> ds = new List<ChiTietPhieuBan>();
-
-            DataTable tbl = factory.LayChiTietPhieuBan(idPhieuBan);
-            foreach (DataRow row in tbl.Rows)
-            {
-                MaSanPhamController ctrl = new MaSanPhamController();
-                ChiTietPhieuBan ct = new ChiTietPhieuBan();
-                ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
-                ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
-                ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
-
-                ds.Add(ct);
-            }
-            return ds;
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(idPhieuBan), EntityMapper.ToChiTietPhieuBan);
         }
 
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(DateTime dtNgayBan)
         {
-            IList<ChiTietPhieuBan> ds = new List<ChiTietPhieuBan>();
-
-            DataTable tbl = factory.LayChiTietPhieuBan(dtNgayBan);
-            foreach (DataRow row in tbl.Rows)
-            {
-                MaSanPhamController ctrl = new MaSanPhamController();
-                ChiTietPhieuBan ct = new ChiTietPhieuBan();
-                ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
-                ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
-                ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
-
-                ds.Add(ct);
-            }
-            return ds;
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(dtNgayBan), EntityMapper.ToChiTietPhieuBan);
         }
         public IList<ChiTietPhieuBan> ChiTietPhieuBan(int thang, int nam)
         {
-            IList<ChiTietPhieuBan> ds = new List<ChiTietPhieuBan>();
-
-            DataTable tbl = factory.LayChiTietPhieuBan(thang, nam);
-            foreach (DataRow row in tbl.Rows)
-            {
-                MaSanPhamController ctrl = new MaSanPhamController();
-                ChiTietPhieuBan ct = new ChiTietPhieuBan();
-                ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
-                ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
-                ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
-
-                ds.Add(ct);
-            }
-            return ds;
+            return EntityMapper.MapList<ChiTietPhieuBan>(factory.LayChiTietPhieuBan(thang, nam), EntityMapper.ToChiTietPhieuBan);
         }
 
     }
