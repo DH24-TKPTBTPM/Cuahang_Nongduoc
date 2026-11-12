@@ -14,6 +14,15 @@ namespace CuahangNongduoc
         public frmInPhieuChi(CuahangNongduoc.BusinessObject.PhieuChi ph)
         {
             InitializeComponent();
+            // ==================== [FE-BC] REFACTORING ====================
+            // Lỗi (Code smell) : Thiếu cấu hình AppDomain cho ReportViewer và đồng bộ Font hiển thị khi in từ SQL Server
+            // Kỹ thuật         : Clean UI & ReportViewer Configuration
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 12/11/2026
+            // =============================================================
+            this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
+            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
             m_PhieuChi = ph;
         }
 
