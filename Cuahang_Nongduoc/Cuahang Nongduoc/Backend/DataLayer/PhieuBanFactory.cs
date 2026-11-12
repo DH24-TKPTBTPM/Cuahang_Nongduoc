@@ -20,10 +20,22 @@ namespace CuahangNongduoc.DataLayer
     {
         DataService m_Ds = new DataService();
 
+        // ==================== [R32-BH] REFACTORING ====================
+        // Lỗi (Code smell) : Dùng hàm CONVERT(date, NGAY_BAN) trong WHERE làm SQL Server không tận dụng được Index khi lọc theo ngày
+        // Kỹ thuật         : Substitute Algorithm
+        // Trước            : WHERE CONVERT(date, NGAY_BAN) = CONVERT(date, @ngay)
+        // Sau              : Chuyển sang lọc theo khoảng nửa mở (NGAY_BAN >= @tu AND NGAY_BAN < @den) để giữ nguyên kết quả và tối ưu truy vấn
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public DataTable TimPhieuBan(String idKh, DateTime dt)
         {
-            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_BAN WHERE CONVERT(date, NGAY_BAN) = CONVERT(date, @ngay) AND ID_KHACH_HANG = @kh");
-            cmd.Parameters.Add("@ngay", SqlDbType.DateTime).Value = dt;
+            DateTime tu = dt.Date;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_BAN WHERE NGAY_BAN >= @tu AND NGAY_BAN < @den AND ID_KHACH_HANG = @kh");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
             cmd.Parameters.Add("@kh", SqlDbType.VarChar, 50).Value = idKh;
 
             m_Ds.Load(cmd);
@@ -86,17 +98,24 @@ namespace CuahangNongduoc.DataLayer
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 06/11/2026
 // ==============================================================
+// ==================== [R32-BH] REFACTORING ====================
+// Lỗi (Code smell) : Dùng MONTH(NGAY_BAN) và YEAR(NGAY_BAN) trong WHERE làm SQL Server phải quét toàn bảng (không dùng được Index)
+// Kỹ thuật         : Substitute Algorithm
+// Trước            : WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_BAN)=@thang AND YEAR(NGAY_BAN)= @nam
+// Sau              : Chuyển sang lọc theo khoảng đầu-cuối tháng (NGAY_BAN >= @tu AND NGAY_BAN < @den)
+// Tác giả          : BE2
+// Hỗ trợ           : BE3
+// Kiểm tra         : QA2
+// Ngày chỉnh sửa   : 12/11/2026
+// ==============================================================
         public static long LayConNo(String kh, int thang, int nam)
         {
             DataService ds = new DataService();
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT SUM(CON_NO) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_BAN)=@thang AND YEAR(NGAY_BAN)= @nam");
-            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(CON_NO), 0) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @kh AND MONTH(NGAY_BAN)=@thang AND YEAR(NGAY_BAN)= @nam");
-// Code cũ: cmd.Parameters.Add("kh", OleDbType.VarChar, 50).Value = kh;
-            cmd.Parameters.Add("kh", SqlDbType.VarChar, 50).Value = kh;
-// Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
-            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
-// Code cũ: cmd.Parameters.Add("nam", OleDbType.Integer).Value = nam;
-            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(CON_NO), 0) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @kh AND NGAY_BAN >= @tu AND NGAY_BAN < @den");
+            cmd.Parameters.Add("@kh", SqlDbType.VarChar, 50).Value = kh;
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
 
             object obj = ds.ExecuteScalar(cmd);
             if (obj == null || Convert.IsDBNull(obj))
