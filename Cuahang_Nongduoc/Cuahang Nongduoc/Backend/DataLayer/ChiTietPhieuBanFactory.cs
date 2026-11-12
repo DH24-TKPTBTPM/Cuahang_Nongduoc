@@ -26,7 +26,7 @@ namespace CuahangNongduoc.DataLayer
         // Trước            : SELECT * rồi gọi lồng MaSanPhamController -> SanPhamController -> DonViTinhController cho mỗi dòng chi tiết
         // Sau              : Chỉ rõ tên cột và bổ sung LayChiTietPhieuBanDayDu() JOIN sẵn 4 bảng trong 1 câu SQL duy nhất
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE1
         // Kiểm tra         : QA2
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================

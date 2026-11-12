@@ -11,22 +11,16 @@ namespace CuahangNongduoc.DataLayer
     {
         DataService m_Ds = new DataService();
 
-        // ==================== [R28-NH] REFACTORING ====================
-        // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
-        // Kỹ thuật         : Migrate Data Provider
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 06/11/2026
-        // Ngày kiểm thử    : 07/11/2026
+        // ==================== [R19] REFACTORING ====================
+        // Lỗi (Code smell) : Hàm LoadSchema() là mã thừa không được bất kỳ nơi nào trong project gọi tới
+        // Kỹ thuật         : Remove Dead Code
+        // Trước            : Tồn tại phương thức LoadSchema() chạy câu SQL ID = '-1' không dùng
+        // Sau              : Xóa bỏ hàm LoadSchema() khỏi PhieuNhapFactory
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
-        public void LoadSchema()
-        {
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_NHAP WHERE ID='-1'");
-           SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_NHAP WHERE ID='-1'");
-            m_Ds.Load(cmd);
-
-        }
 
         // ==================== [R28-NH] REFACTORING ====================
         // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient

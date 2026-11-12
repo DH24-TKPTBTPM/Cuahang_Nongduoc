@@ -14,9 +14,19 @@ namespace CuahangNongduoc.Controller
         ChiTietPhieuNhapFactory factory = new ChiTietPhieuNhapFactory();
 
 
+        // ==================== [R19] REFACTORING ====================
+        // Lỗi (Code smell) : Gọi hàm thừa factory.LoadSchema() sau khi đã xóa LoadSchema() ở ChiTietPhieuNhapFactory
+        // Kỹ thuật         : Remove Dead Code
+        // Trước            : factory.LoadSchema();
+        // Sau              : Dùng factory.LayChiTietPhieuNhap(idPhieuNhap) để nạp sẵn cấu trúc bảng trước khi thêm dòng
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public void ThemChiTietPhieuNhap(String idPhieuNhap, String idMaSP)
         {
-            factory.LoadSchema();
+            factory.LayChiTietPhieuNhap(idPhieuNhap);
             DataRow row = factory.NewRow();
             row["ID_PHIEU_NHAP"] = idPhieuNhap;
             row["ID_MA_SAN_PHAM"] = idMaSP;
