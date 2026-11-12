@@ -84,6 +84,10 @@
     <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
+    <Compile Include="Backend\Patterns\State\SuaState.cs" />
+    <Compile Include="Backend\Patterns\State\ThemState.cs" />
+    <Compile Include="Backend\Patterns\State\XemState.cs" />
+    <Compile Include="Backend\Patterns\State\IFrmNhapHangState.cs" />
     <Compile Include="Backend\Patterns\Strategy\IBanHangStrategy.cs" />
     <Compile Include="Backend\Patterns\Strategy\BanLeStrategy.cs" />
     <Compile Include="Backend\Patterns\Strategy\BanSiStrategy.cs" />
