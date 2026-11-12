@@ -125,13 +125,23 @@ namespace CuahangNongduoc.Controller
 
         }
     
+        // ==================== [R10] REFACTORING ====================
+        // Lỗi (Code smell) : Lặp lại đoạn code gán 7 trường của SanPham từ DataRow ở LaySanPham() và LaySoLuongTon()
+        // Kỹ thuật         : Extract Method (kết hợp Mapper [D05])
+        // Trước            : Cả 2 hàm đều tự đọc từng cột ID, TEN_SAN_PHAM, SO_LUONG, DON_GIA_NHAP, GIA_BAN_LE, GIA_BAN_SI, ID_DON_VI_TINH để gán vào SanPham
+        // Sau              : Tách toàn bộ phần gán 7 trường sang dùng chung EntityMapper.ToSanPham / EntityMapper.ToSoLuongTon
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         // ==================== [D05] REFACTORING ====================
         // Lỗi (Code smell) : Code đọc từng cột DataRow để tạo SanPham bị viết thủ công trong Controller
         // Kỹ thuật         : Mapper Pattern (PoEAA)
         // Trước            : Lấy từng cột ID, TEN_SAN_PHAM, SO_LUONG, DON_GIA_NHAP... gán tay vào đối tượng SanPham
         // Sau              : Chỉ cần gọi EntityMapper.ToSanPham(tbl.Rows[0]) để chuyển đổi nhanh và đồng nhất
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
@@ -147,7 +157,7 @@ namespace CuahangNongduoc.Controller
         // Trước            : Dùng vòng lặp foreach tự đọc từng cột tạo SanPham rồi mới gán vào SoLuongTon
         // Sau              : Gọi EntityMapper.MapList<SoLuongTon>(..., EntityMapper.ToSoLuongTon) chỉ trong 1 dòng
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
