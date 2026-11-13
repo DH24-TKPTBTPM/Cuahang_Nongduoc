@@ -87,10 +87,18 @@ namespace CuahangNongduoc.Controller
             factory.TimDiaChi(diachi, loai);
         }
         
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
         public KhachHang LayKhachHang(String id)
         {
             DataTable tbl = factory.LayKhachHang(id);
-            KhachHang kh = new KhachHang();
+            KhachHang kh = null;
             if (tbl.Rows.Count > 0)
             {
                 kh.Id = Convert.ToString(tbl.Rows[0]["ID"]);

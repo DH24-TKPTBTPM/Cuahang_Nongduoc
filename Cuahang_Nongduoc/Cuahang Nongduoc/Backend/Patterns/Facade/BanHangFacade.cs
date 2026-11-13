@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.DataLayer; // Chứa MaSanPhanFactory
 using CuahangNongduoc.Patterns.Singleton;
+using CuahangNongduoc.Patterns.Strategy;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Data;
 
 namespace CuahangNongduoc.Patterns.Facade
 {
@@ -46,11 +49,100 @@ namespace CuahangNongduoc.Patterns.Facade
             return strategy.LayDonGia(sp, masp);
         }
 
-        public bool LuuHoaDon(PhieuBan phieuBan, IList<ChiTietPhieuBan> danhSachChiTiet, IList<MaSanPham> dsXoa)
+        // ==================== [FE-02] REFACTORING (HIDE DELEGATE) ====================
+        // Gói gọn toàn bộ nghiệp vụ lưu phiếu bán:
+        // - Tạo/cập nhật dòng Phiếu bán
+        // - Hoàn tồn kho các sản phẩm trong danh sách đã xóa (bằng MaSanPhanFactory)
+        // - Thực thi lưu Chi tiết và Phiếu bán xuống Database
+        // =============================================================================
+        public bool LuuHoaDon(string maPhieu, string maKhachHang, DateTime ngayBan,
+                             decimal tongTien, decimal daTra, decimal conNo,
+                             ChiTietPhieuBanController ctrlChiTiet,
+                             PhieuBanController ctrlPhieuBan,
+                             IList<MaSanPham> dsXoa,
+                             bool isThemMoi)
         {
-            // Facade tự chịu trách nhiệm điều phối: Lưu phiếu bán, lưu chi tiết, trừ tồn kho, cập nhật nợ
-            // Chi tiết cài đặt sẽ hoàn thiện ở Giai đoạn 3
-            return true;
+            try
+            {
+                if (isThemMoi)
+                {
+                    // 1. Kiểm tra trùng mã phiếu
+                    if (ctrlPhieuBan.LayPhieuBan(maPhieu) != null)
+                    {
+                        MessageBox.Show("Mã Phiếu bán này đã tồn tại !", "Phiếu Bán", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+
+                    // 2. Thêm dòng phiếu mới
+                    DataRow row = ctrlPhieuBan.NewRow();
+                    row["ID"] = maPhieu;
+                    row["ID_KHACH_HANG"] = maKhachHang;
+                    row["NGAY_BAN"] = ngayBan.Date;
+                    row["TONG_TIEN"] = tongTien;
+                    row["DA_TRA"] = daTra;
+                    row["CON_NO"] = conNo;
+                    ctrlPhieuBan.Add(row);
+
+                    // 3. Tăng mã tự động
+                    if (ThamSo.LaSoNguyen(maPhieu))
+                    {
+                        long so = Convert.ToInt64(maPhieu);
+                        if (so >= ThamSo.LayMaPhieuBan())
+                        {
+                            ThamSo.GanMaPhieuBan(so + 1);
+                        }
+                    }
+                }
+                else
+                {
+                    // 4. Nếu là cập nhật: Hoàn kho cho các sản phẩm đã bị xóa khỏi phiếu
+                    if (dsXoa != null && dsXoa.Count > 0)
+                    {
+                        foreach (MaSanPham masp in dsXoa)
+                        {
+                            // Move Method & Hide Delegate: Ẩn gọi MaSanPhanFactory khỏi Form
+                            MaSanPhanFactory.CapNhatSoLuong(masp.Id, masp.SoLuong);
+                        }
+                        dsXoa.Clear();
+                    }
+                    ctrlPhieuBan.Update();
+                }
+
+                // 5. Lưu xuống DB
+                ctrlChiTiet.Save();
+                ctrlPhieuBan.Save();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi lưu phiếu bán: " + ex.Message, "Lỗi Facade", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        // ==================== [FE-02] REFACTORING (MOVE METHOD) ====================
+        // Chuyển logic hoàn kho khi xóa Phiếu bán từ Form về Facade
+        // ===========================================================================
+        public bool XoaPhieuBan(string maPhieu, PhieuBanController ctrlPhieuBan)
+        {
+            try
+            {
+                ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
+                IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(maPhieu);
+                foreach (ChiTietPhieuBan ct in ds)
+                {
+                    // Ẩn MaSanPhanFactory khỏi Form
+                    MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                }
+                ctrlPhieuBan.Save();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xóa phiếu bán: " + ex.Message, "Lỗi Facade", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
     }
 }

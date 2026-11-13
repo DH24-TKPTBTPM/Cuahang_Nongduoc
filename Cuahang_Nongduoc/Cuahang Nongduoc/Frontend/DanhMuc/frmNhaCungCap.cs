@@ -16,6 +16,26 @@ namespace CuahangNongduoc
             InitializeComponent();
         }
 
+        // ==================== [FE-DM] REFACTORING ====================
+        // Lỗi (Code smell) : Tight Coupling – Quản lý DataBinding UI trực tiếp trong Controller
+        // Kỹ thuật         : Move Method (Form chủ động quản lý Binding và hiển thị)
+        // Trước            : ctrl.HienthiDataGridview(dataGridView, bindingNavigator) gọi trực tiếp trong Load
+        // Sau              : Tách riêng phương thức HienThiDanhSach(), Form giữ vai trò hiển thị UI
+        // Tác giả          : FE2 Nguyễn Huỳnh Ngọc Anh
+        // Hỗ Trợ           : Không
+        // Kiểm tra         : QA
+        // Ngày chỉnh sửa   : 11/11/2026
+        // =============================================================
+        private void frmNhaCungCap_Load(object sender, EventArgs e)
+        {
+            HienThiDanhSach();
+        }
+
+        private void HienThiDanhSach()
+        {
+            ctrl.HienthiDataGridview(dataGridView, bindingNavigator);
+        }
+
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Nha Cung Cap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
