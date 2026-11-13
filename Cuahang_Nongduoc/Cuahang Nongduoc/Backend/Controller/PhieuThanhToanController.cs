@@ -22,9 +22,17 @@ namespace CuahangNongduoc.Controller
         {
             factory.Add(row);
         }
-        public void Save()
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        public bool Save()
         {
-            factory.Save();
+            return factory.Save();
         }
 
         public PhieuThanhToan LayPhieuThanhToan(String id)
