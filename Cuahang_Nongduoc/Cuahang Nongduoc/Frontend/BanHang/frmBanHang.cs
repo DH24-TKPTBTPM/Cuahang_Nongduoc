@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Patterns.Strategy;
-using CuahangNongduoc.Frontend.Chung;
+using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
 {
@@ -352,7 +352,6 @@ namespace CuahangNongduoc
                 NgayBan = dtNgayLapPhieu.Value.Date,
                 TongTien = Convert.ToInt64(numTongTien.Value),
                 DaTra = Convert.ToInt64(numDaTra.Value),
-                ConNo = Convert.ToInt64(numConNo.Value)
             };
 
             _facade.LuuHoaDon(phieuBanNew, null, null);

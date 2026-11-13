@@ -43,7 +43,6 @@ namespace CuahangNongduoc.Patterns.Facade
             _ctrlPhieuBan = new PhieuBanController();
             _ctrlChiTiet = new ChiTietPhieuBanController();
 
-            _maSanPhanFactory = new MaSanPhanFactory();
         }
 
         public PhieuBan KhoiTaoPhieuMoi(IBanHangStrategy strategy)
