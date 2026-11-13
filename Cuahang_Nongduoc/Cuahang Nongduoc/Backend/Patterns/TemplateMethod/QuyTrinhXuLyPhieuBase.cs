@@ -2,21 +2,15 @@ using System;
 
 namespace CuahangNongduoc.Patterns.TemplateMethod
 {
-    /// <summary>
-    /// Template Method Pattern (Behavioral): Định nghĩa khung sườn thuật toán xử lý chứng từ
-    /// gồm 5 bước cố định:
-    /// 1. Kiểm tra tính hợp lệ (KiemTraHopLe)
-    /// 2. Cập nhật tồn kho (CapNhatKho)
-    /// 3. Ghi dữ liệu chứng từ (GhiDuLieu)
-    /// 4. Cập nhật công nợ (CapNhatCongNo)
-    /// 5. In ấn chứng từ (InAn)
-    /// </summary>
+    // ==================== [TM-01] REFACTORING ====================
+    // Kỹ thuật         : Template Method Pattern (GoF)
+    // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+    // Hỗ trợ           : BE2 - Trần Tuấn Anh
+    // Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+    // Ngày chỉnh sửa   : 08/11/2026
+    // ==============================================================
     public abstract class QuyTrinhXuLyPhieuBase
     {
-        /// <summary>
-        /// Template Method định nghĩa thứ tự thực thi chuẩn của quy trình xử lý phiếu.
-        /// Không cho phép lớp con thay đổi khung sườn này.
-        /// </summary>
         public bool XuLyPhieu()
         {
             if (!KiemTraHopLe())
