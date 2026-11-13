@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -76,14 +76,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\BusinessObject\ChiTietPhieuNhap.cs" />
+    <Compile Include="Backend\BusinessObject\Validation\GiaTriValidator.cs" />
+    <Compile Include="Backend\BusinessObject\Validation\HanSuDungValidator.cs" />
+    <Compile Include="Backend\BusinessObject\Validation\IValidationStrategy.cs" />
+    <Compile Include="Backend\BusinessObject\Validation\TonKhoValidator.cs" />
+    <Compile Include="Backend\BusinessObject\Validation\ValidatorContext.cs" />
     <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
+    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
+    <Compile Include="Backend\Patterns\State\SuaState.cs" />
+    <Compile Include="Backend\Patterns\State\ThemState.cs" />
+    <Compile Include="Backend\Patterns\State\XemState.cs" />
+    <Compile Include="Backend\Patterns\State\IFrmNhapHangState.cs" />
     <Compile Include="Backend\Patterns\Strategy\IBanHangStrategy.cs" />
     <Compile Include="Backend\Patterns\Strategy\BanLeStrategy.cs" />
     <Compile Include="Backend\Patterns\Strategy\BanSiStrategy.cs" />
     <Compile Include="Backend\Patterns\Facade\BanHangFacade.cs" />
     <Compile Include="Backend\Patterns\Factory\PhieuFactory.cs" />
+    <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhBanHang.cs" />
+    <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhNhapHang.cs" />
     <Compile Include="Backend\Patterns\TemplateMethod\QuyTrinhXuLyPhieuBase.cs" />
     <Compile Include="Backend\BusinessObject\ChiTietPhieuBan.cs" />
     <Compile Include="Backend\BusinessObject\PhieuChi.cs" />
@@ -103,7 +115,6 @@
     <Compile Include="Backend\Controller\PhieuChiController.cs" />
     <Compile Include="Backend\Controller\LyDoChiController.cs" />
     <Compile Include="Backend\Controller\NhaCungCapController.cs" />
-    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Controller\PhieuThanhToanController.cs" />
     <Compile Include="Backend\Controller\PhieuNhapController.cs" />
     <Compile Include="Backend\Controller\KhachHangController.cs" />
@@ -112,6 +123,11 @@
     <Compile Include="Backend\Controller\SanPhamController.cs" />
     <Compile Include="Backend\Controller\DonViTinhController.cs" />
     <Compile Include="Backend\DataLayer\PhieuChiFactory.cs" />
+    <Compile Include="Frontend\DungChung\Statess\IFrmState.cs" />
+    <Compile Include="Frontend\DungChung\Statess\IStateableForm.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateSua.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateThem.cs" />
+    <Compile Include="Frontend\DungChung\Statess\StateXem.cs" />
     <Compile Include="Frontend\InAn\frmInPhieuChi.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -551,6 +567,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Backend\BusinessObject\Validation\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

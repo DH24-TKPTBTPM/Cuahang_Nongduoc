@@ -98,6 +98,24 @@ namespace CuahangNongduoc.DataLayer
             else
                 return Convert.ToInt64(obj);
         }
+
+// ==================== [R24] REFACTORING ====================
+// Lỗi (Code smell) : Dính control UI, N+1 query, mất dữ liệu khi Lưu lỗi
+// Kỹ thuật         : Extract Method + Safe Transaction
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 08/11/2026
+// ==============================================================
+        public static DataTable LayTongTienTheoKhachHang(int thang, int nam)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT ID_KHACH_HANG, ISNULL(SUM(TONG_TIEN), 0) AS TONG_TIEN FROM PHIEU_THANH_TOAN WHERE MONTH(NGAY_THANH_TOAN)=@thang AND YEAR(NGAY_THANH_TOAN)=@nam GROUP BY ID_KHACH_HANG");
+            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
+            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+            ds.Load(cmd);
+            return ds.ResultTable;
+        }
         
 
         public DataRow NewRow()

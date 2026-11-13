@@ -13,11 +13,14 @@ namespace CuahangNongduoc.Patterns.Factory
         ThanhToan
     }
 
-    /// <summary>
-    /// Factory Method Pattern (Creational): Đóng gói cơ chế khởi tạo các đối tượng chứng từ
-    /// (Phiếu bán, Phiếu nhập, Phiếu chi, Phiếu thanh toán).
-    /// Chuẩn hóa định nghĩa Factory chuẩn GoF, phân biệt hoàn toàn với các lớp DAO/DataLayer.
-    /// </summary>
+    // ==================== [FM-01] REFACTORING ====================
+    // Kỹ thuật         : Factory Method Pattern (GoF)
+    // Mục đích         : Dùng PhieuFactory thay vì new PhieuBan()/PhieuNhap()/PhieuChi() trong Form
+    // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+    // Hỗ trợ           : FE2 - Nguyễn Huỳnh Ngọc Anh
+    // Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+    // Ngày chỉnh sửa   : 08/11/2026
+    // ==============================================================
     public static class PhieuFactory
     {
         public static PhieuBan TaoPhieuBan(LoaiPhieu loai)

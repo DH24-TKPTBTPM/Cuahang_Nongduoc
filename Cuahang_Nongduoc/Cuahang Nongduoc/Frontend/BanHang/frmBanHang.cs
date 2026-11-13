@@ -1,14 +1,15 @@
-﻿using System;
+﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Controller;
+using CuahangNongduoc.Frontend.DungChung.Statess;
+using CuahangNongduoc.Patterns.Facade;
+using CuahangNongduoc.Patterns.Strategy;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using CuahangNongduoc.Controller;
-using CuahangNongduoc.BusinessObject;
-using CuahangNongduoc.Patterns.Strategy;
-using CuahangNongduoc.Patterns.Facade; // [FE-02]: Tham chiếu đến tầng Facade
 
 namespace CuahangNongduoc
 {
@@ -17,7 +18,7 @@ namespace CuahangNongduoc
     /// Thay thế : 2 form riêng biệt trùng lặp giao diện frmBanLe.cs và frmBanSi.cs
     /// Tác giả : FE1 – Dương Thị Kim Anh | Hỗ trợ: FE2 - Nguyễn Huỳnh Ngọc Anh | Kiểm tra: QA2 – Huỳnh Lư Anh Minh
     /// Ngày tạo : 06/11/2026
-    public partial class frmBanHang : Form
+    public partial class frmBanHang : Form, IStateableForm
     {
 
         // ==================== [FE-02] REFACTORING ====================
@@ -38,8 +39,11 @@ namespace CuahangNongduoc
         PhieuBanController ctrlPhieuBan = new PhieuBanController();
         ChiTietPhieuBanController ctrlChiTiet = new ChiTietPhieuBanController();
         IList<MaSanPham> deleted = new List<MaSanPham>();
-        Controll status = Controll.Normal;
 
+        // [D09] VIẾT MỚI – Mẫu thiết kế: State (Behavioral, GoF)
+        // Mục đích : Lưu trữ đối tượng trạng thái hiện tại (StateXem, StateThem, StateSua)
+        private IFrmState _currentState;
+    
         // Biến lưu trữ Strategy
         private IBanHangStrategy _strategy;
 
@@ -66,7 +70,7 @@ namespace CuahangNongduoc
         public frmBanHang(IBanHangStrategy strategy) : this()
         {
             _strategy = strategy;
-            status = Controll.AddNew;
+            SetState(new StateThem());
             if (_strategy != null)
             {
                 this.Text = "Phiếu " + _strategy.TenChienLuoc;
@@ -77,7 +81,7 @@ namespace CuahangNongduoc
             : this(strategy)
         {
             this.ctrlPhieuBan = ctrlPB;
-            status = Controll.Normal;
+            SetState(new StateThem());
         }
 
         private void frmNhapHang_Load(object sender, EventArgs e)
@@ -97,19 +101,75 @@ namespace CuahangNongduoc
 
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
 
-            if (status == Controll.AddNew)
+            // ==================== [D09-FE1] REFACTORING (STATE PATTERN) ====================
+            // Lỗi (Code smell) : Conditional Complexity / Hardcoded State – Dùng cờ 'status' để phân nhánh UI
+            // Kỹ thuật         : Polymorphism via State Pattern
+            // Trước            : if (status == Controll.AddNew) ... else this.Allow(false);
+            // Sau              : Kiểm tra (_currentState is StateThem) và giao việc Allow() cho State tự xử lý
+            // Tác giả          : FE1 – Dương Thị Kim Anh
+            // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+            // Kiểm tra         : QA
+            // Ngày chỉnh sửa   : 10/11/2026
+            // ==============================================================================
+            if (_currentState is StateThem)
             {
                 txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
             }
-            else
-            {
-                this.Allow(false);
-            }
         }
+
+
+        #region IStateableForm Implementation
+        /// [D09c] VIẾT MỚI – Mẫu thiết kế: State (Behavioral, GoF)
+        /// Mục đích : Hàm cập nhật Trạng thái mới cho Form và thực thi Handle để phân bổ UI tương ứng
+        /// Thay thế : Các hàm phân nhánh if (status == ...) đặt rải rác trên Form
+        /// Tác giả : FE1 – Dương Thị Kim Anh | Hỗ trợ: FE2 – Nguyễn Huỳnh Ngọc Anh | Kiểm tra: QA1 - Huỳnh Lư Anh Minh
+        /// Ngày tạo : 10/11/2026
+        public void SetState(IFrmState state)
+        {
+            this._currentState = state;
+            if (this._currentState != null) this._currentState.Handle(this);
+        }
+
+        public void AllowInput(bool enable)
+        {
+            txtMaPhieu.Enabled = enable;
+            dtNgayLapPhieu.Enabled = enable;
+            numTongTien.Enabled = enable;
+            btnAdd.Enabled = enable;
+            btnRemove.Enabled = enable;
+            dgvDanhsachSP.Enabled = enable;
+        }
+
+        public void AllowEditMaPhieu(bool enable)
+        {
+            txtMaPhieu.Enabled = enable;
+        }
+
+        public void SetToolbarButtons(bool canAdd, bool canSave, bool canEdit, bool canDelete)
+        {
+            // Tên các tool này phụ thuộc vào giao diện thực tế của bạn, ví dụ:
+            if (toolLuu != null) toolLuu.Enabled = canSave;
+            if (toolChinhSua != null) toolChinhSua.Enabled = canEdit;
+            if (toolXoa != null) toolXoa.Enabled = canDelete;
+            // ... (bật/tắt các nút tương ứng trên UI)
+        }
+        #endregion
+
+        
 
         void BindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            if (status == Controll.Normal)
+            // ==================== [D09] REFACTORING (STATE PATTERN) ====================
+            // Lỗi (Code smell) : Inappropriate Intimacy – Phụ thuộc vào biến trạng thái cũ
+            // Kỹ thuật         : Type Check Refactoring via State
+            // Trước            : if (status == Controll.Normal) ...
+            // Sau              : if (_currentState is StateXem) ...
+            // Tác giả          : FE1 – Dương Thị Kim Anh
+            // Hỗ trợ           : FE2 - Nguyễn Huỳnh Ngọc Anh
+            // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+            // Ngày chỉnh sửa   : 10/11/2026
+            // ==============================================================================
+            if (_currentState is StateXem)
             {
                 ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
             }
@@ -185,8 +245,6 @@ namespace CuahangNongduoc
         {
             bindingNavigatorPositionItem.Focus();
             this.Luu();
-            status = Controll.Normal;
-            this.Allow(false);
         }
 
         // ==================== [FE-02] REFACTORING ====================
@@ -199,18 +257,49 @@ namespace CuahangNongduoc
         // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
         // Ngày chỉnh sửa   : 10/11/2026
         // ===========================================================
+        // ==================== [D09] REFACTORING (FACADE PATTERN) ====================
+        // Lỗi (Code smell) : Direct Factory Access / Feature Envy – UI Form trực tiếp gọi MaSanPhanFactory
+        // Kỹ thuật         : Hide Delegate / Move Method via Facade
+        // Trước            : Form gọi hàm Luu() tự phân nhánh và loop gọi MaSanPhanFactory.CapNhatSoLuong(...)
+        // Sau              : Nút Lưu CHỈ GỌI DUY NHẤT `_facade.LuuHoaDon(...)` và chuyển state sang StateXem()
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =================================================================================
         void Luu()
         {
-            if (status == Controll.AddNew)
+            bool isThemMoi = (_currentState is StateThem);
+            string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
+
+            try
             {
-                ThemMoi();
+                // GỌI DUY NHẤT FACADE ĐỂ LƯU VÀ HOÀN TỒN KHO
+                bool thanhCong = _facade.LuuHoaDon(
+                    txtMaPhieu.Text.Trim(),
+                    maKhachHang,
+                    dtNgayLapPhieu.Value,
+                    numTongTien.Value,
+                    numDaTra.Value,
+                    numConNo.Value,
+                    deleted,
+                    isThemMoi
+                );
+
+                if (thanhCong)
+                {
+                    deleted.Clear(); // Xóa bộ đệm sau khi lưu thành công
+                    MessageBox.Show("Lưu phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    SetState(new StateXem());
+                }
             }
-            else
+            catch (Exception ex)
             {
-                CapNhat();
+                  // Bắt lỗi do Facade ném ra
+                  MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        
         void CapNhat()
         {
             // [FE-02 - Hide Delegate]: Bỏ gọi trực tiếp MaSanPhanFactory.CapNhatSoLuong() ở Form. 
@@ -279,7 +368,7 @@ namespace CuahangNongduoc
         private void toolLuu_Them_Click(object sender, EventArgs e)
         {
             ctrlPhieuBan = new PhieuBanController();
-            status = Controll.AddNew;
+            SetState(new StateThem());
 
             // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
             deleted.Clear();
@@ -299,7 +388,7 @@ namespace CuahangNongduoc
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
 
                 // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
-                if (status != Controll.AddNew)
+                if (!(_currentState is StateThem))
                 {
                     deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
                 }
@@ -321,7 +410,7 @@ namespace CuahangNongduoc
                 numTongTien.Value -= Convert.ToInt64(row["THANH_TIEN"]);
 
                 // [R18 - Fix Bug]: Chỉ ghi nhận vào deleted nếu KHÔNG phải đang ở trạng thái Thêm mới
-                if (status != Controll.AddNew)
+                if (!(_currentState is StateThem))
                 {
                     deleted.Add(new MaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]), Convert.ToInt32(row["SO_LUONG"])));
                 }
@@ -330,7 +419,7 @@ namespace CuahangNongduoc
 
         private void toolLuuIn_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (!(_currentState is StateXem))
             {
                 MessageBox.Show("Vui lòng lưu lại Phiếu bán hiện tại!", "Phiếu Bán", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -351,8 +440,7 @@ namespace CuahangNongduoc
 
         private void toolChinhSua_Click(object sender, EventArgs e)
         {
-            status = Controll.Edit;
-            this.Allow(true);
+            SetState(new StateSua());
         }
 
         void Allow(bool val)
@@ -367,7 +455,7 @@ namespace CuahangNongduoc
 
         private void toolThoat_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (!(_currentState is StateXem))
             {
                 if (MessageBox.Show("Bạn có muốn lưu lại Phiếu bán này không?", "Phiếu Bán", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -377,6 +465,16 @@ namespace CuahangNongduoc
             this.Close();
         }
 
+        // ==================== [D09] REFACTORING (FACADE PATTERN) ====================
+        // Lỗi (Code smell) : Direct Factory Access – Form tự vòng lặp gọi Factory hoàn tồn kho khi xóa phiếu
+        // Kỹ thuật         : Hide Delegate / Move Method via Facade
+        // Trước            : Tự gọi ChiTietPhieuBanController lấy danh sách và lặp MaSanPhanFactory.CapNhatSoLuong
+        // Sau              : Ủy nhiệm hoàn toàn cho phương thức _facade.XoaPhieuBan(maPhieu, ctrlPhieuBan)
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =================================================================================
         private void toolXoa_Click(object sender, EventArgs e)
         {
             DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
@@ -384,19 +482,20 @@ namespace CuahangNongduoc
             {
                 if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phiếu Bán", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                    IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
-                    // [FE-02 - Hide Delegate]: Chuyển danh sách sản phẩm cần xóa sang Facade điều phối
-                    IList<MaSanPham> listXoa = new List<MaSanPham>();
-                    foreach (ChiTietPhieuBan ct in ds)
+                    string maPhieu = view["ID"].ToString();
+                    try
                     {
-                        listXoa.Add(new MaSanPham(ct.MaSanPham.Id, ct.SoLuong));
+                        // Gọi Facade xóa và hoàn tồn kho ẩn dưới tầng Backend
+                        if (_facade.XoaPhieuBan(maPhieu))
+                        {
+                            bindingNavigator.BindingSource.RemoveCurrent();
+                            MessageBox.Show("Xóa phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
                     }
-
-                    _facade.LuuHoaDon(null, null, listXoa);
-                    _facade.LuuHoaDon(null, null, listXoa);
-                    bindingNavigator.BindingSource.RemoveCurrent();
-                    ctrlPhieuBan.Save();
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }

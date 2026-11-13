@@ -124,10 +124,18 @@ namespace CuahangNongduoc.Controller
 
         }
     
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
         public SanPham LaySanPham(String id)
         {
             DataTable tbl = factory.LaySanPham(id);
-            SanPham sp = new SanPham();
+            SanPham sp = null;
             DonViTinhController ctrlDVT = new DonViTinhController();
             if (tbl.Rows.Count > 0)
             {
@@ -169,6 +177,23 @@ namespace CuahangNongduoc.Controller
             }
             return ds;
 
+        }
+
+        // ==================== FE-DM  REFACTORING ====================
+        // Lỗi (Code smell) : Tight Coupling – Controller nhận 9 tham số WinForms Controls
+        // Kỹ thuật         : Remove Parameter / Move DataBinding Responsibility
+        // Trước            : HienthiDataGridview nhận DataGridView, BindingNavigator và 7 Controls nhập liệu
+        // Sau              : HienthiDataGridview chỉ nhận DataGridView và BindingNavigator, gán BindingSource
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Ngày chỉnh sửa   : 11/11/2026
+        // ===================================================================
+        public void HienthiDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
+        {
+            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
+            bs.DataSource = factory.DanhsachSanPham();
+
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
         }
 
         public DataRow NewRow()
