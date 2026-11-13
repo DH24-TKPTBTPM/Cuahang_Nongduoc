@@ -122,8 +122,13 @@ namespace CuahangNongduoc
         private void toolTongHop_Click(object sender, EventArgs e)
         {
             toolProgress.Visible = true;
-            //ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
-            TongHopDuNo(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text)); // FE3-[FE-CN] Form tự xử lý tiến trình và binding
+            DataTable data = ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+            toolProgress.Maximum = data.Rows.Count;
+            toolProgress.Value = data.Rows.Count;
             toolProgress.Visible = false;
         }
 
@@ -141,6 +146,12 @@ namespace CuahangNongduoc
 
         private void toolIn_Click(object sender, EventArgs e)
         {
+            // Thêm dòng kiểm tra an toàn này
+            if (bindingNavigator.BindingSource == null || bindingNavigator.BindingSource.Current == null)
+            {
+                MessageBox.Show("Vui lòng tổng hợp dữ liệu trước khi in!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
             KhachHangController ctrlKH = new KhachHangController();
             DuNoKhachHang dn = new DuNoKhachHang();

@@ -82,6 +82,7 @@
     <Compile Include="Backend\BusinessObject\Validation\TonKhoValidator.cs" />
     <Compile Include="Backend\BusinessObject\Validation\ValidatorContext.cs" />
     <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
+    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
     <Compile Include="Backend\Patterns\State\SuaState.cs" />
@@ -114,7 +115,6 @@
     <Compile Include="Backend\Controller\PhieuChiController.cs" />
     <Compile Include="Backend\Controller\LyDoChiController.cs" />
     <Compile Include="Backend\Controller\NhaCungCapController.cs" />
-    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Controller\PhieuThanhToanController.cs" />
     <Compile Include="Backend\Controller\PhieuNhapController.cs" />
     <Compile Include="Backend\Controller\KhachHangController.cs" />
