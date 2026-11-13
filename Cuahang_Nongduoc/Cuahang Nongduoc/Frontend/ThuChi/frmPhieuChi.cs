@@ -53,7 +53,16 @@ namespace CuahangNongduoc
 
             txtGhiChu.DataBindings.Clear();
             txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
-        }
+        } 
+        
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
         private void frmThanhToan_Load(object sender, EventArgs e)
         { 
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
@@ -147,9 +156,11 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                HienthiPhieuChi(factory.TimPhieuChi(Convert.ToInt32(Tim.cmbLyDo.SelectedValue), Tim.dtNgayChi.Value.Date));
-                // ctrl.TimPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu, Convert.ToInt32(Tim.cmbLyDo.SelectedValue), dtNgayChi.Value.Date);
-
+                HienthiPhieuChi(factory.TimPhieuChi(new PhieuChiSearchParam
+                {
+                    LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
+                    Ngay = Tim.dtNgayChi.Value.Date
+                }));
             }
         }
     }

@@ -1,6 +1,8 @@
-﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Backend.Patterns.State;
+using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.Chung;
+using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,24 +23,41 @@ namespace CuahangNongduoc
         PhieuNhap m_PhieuNhap = null;
 
 
-        Controll status = Controll.Normal;
+        // ==================== [FE-FE2] REFACTORING ====================
+        // Lỗi (Code smell) : Primitive Obsession / Hardcoded State – Quản lý trạng thái giao diện bằng enum 'status' gây phân nhánh rải rác
+        // Kỹ thuật         : Replace State/Strategy with State Pattern & Encapsulate Field
+        // Trước            : Controll status = Controll.Normal; (dùng if/else kiểm tra status ở các nút bấm & hàm Allow để private)
+        // Sau              : private IFrmNhapHangState currentState; (chuyển giao quản lý cho các lớp State & đổi Allow() thành public)
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : <Không>
+        // Kiểm tra         : QA – <Họ_tên>
+        // Ngày chỉnh sửa   : 9/11/2026
+        // ===========================================================
+        private IFrmNhapHangState currentState;
 
         public frmNhapHang()
         {
             InitializeComponent();
-            status = Controll.AddNew;
+            SetState(new ThemState());
         }
+
         public frmNhapHang(PhieuNhapController ctrlPN)
           : this()
         {
             this.ctrl = ctrlPN;
-            status = Controll.Normal;
+            SetState(new XemState());
         }
 
+        // Phương thức thay đổi State hiện tại
+        public void SetState(IFrmNhapHangState state)
+        {
+            this.currentState = state;
+            this.currentState.Handle(this);
+        }
 
         void BindingSource_CurrentChanged(object sender, EventArgs e)
         {
-            if (status == Controll.Normal)
+            if (currentState is XemState)
                 ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
         }
 
@@ -57,14 +76,11 @@ namespace CuahangNongduoc
 
             ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
 
-            if (status == Controll.AddNew)
+            if (currentState is ThemState)
             {
-                txtMaPhieu.Text = ThamSo.LayMaPhieuNhap().ToString();
-                Allow(true);
-            }
-            else
-            {
-                Allow(false);
+                // Khởi tạo phiếu nhập bằng PhieuFactory
+                m_PhieuNhap = PhieuFactory.TaoPhieuNhap();
+                txtMaPhieu.Text = m_PhieuNhap.Id;
             }
 
 
@@ -153,13 +169,12 @@ namespace CuahangNongduoc
         {
             bindingNavigatorPositionItem.Focus();
             this.Luu();
-            status = Controll.Normal;
-            this.Allow(false);
+            SetState(new XemState());
         }
 
         void Luu()
         {
-            if (status == Controll.AddNew)
+            if (currentState is ThemState)
             {
                 ThemMoi();
 
@@ -262,40 +277,40 @@ namespace CuahangNongduoc
         {
             ctrl = new PhieuNhapController();
 
-            status = Controll.AddNew;
+            // Chuyển State sang Thêm
+            SetState(new ThemState());
 
-            txtMaPhieu.Text = ThamSo.LayMaPhieuNhap().ToString();
-            numTongTien.Value = 0;
-            numDaTra.Value = 0;
-            numConNo.Value = 0;
+            // Tạo đối tượng qua PhieuFactory
+            m_PhieuNhap = PhieuFactory.TaoPhieuNhap();
+
+            txtMaPhieu.Text = m_PhieuNhap.Id;
+            dtNgayNhap.Value = m_PhieuNhap.NgayNhap;
+            numTongTien.Value = Convert.ToDecimal(m_PhieuNhap.TongTien);
+            numDaTra.Value = Convert.ToDecimal(m_PhieuNhap.DaTra);
+            numConNo.Value = Convert.ToDecimal(m_PhieuNhap.ConNo);
+
             ctrlMaSP.HienThiChiTietPhieuNhap(txtMaPhieu.Text, dataGridView);
-            this.Allow(true);
         }
 
         private void toolSavePrint_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (!(currentState is XemState))
             {
                 MessageBox.Show("Vui lòng lưu lại Phiếu nhập hiện tại!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-
                 String ma_phieu = txtMaPhieu.Text;
-
                 PhieuNhapController ctrlPN = new PhieuNhapController();
-
                 CuahangNongduoc.BusinessObject.PhieuNhap ph = ctrlPN.LayPhieuNhap(ma_phieu);
-
                 frmInPhieuNhap PhieuNhap = new frmInPhieuNhap(ph);
-
                 PhieuNhap.Show();
             }
         }
 
         private void toolThoat_Click(object sender, EventArgs e)
         {
-            if (status != Controll.Normal)
+            if (!(currentState is XemState))
             {
                 if (MessageBox.Show("Bạn có muốn lưu lại Phiếu nhập này không?", "Phieu Nhap Hang", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
@@ -328,7 +343,7 @@ namespace CuahangNongduoc
             GridErrorHelper.HandleDataError(sender, e);
         }
 
-        void Allow(bool val)
+         public void Allow(bool val)
         {
             txtMaPhieu.Enabled = val;
             cmbNhaCungCap.Enabled = val;
@@ -343,8 +358,7 @@ namespace CuahangNongduoc
 
         private void toolChinhsua_Click(object sender, EventArgs e)
         {
-            status = Controll.Edit;
-            this.Allow(true);
+            SetState(new SuaState());
         }
 
         // ==================== [FE-07] REFACTORING ====================
