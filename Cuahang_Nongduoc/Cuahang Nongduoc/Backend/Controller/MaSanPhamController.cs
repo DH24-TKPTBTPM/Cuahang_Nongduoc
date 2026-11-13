@@ -126,7 +126,6 @@ namespace CuahangNongduoc.Controller
                 sp.Id = Convert.ToString(row["ID"]);
                 sp.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
                 sp.GiaNhap = Convert.ToInt64(row["DON_GIA_NHAP"]);
-                sp.ThanhTien = sp.SoLuong * sp.GiaNhap;
                 sp.NgayNhap = Convert.ToDateTime(row["NGAY_NHAP"]);
                 sp.NgaySanXuat = Convert.ToDateTime(row["NGAY_SAN_XUAT"]);
                 sp.NgayHetHan = Convert.ToDateTime(row["NGAY_HET_HAN"]);

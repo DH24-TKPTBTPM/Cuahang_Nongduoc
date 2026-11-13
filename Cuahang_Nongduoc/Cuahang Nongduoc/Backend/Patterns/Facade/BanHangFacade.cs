@@ -6,6 +6,8 @@ using CuahangNongduoc.Controller;
 using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.Patterns.Singleton;
 using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.Patterns.Factory; // Import Factory ở Backend
+
 
 namespace CuahangNongduoc.Patterns.Facade
 {
@@ -40,6 +42,8 @@ namespace CuahangNongduoc.Patterns.Facade
             _ctrlMaSanPham = new MaSanPhamController();
             _ctrlPhieuBan = new PhieuBanController();
             _ctrlChiTiet = new ChiTietPhieuBanController();
+
+            _maSanPhanFactory = new MaSanPhanFactory();
         }
 
         public PhieuBan KhoiTaoPhieuMoi(IBanHangStrategy strategy)
@@ -47,6 +51,8 @@ namespace CuahangNongduoc.Patterns.Facade
             PhieuBan pb = new PhieuBan();
             pb.Id = ThamSoManager.Instance.LayMaPhieuBan().ToString();
             pb.NgayBan = DateTime.Now;
+            pb.TongTien = 0;
+            pb.DaTra = 0;
             return pb;
         }
 
@@ -65,6 +71,15 @@ namespace CuahangNongduoc.Patterns.Facade
         // Kiểm tra         : QA2
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
+  // ==================== [FE02] REFACTORING ====================
+        // Lỗi (Code smell) : Inappropriate Intimacy / Violating Facade - UI gọi trực tiếp Factory khởi tạo mã
+        // Kỹ thuật         : Move Method (Di chuyển logic gọi Factory từ Form sang Facade)
+        // Trước            : Form trực tiếp tạo MaSanPhamFactory và xử lý sinh mã từng sản phẩm
+        // Sau              : Di chuyển MaSanPhamFactory.TaoMaSanPhamTuDong() vào tập trung trong LuuHoaDon()
+        // Tác giả          : FE1 - Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 - Nguyễn Huỳnh Ngọc Anh 
+        // Kiểm tra         : QA1 – <Họ và tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
         public bool LuuHoaDon(PhieuBan phieuBan, IList<ChiTietPhieuBan> danhSachChiTiet, IList<MaSanPham> dsXoa)
         {
             LastErrorMessage = null;
@@ -105,6 +120,60 @@ namespace CuahangNongduoc.Patterns.Facade
             {
                 LastErrorMessage = "Lỗi lưu hóa đơn: " + ex.Message;
                 AppLogger.Instance.Error("BanHangFacade.LuuHoaDon thất bại (đã Rollback)", ex);
+                return false;
+            }
+        }
+
+        // ==================== [FE-02] REFACTORING (MOVE METHOD) ====================
+        // Chuyển logic hoàn kho khi xóa Phiếu bán từ Form về Facade
+        // ===========================================================================
+        public bool XoaPhieuBan(string maPhieu)
+        {
+            LastErrorMessage = null;
+            try
+            {
+                using (IUnitOfWork uow = new UnitOfWork())
+                {
+                    // 1. Lấy thông tin phiếu bán cũ
+                    PhieuBanFactory pbFactory = new PhieuBanFactory();
+                    DataTable tblPhieu = pbFactory.LayPhieuBan(maPhieu);
+
+                    if (tblPhieu.Rows.Count == 0)
+                    {
+                        LastErrorMessage = "Phiếu bán không tồn tại.";
+                        return false;
+                    }
+
+                    string idKH = Convert.ToString(tblPhieu.Rows[0]["ID_KHACH_HANG"]);
+                    DateTime ngayBan = ChuanHoaNgay(Convert.ToDateTime(tblPhieu.Rows[0]["NGAY_BAN"]));
+
+                    // 2. Xóa chi tiết phiếu bán (ChiTietPhieuBanFactory tự trigger hoàn tồn kho)
+                    ChiTietPhieuBanFactory ctFactory = new ChiTietPhieuBanFactory();
+                    DataTable tblCT = ctFactory.LayChiTietPhieuBan(maPhieu);
+                    foreach (DataRow row in tblCT.Rows)
+                    {
+                        row.Delete();
+                    }
+                    if (tblCT.GetChanges() != null && !ctFactory.Save())
+                        throw new DataAccessException("Lỗi khi xóa chi tiết phiếu và hoàn tồn kho.", null);
+
+                    // 3. Xóa phiếu bán gốc
+                    tblPhieu.Rows[0].Delete();
+                    if (tblPhieu.GetChanges() != null && !pbFactory.Save())
+                        throw new DataAccessException("Lỗi khi xóa dòng phiếu bán.", null);
+
+                    // 4. Tính toán lại Công nợ khách hàng sau khi xóa phiếu
+                    CapNhatCongNo(idKH, ngayBan.Month, ngayBan.Year);
+
+                    // 5. Commit giao dịch an toàn
+                    uow.Commit();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LastErrorMessage = "Lỗi khi xóa hóa đơn: " + ex.Message;
+                AppLogger.Instance.Error("BanHangFacade.XoaPhieuBan thất bại (đã Rollback)", ex);
                 return false;
             }
         }
