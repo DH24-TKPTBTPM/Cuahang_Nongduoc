@@ -26,7 +26,11 @@ namespace CuahangNongduoc
 
             this.toolThang.SelectedIndex = DateTime.Now.Month - 1;
             this.toolNam.Text = DateTime.Now.Year.ToString();
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
 
         }
 
@@ -122,8 +126,13 @@ namespace CuahangNongduoc
         private void toolTongHop_Click(object sender, EventArgs e)
         {
             toolProgress.Visible = true;
-            //ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
-            TongHopDuNo(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text)); // FE3-[FE-CN] Form tự xử lý tiến trình và binding
+            DataTable data = ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+            toolProgress.Maximum = data.Rows.Count;
+            toolProgress.Value = data.Rows.Count;
             toolProgress.Visible = false;
         }
 
