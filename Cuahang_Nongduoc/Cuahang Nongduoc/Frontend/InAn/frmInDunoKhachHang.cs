@@ -8,38 +8,40 @@ using System.Windows.Forms;
 
 namespace CuahangNongduoc
 {
-    public partial class frmInDunoKhachHang : Form
+    
+    public partial class frmInDunoKhachHang : BaseReportForm // FE3-[D10] Kế thừa BaseReportForm
+    //public partial class frmInDunoKhachHang : Form
     {
         CuahangNongduoc.BusinessObject.DuNoKhachHang m_DuNo;
         public frmInDunoKhachHang(CuahangNongduoc.BusinessObject.DuNoKhachHang  dn)
         {
             InitializeComponent();
-            // ==================== [FE-BC] REFACTORING ====================
-            // Lỗi (Code smell) : Thiếu cấu hình AppDomain cho ReportViewer và đồng bộ Font hiển thị khi in từ SQL Server
-            // Kỹ thuật         : Clean UI & ReportViewer Configuration
-            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
-            // Ngày chỉnh sửa   : 12/11/2026
-            // =============================================================
-            this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
-            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
+            CauHinhReportViewer(this.reportViewer); // FE3-[D10] Cấu hình ReportViewer dùng chung từ BaseReportForm
             m_DuNo = dn;
         }
 
         private void frmInDunoKhachHang_Load(object sender, EventArgs e)
         {
-            Num2Str num = new Num2Str();
-            IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
-            CuahangNongduoc.BusinessObject.CuaHang ch = ThamSo.LayCuaHang();
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ten_cua_hang", ch.TenCuaHang));
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dia_chi", ch.DiaChi));
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dien_thoai", ch.DienThoai));
+            // ==================== [D10] DESIGN PATTERN (GoF) ====================
+            // Mẫu thiết kế     : Builder + Template Method (GoF)
+            // Lỗi (Code smell) : Duplicate Code – Lặp lại 11 dòng khởi tạo ReportParameter và gán DataSource
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 12/11/2026
+            // ====================================================================
+            HienThiBaoCao(this.reportViewer, this.DuNoKhachHangBindingSource, m_DuNo, m_DuNo.CuoiKy); // FE3-[D10] Gọi Template Method
+            //Num2Str num = new Num2Str();
+            //IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
+            //CuahangNongduoc.BusinessObject.CuaHang ch = ThamSo.LayCuaHang();
+            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ten_cua_hang", ch.TenCuaHang));
+            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dia_chi", ch.DiaChi));
+            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dien_thoai", ch.DienThoai));
 
-            param.Add(new Microsoft.Reporting.WinForms.ReportParameter("bang_chu", num.NumberToString(m_DuNo.CuoiKy.ToString())));
+            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("bang_chu", num.NumberToString(m_DuNo.CuoiKy.ToString())));
 
-            this.reportViewer.LocalReport.SetParameters(param);
-            this.DuNoKhachHangBindingSource.DataSource = m_DuNo;
-            this.reportViewer.RefreshReport();
+            //this.reportViewer.LocalReport.SetParameters(param);
+            //this.DuNoKhachHangBindingSource.DataSource = m_DuNo;
+            //this.reportViewer.RefreshReport();
         }
     }
 }
