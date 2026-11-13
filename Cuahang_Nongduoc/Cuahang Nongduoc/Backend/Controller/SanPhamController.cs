@@ -179,6 +179,23 @@ namespace CuahangNongduoc.Controller
 
         }
 
+        // ==================== FE-DM  REFACTORING ====================
+        // Lỗi (Code smell) : Tight Coupling – Controller nhận 9 tham số WinForms Controls
+        // Kỹ thuật         : Remove Parameter / Move DataBinding Responsibility
+        // Trước            : HienthiDataGridview nhận DataGridView, BindingNavigator và 7 Controls nhập liệu
+        // Sau              : HienthiDataGridview chỉ nhận DataGridView và BindingNavigator, gán BindingSource
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Ngày chỉnh sửa   : 11/11/2026
+        // ===================================================================
+        public void HienthiDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
+        {
+            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
+            bs.DataSource = factory.DanhsachSanPham();
+
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
+        }
+
         public DataRow NewRow()
         {
             return factory.NewRow();
