@@ -10,6 +10,10 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using CuahangNongduoc.Controller;
+using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.Frontend.Chung;
 
 namespace CuahangNongduoc
 {
@@ -433,9 +437,19 @@ namespace CuahangNongduoc
             }
         }
 
+        // ==================== [FE-09] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code – Xử lý DataError thủ công chỉ dùng e.Cancel
+        // Kỹ thuật         : Extract Method (Gọi hàm dùng chung từ GridErrorHelper)
+        // Trước            : e.Cancel = true;
+        // Sau              : GridErrorHelper.HandleDataError(sender, e);
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : Không
+        // Kiểm tra         : QA – <Điền họ tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =============================================================
         private void dgvDanhsachSP_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            e.Cancel = true;
+            GridErrorHelper.HandleDataError(sender, e);
         }
 
         private void toolChinhSua_Click(object sender, EventArgs e)
