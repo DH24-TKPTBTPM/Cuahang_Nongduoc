@@ -1,7 +1,7 @@
 using CuahangNongduoc.Backend.Patterns.State;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.Frontend.Chung;
+using CuahangNongduoc.Frontend.Common1;
 using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections;
