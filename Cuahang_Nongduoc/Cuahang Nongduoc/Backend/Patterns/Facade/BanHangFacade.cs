@@ -42,7 +42,6 @@ namespace CuahangNongduoc.Patterns.Facade
             pb.NgayBan = DateTime.Now;
             pb.TongTien = 0;
             pb.DaTra = 0;
-            pb.ConNo = 0;
             return pb;
         }
 

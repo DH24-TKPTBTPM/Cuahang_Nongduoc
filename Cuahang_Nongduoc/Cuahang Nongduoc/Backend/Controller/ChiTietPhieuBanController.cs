@@ -54,7 +54,6 @@ namespace CuahangNongduoc.Controller
                 ChiTietPhieuBan ct = new ChiTietPhieuBan();
                 ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
                 ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
                 ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
 
                 ds.Add(ct);
@@ -73,7 +72,6 @@ namespace CuahangNongduoc.Controller
                 ChiTietPhieuBan ct = new ChiTietPhieuBan();
                 ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
                 ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
                 ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
 
                 ds.Add(ct);
@@ -91,7 +89,6 @@ namespace CuahangNongduoc.Controller
                 ChiTietPhieuBan ct = new ChiTietPhieuBan();
                 ct.DonGia = Convert.ToInt64(row["DON_GIA"]);
                 ct.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                ct.ThanhTien = Convert.ToInt64(row["THANH_TIEN"]);
                 ct.MaSanPham = ctrl.LayMaSanPham(Convert.ToString(row["ID_MA_SAN_PHAM"]));
 
                 ds.Add(ct);

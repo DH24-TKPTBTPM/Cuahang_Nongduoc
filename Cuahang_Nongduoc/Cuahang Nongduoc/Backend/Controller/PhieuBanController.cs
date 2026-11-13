@@ -204,7 +204,6 @@ namespace CuahangNongduoc.Controller
                 ph.NgayBan = Convert.ToDateTime(tbl.Rows[0]["NGAY_BAN"]);
                 ph.TongTien = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
                 ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                ph.ConNo = Convert.ToInt64(tbl.Rows[0]["CON_NO"]);
                 KhachHangController ctrlKH = new KhachHangController();
                 ph.KhachHang = ctrlKH.LayKhachHang(Convert.ToString(tbl.Rows[0]["ID_KHACH_HANG"]));
                 ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
