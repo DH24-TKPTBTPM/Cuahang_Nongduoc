@@ -12,70 +12,99 @@ namespace CuahangNongduoc.Controller
     {
         KhachHangFactory factory = new KhachHangFactory();
 
-        public void HienthiAutoComboBox(System.Windows.Forms.ComboBox cmb, bool loai)
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiAutoComboBox(bool loai)
         {
-            cmb.DataSource = factory.DanhsachKhachHang(loai);
-            cmb.DisplayMember = "HO_TEN";
-            cmb.ValueMember = "ID";
-        }
-        public void HienthiChungAutoComboBox(System.Windows.Forms.ComboBox cmb)
-        {
-            cmb.DataSource = factory.DanhsachKhachHang();
-            cmb.DisplayMember = "HO_TEN";
-            cmb.ValueMember = "ID";
-        }
-
-        public void HienthiKhachHangDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
-        {
-            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
-            DataTable tbl = factory.DanhsachKhachHang(false);
-            tbl.Columns[4].DefaultValue = false;
-            bs.DataSource = tbl;
-            bn.BindingSource = bs;
-            dg.DataSource = bs;
-            
+            return factory.DanhsachKhachHang(loai);
         }
 
-        public void HienthiKhachHangChungDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiChungAutoComboBox()
         {
-
-            cmb.DataSource = factory.DanhsachKhachHang();
-            cmb.DisplayMember = "HO_TEN";
-            cmb.ValueMember = "ID";
-            cmb.DataPropertyName = "ID_KHACH_HANG";
-            cmb.HeaderText = "Khách hàng";
-
+            return factory.DanhsachKhachHang();
         }
 
-        public void HienthiKhachHangDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiKhachHangDataGridview(bool loai)
         {
-        
-            cmb.DataSource = factory.DanhsachKhachHang(false);
-            cmb.DisplayMember = "HO_TEN";
-            cmb.ValueMember = "ID";
-            cmb.DataPropertyName = "ID_KHACH_HANG";
-            cmb.HeaderText = "Khách hàng";
-
+            DataTable tbl = factory.DanhsachKhachHang(loai);
+            tbl.Columns["LOAI_KH"].DefaultValue = loai;
+            return tbl;
         }
-        public void HienthiDaiLyDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiKhachHangChungDataGridviewComboBox()
         {
-
-            cmb.DataSource = factory.DanhsachKhachHang(true);
-            cmb.DisplayMember = "HO_TEN";
-            cmb.ValueMember = "ID";
-            cmb.DataPropertyName = "ID_KHACH_HANG";
-            cmb.HeaderText = "Đại lý";
-
+            return factory.DanhsachKhachHang();
         }
-        public void HienthiDaiLyDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
-        {
-            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
-            DataTable tbl = factory.DanhsachKhachHang(true);
-            tbl.Columns[4].DefaultValue = true;
-            bs.DataSource = tbl;
-            bn.BindingSource = bs;
-            dg.DataSource = bs;
 
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiKhachHangDataGridviewComboBox()
+        {
+            return factory.DanhsachKhachHang(false);
+        }
+
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiDaiLyDataGridviewComboBox()
+        {
+            return factory.DanhsachKhachHang(true);
+        }
+
+// ==================== [R23] REFACTORING ====================
+// Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
+// Kỹ thuật         : Replace Magic Number
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE2
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        public DataTable HienthiDaiLyDataGridview(bool loai)
+        {
+            DataTable tbl = factory.DanhsachKhachHang(loai);
+            tbl.Columns["LOAI_KH"].DefaultValue = loai;
+            return tbl;
         }
 
         public void TimHoTen(String hoten, bool loai)
