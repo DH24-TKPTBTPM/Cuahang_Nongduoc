@@ -20,6 +20,19 @@ namespace CuahangNongduoc
     /// Ngày tạo : 06/11/2026
     public partial class frmBanHang : Form, IStateableForm
     {
+
+        // ==================== [FE-02] REFACTORING ====================
+        // Lỗi (Code smell) : Violating Facade / Direct Subsystem Access – Form UI gọi trực tiếp MaSanPhanFactory ở DataLayer
+        // Kỹ thuật         : Hide Delegate / Move Method
+        // Trước            : Form trực tiếp khởi tạo và gọi CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong() trong Form
+        // Sau              : Nút Lưu và các thao tác lưu dữ liệu ủy quyền hoàn toàn qua _facade.LuuHoaDon(), loại bỏ gọi MaSanPhanFactory
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 05/11/2026
+        // ===========================================================
+        private readonly BanHangFacade _facade = new BanHangFacade();
+
         SanPhamController ctrlSanPham = new SanPhamController();
         KhachHangController ctrlKhachHang = new KhachHangController();
         MaSanPhamController ctrlMaSanPham = new MaSanPhamController();
@@ -31,8 +44,6 @@ namespace CuahangNongduoc
         // Mục đích : Lưu trữ đối tượng trạng thái hiện tại (StateXem, StateThem, StateSua)
         private IFrmState _currentState;
     
-        private BanHangFacade _facade = new BanHangFacade();
-
         // Biến lưu trữ Strategy
         private IBanHangStrategy _strategy;
 
@@ -236,6 +247,16 @@ namespace CuahangNongduoc
             this.Luu();
         }
 
+        // ==================== [FE-02] REFACTORING ====================
+        // Lỗi (Code smell) : Violating Facade Pattern - Nút Lưu/Form gọi trực tiếp MaSanPhanFactory và các Controller
+        // Kỹ thuật         : Hide Delegate / Move Method
+        // Trước            : Form trực tiếp gọi MaSanPhanFactory.CapNhatSoLuong(), ctrlChiTiet.Save(), ctrlPhieuBan.Save()
+        // Sau              : Form chỉ gọi duy nhất _facade.LuuHoaDon(...) để xử lý lưu phiếu bán và điều phối hoàn kho
+        // Tác giả          : FE1 – Dương Thị Kim Anh
+        // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 10/11/2026
+        // ===========================================================
         // ==================== [D09] REFACTORING (FACADE PATTERN) ====================
         // Lỗi (Code smell) : Direct Factory Access / Feature Envy – UI Form trực tiếp gọi MaSanPhanFactory
         // Kỹ thuật         : Hide Delegate / Move Method via Facade
@@ -251,33 +272,41 @@ namespace CuahangNongduoc
             bool isThemMoi = (_currentState is StateThem);
             string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
 
-            // GỌI DUY NHẤT FACADE ĐỂ LƯU VÀ HOÀN TỒN KHO
-            bool thanhCong = _facade.LuuHoaDon(
-                txtMaPhieu.Text.Trim(),
-                maKhachHang,
-                dtNgayLapPhieu.Value,
-                numTongTien.Value,
-                numDaTra.Value,
-                numConNo.Value,
-                ctrlChiTiet,
-                ctrlPhieuBan,
-                deleted,
-                isThemMoi
-            );
-
-            if (thanhCong)
+            try
             {
-                MessageBox.Show("Lưu phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                SetState(new StateXem());
+                // GỌI DUY NHẤT FACADE ĐỂ LƯU VÀ HOÀN TỒN KHO
+                bool thanhCong = _facade.LuuHoaDon(
+                    txtMaPhieu.Text.Trim(),
+                    maKhachHang,
+                    dtNgayLapPhieu.Value,
+                    numTongTien.Value,
+                    numDaTra.Value,
+                    numConNo.Value,
+                    deleted,
+                    isThemMoi
+                );
+
+                if (thanhCong)
+                {
+                    deleted.Clear(); // Xóa bộ đệm sau khi lưu thành công
+                    MessageBox.Show("Lưu phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    SetState(new StateXem());
+                }
+            }
+            catch (Exception ex)
+            {
+                  // Bắt lỗi do Facade ném ra
+                  MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        
         void CapNhat()
         {
-            foreach (MaSanPham masp in deleted)
-            {
-                CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(masp.Id, masp.SoLuong);
-            }
+            // [FE-02 - Hide Delegate]: Bỏ gọi trực tiếp MaSanPhanFactory.CapNhatSoLuong() ở Form. 
+            // Truyền danh sách deleted vào Facade để Facade tự điều phối cập nhật số lượng tồn kho.
+            PhieuBan phieuBanCurrent = ctrlPhieuBan.LayPhieuBan(txtMaPhieu.Text);
+            _facade.LuuHoaDon(phieuBanCurrent, null, deleted);
+
             deleted.Clear();
             ctrlChiTiet.Save();
             ctrlPhieuBan.Update();
@@ -309,6 +338,18 @@ namespace CuahangNongduoc
                     ThamSo.GanMaPhieuBan(so + 1);
                 }
             }
+
+            // [FE-02 - Hide Delegate]: Gọi Facade lưu phiếu bán và chi tiết phiếu
+            PhieuBan phieuBanNew = new PhieuBan
+            {
+                Id = txtMaPhieu.Text,
+                NgayBan = dtNgayLapPhieu.Value.Date,
+                TongTien = Convert.ToInt64(numTongTien.Value),
+                DaTra = Convert.ToInt64(numDaTra.Value),
+                ConNo = Convert.ToInt64(numConNo.Value)
+            };
+
+            _facade.LuuHoaDon(phieuBanNew, null, null);
 
             ctrlPhieuBan.Save();
             ctrlChiTiet.Save();
@@ -442,10 +483,18 @@ namespace CuahangNongduoc
                 if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phiếu Bán", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     string maPhieu = view["ID"].ToString();
-                    // GỌI FACADE XÓA VÀ HOÀN TỒN KHO ẨN DƯỚI TẦNG BACKEND
-                    if (_facade.XoaPhieuBan(maPhieu, ctrlPhieuBan))
+                    try
                     {
-                        bindingNavigator.BindingSource.RemoveCurrent();
+                        // Gọi Facade xóa và hoàn tồn kho ẩn dưới tầng Backend
+                        if (_facade.XoaPhieuBan(maPhieu))
+                        {
+                            bindingNavigator.BindingSource.RemoveCurrent();
+                            MessageBox.Show("Xóa phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
