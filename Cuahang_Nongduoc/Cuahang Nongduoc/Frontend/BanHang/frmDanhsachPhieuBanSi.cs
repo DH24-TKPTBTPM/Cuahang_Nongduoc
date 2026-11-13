@@ -22,7 +22,11 @@ namespace CuahangNongduoc
         KhachHangController ctrlKH = new KhachHangController();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
-            ctrlKH.HienthiDaiLyDataGridviewComboBox(colKhachhang);
+            colKhachhang.DataSource = ctrlKH.HienthiDaiLyDataGridviewComboBox();
+            colKhachhang.DisplayMember = "HO_TEN";
+            colKhachhang.ValueMember = "ID";
+            colKhachhang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachhang.HeaderText = "Đại lý";
             ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
         }
         
