@@ -21,9 +21,37 @@ namespace CuahangNongduoc.DataLayer
     {
         DataService m_Ds = new DataService();
 
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : Dùng SELECT * / SELECT CT.* và truy vấn rời từng dòng gây N+1 query khi nạp chi tiết phiếu bán
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : SELECT * rồi gọi lồng MaSanPhamController -> SanPhamController -> DonViTinhController cho mỗi dòng chi tiết
+        // Sau              : Chỉ rõ tên cột và bổ sung LayChiTietPhieuBanDayDu() JOIN sẵn 4 bảng trong 1 câu SQL duy nhất
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
+        private const string SqlChiTietDayDu =
+            "SELECT CT.DON_GIA, CT.SO_LUONG, CT.THANH_TIEN, " +
+            "MSP.ID AS MSP_ID, MSP.SO_LUONG AS MSP_SO_LUONG, MSP.DON_GIA_NHAP AS MSP_DON_GIA_NHAP, " +
+            "MSP.NGAY_NHAP AS MSP_NGAY_NHAP, MSP.NGAY_SAN_XUAT AS MSP_NGAY_SAN_XUAT, MSP.NGAY_HET_HAN AS MSP_NGAY_HET_HAN, " +
+            "SP.ID AS SP_ID, SP.TEN_SAN_PHAM, SP.SO_LUONG AS SP_SO_LUONG, SP.DON_GIA_NHAP AS SP_DON_GIA_NHAP, " +
+            "SP.GIA_BAN_LE, SP.GIA_BAN_SI, DVT.ID AS DVT_ID, DVT.TEN_DON_VI " +
+            "FROM CHI_TIET_PHIEU_BAN CT " +
+            "LEFT JOIN MA_SAN_PHAM MSP ON CT.ID_MA_SAN_PHAM = MSP.ID " +
+            "LEFT JOIN SAN_PHAM SP ON MSP.ID_SAN_PHAM = SP.ID " +
+            "LEFT JOIN DON_VI_TINH DVT ON SP.ID_DON_VI_TINH = DVT.ID ";
+
+        private static DataTable LoadReadOnly(SqlCommand cmd)
+        {
+            DataService ds = new DataService();
+            ds.Load(cmd);
+            return ds.ResultTable;
+        }
+
         public DataTable LayChiTietPhieuBan(String idPhieuBan)
         {
-            SqlCommand cmd = new SqlCommand("SELECT * FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
+            SqlCommand cmd = new SqlCommand("SELECT ID_PHIEU_BAN, ID_MA_SAN_PHAM, SO_LUONG, DON_GIA, THANH_TIEN FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
             m_Ds.Load(cmd);
             return m_Ds.ResultTable;
@@ -35,14 +63,14 @@ namespace CuahangNongduoc.DataLayer
         // Trước            : Dùng CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban) và MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam
         // Sau              : Đổi cả 2 hàm sang lọc theo khoảng (PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den)
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA2
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
         public DataTable LayChiTietPhieuBan(DateTime dtNgayBan)
         {
             DateTime tu = dtNgayBan.Date;
-            SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
+            SqlCommand cmd = new SqlCommand("SELECT CT.ID_PHIEU_BAN, CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
                     " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
             cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
             cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
@@ -53,12 +81,37 @@ namespace CuahangNongduoc.DataLayer
         public DataTable LayChiTietPhieuBan(int thang, int nam)
         {
             DateTime tu = new DateTime(nam, thang, 1);
-            SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
+            SqlCommand cmd = new SqlCommand("SELECT CT.ID_PHIEU_BAN, CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
                     " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
             cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
             cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
             m_Ds.Load(cmd);
             return m_Ds.ResultTable;
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(String idPhieuBan)
+        {
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "WHERE CT.ID_PHIEU_BAN = @id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
+            return LoadReadOnly(cmd);
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(DateTime dtNgayBan)
+        {
+            DateTime tu = dtNgayBan.Date;
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
+            return LoadReadOnly(cmd);
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(int thang, int nam)
+        {
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
+            return LoadReadOnly(cmd);
         }
 
         public DataRow NewRow()
