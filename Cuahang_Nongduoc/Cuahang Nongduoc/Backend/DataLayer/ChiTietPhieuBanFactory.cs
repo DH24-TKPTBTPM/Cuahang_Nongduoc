@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -83,13 +84,35 @@ namespace CuahangNongduoc.DataLayer
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 08/11/2026
         // ==============================================================
+
+        // ==================== [R27] REFACTORING ====================
+        // Lỗi (Code smell) : Non-Atomic Operations (FE BUG-02) – Trừ kho trước khi lưu chi tiết phiếu bán và thực thi rời rạc, gây lệch kho khi lưu CSDL thất bại
+        // Kỹ thuật         : Introduce Unit of Work (https://refactoring.guru)
+        // Trước            : Gọi DongBoTonKhoTheoTrangThai() trừ tồn kho trực tiếp rồi mới gọi m_Ds.UpdateDataTable() không có Transaction bảo vệ
+        // Sau              : Đưa toàn bộ thao tác đồng bộ kho và lưu chi tiết phiếu vào chung một TransactionScope (Unit of Work), tự động Rollback kho nếu lưu DB lỗi
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public bool Save()
         {
-            foreach (DataRow row in m_Ds.Rows)
+            using (TransactionScope scope = new TransactionScope())
             {
-                DongBoTonKhoTheoTrangThai(row);
+                // 1. Đồng bộ tồn kho theo trạng thái (khi RowState và DataRowVersion.Original còn nguyên vẹn)
+                foreach (DataRow row in m_Ds.Rows)
+                {
+                    DongBoTonKhoTheoTrangThai(row);
+                }
+
+                // 2. Lưu chi tiết phiếu bán xuống Database (nếu lỗi, TransactionScope sẽ tự động Rollback tồn kho ở bước 1)
+                bool isSaved = m_Ds.UpdateDataTable() > 0;
+                if (isSaved)
+                {
+                    scope.Complete();
+                }
+                return isSaved;
             }
-            return m_Ds.UpdateDataTable() > 0;
         }
 
         private void DongBoTonKhoTheoTrangThai(DataRow row)

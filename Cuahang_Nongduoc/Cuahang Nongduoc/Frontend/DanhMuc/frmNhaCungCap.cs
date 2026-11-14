@@ -52,10 +52,6 @@ namespace CuahangNongduoc
             }
         }
 
-        private void frmNhaCungCap_Load(object sender, EventArgs e)
-        {
-            ctrl.HienthiDataGridview(dataGridView, bindingNavigator);
-        }
 
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {

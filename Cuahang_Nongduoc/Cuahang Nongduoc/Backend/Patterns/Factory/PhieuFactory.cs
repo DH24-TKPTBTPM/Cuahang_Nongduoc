@@ -30,7 +30,6 @@ namespace CuahangNongduoc.Patterns.Factory
             pb.NgayBan = DateTime.Now;
             pb.TongTien = 0;
             pb.DaTra = 0;
-            pb.ConNo = 0;
             return pb;
         }
 
@@ -41,7 +40,6 @@ namespace CuahangNongduoc.Patterns.Factory
             pn.NgayNhap = DateTime.Now;
             pn.TongTien = 0;
             pn.DaTra = 0;
-            pn.ConNo = 0;
             return pn;
         }
 
