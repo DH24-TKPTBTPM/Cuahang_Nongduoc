@@ -29,21 +29,34 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
+        // ==================== [R32-BH] REFACTORING ====================
+        // Lỗi (Code smell) : Lọc ngày bằng CONVERT(date, ...) và MONTH(...)/YEAR(...) khiến SQL Server không dùng được Index trên NGAY_BAN
+        // Kỹ thuật         : Substitute Algorithm
+        // Trước            : Dùng CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban) và MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam
+        // Sau              : Đổi cả 2 hàm sang lọc theo khoảng (PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den)
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public DataTable LayChiTietPhieuBan(DateTime dtNgayBan)
         {
+            DateTime tu = dtNgayBan.Date;
             SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban)");
-            cmd.Parameters.Add("@ngayban", SqlDbType.DateTime).Value = dtNgayBan;
+                    " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
             m_Ds.Load(cmd);
             return m_Ds.ResultTable;
         }
 
         public DataTable LayChiTietPhieuBan(int thang, int nam)
         {
+            DateTime tu = new DateTime(nam, thang, 1);
             SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam");
-            cmd.Parameters.Add("@thang", SqlDbType.Int).Value = thang;
-            cmd.Parameters.Add("@nam", SqlDbType.Int).Value = nam;
+                    " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
             m_Ds.Load(cmd);
             return m_Ds.ResultTable;
         }
