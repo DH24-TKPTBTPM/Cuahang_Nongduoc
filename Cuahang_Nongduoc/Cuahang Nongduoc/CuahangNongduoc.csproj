@@ -65,6 +65,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -84,6 +85,7 @@
     <Compile Include="Backend\BusinessObject\Validation\ValidatorContext.cs" />
     <Compile Include="Backend\Controller\ChiTietPhieuNhapController.cs" />
     <Compile Include="Backend\Controller\InventoryService.cs" />
+    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Patterns\Singleton\DatabaseManager.cs" />
     <Compile Include="Backend\Patterns\Singleton\ThamSoManager.cs" />
     <Compile Include="Backend\Patterns\State\SuaState.cs" />
@@ -116,7 +118,6 @@
     <Compile Include="Backend\Controller\PhieuChiController.cs" />
     <Compile Include="Backend\Controller\LyDoChiController.cs" />
     <Compile Include="Backend\Controller\NhaCungCapController.cs" />
-    <Compile Include="Backend\Controller\DuNoKhachHangController.cs" />
     <Compile Include="Backend\Controller\PhieuThanhToanController.cs" />
     <Compile Include="Backend\Controller\PhieuNhapController.cs" />
     <Compile Include="Backend\Controller\KhachHangController.cs" />
@@ -125,6 +126,8 @@
     <Compile Include="Backend\Controller\SanPhamController.cs" />
     <Compile Include="Backend\Controller\DonViTinhController.cs" />
     <Compile Include="Backend\DataLayer\PhieuChiFactory.cs" />
+    <Compile Include="Frontend\Common\BaseReportForm.cs" />
+    <Compile Include="Frontend\Common1\GridErrorHelper.cs" />
     <Compile Include="Frontend\DungChung\Statess\IFrmState.cs" />
     <Compile Include="Frontend\DungChung\Statess\IStateableForm.cs" />
     <Compile Include="Frontend\DungChung\Statess\StateSua.cs" />
@@ -181,6 +184,10 @@
     <Compile Include="Backend\DataLayer\DonViTinhFactory.cs" />
     <Compile Include="Backend\DataLayer\IUnitOfWork.cs" />
     <Compile Include="Backend\DataLayer\UnitOfWork.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\ISpecification.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\CompositeSpecifications.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\SanPhamSpecifications.cs" />
+    <Compile Include="Backend\DataLayer\Specifications\CongNoSpecifications.cs" />
     <Compile Include="Backend\Core\DataService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -569,6 +576,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Backend\BusinessObject\Validation\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
