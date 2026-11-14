@@ -78,10 +78,10 @@ namespace CuahangNongduoc.DataLayer
         }
 
         // ==================== [D07] REFACTORING ====================
-        // Lỗi (Code smell) : Thiếu cơ chế thông báo khi tồn kho thay đổi (cập nhật kho, cảnh báo hết hàng/hết hạn)
+        // Lỗi (Code smell) : Cập nhật số lượng kho xong nhưng không báo cho nơi khác biết để ghi nhận hay cảnh báo
         // Kỹ thuật         : Observer Pattern (GoF)
-        // Trước            : Chỉ chạy SQL UPDATE MA_SAN_PHAM, không phát sự kiện tồn kho thay đổi
-        // Sau              : Gọi InventoryService.Instance.NotifyInventoryChanged(masp, so_luong) sau khi cập nhật kho
+        // Trước            : Chỉ chạy mỗi câu SQL UPDATE MA_SAN_PHAM rồi kết thúc
+        // Sau              : Sau khi cập nhật DB, gọi thêm InventoryService.Instance.NotifyInventoryChanged(...) để tự động ghi log kho và cảnh báo hết hàng/hết hạn
         // Tác giả          : BE2
         // Hỗ trợ           : BE3
         // Kiểm tra         : QA1

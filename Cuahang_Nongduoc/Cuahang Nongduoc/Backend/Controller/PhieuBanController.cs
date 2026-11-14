@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
+using CuahangNongduoc.DataLayer.Mappers;
 using CuahangNongduoc.BusinessObject;
 using System.Windows.Forms;
 using System.Data;
@@ -191,25 +192,20 @@ namespace CuahangNongduoc.Controller
 
         }
 
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Code đọc dữ liệu từ DataRow sang đối tượng PhieuBan viết lẫn ngay trong Controller
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Hàm LayPhieuBan() tự đọc từng cột (NGAY_BAN, TONG_TIEN, DA_TRA, CON_NO...) rồi mới gán vào PhieuBan
+        // Sau              : Chuyển giao toàn bộ việc chuyển đổi cho EntityMapper.ToPhieuBan(tbl.Rows[0])
+        // Tác giả          : BE2
+        // Hỗ trợ           : -
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public PhieuBan LayPhieuBan(String id)
         {
             DataTable tbl = factory.LayPhieuBan(id);
-            PhieuBan ph = null;
-            if (tbl.Rows.Count > 0)
-            {
-
-                ph = new PhieuBan();
-                ph.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                
-                ph.NgayBan = Convert.ToDateTime(tbl.Rows[0]["NGAY_BAN"]);
-                ph.TongTien = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
-                ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                KhachHangController ctrlKH = new KhachHangController();
-                ph.KhachHang = ctrlKH.LayKhachHang(Convert.ToString(tbl.Rows[0]["ID_KHACH_HANG"]));
-                ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                ph.ChiTiet = ctrl.ChiTietPhieuBan(ph.Id);
-            }
-            return ph;
+            return tbl.Rows.Count > 0 ? EntityMapper.ToPhieuBan(tbl.Rows[0]) : null;
         }
 
         public void TimPhieuBan(String maKH, DateTime dt)

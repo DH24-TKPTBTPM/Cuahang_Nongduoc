@@ -3,10 +3,10 @@ using System;
 namespace CuahangNongduoc.BusinessObject.Events
 {
     // ==================== [D07] REFACTORING ====================
-    // Lỗi (Code smell) : Thiếu cơ chế phát sự kiện khi tồn kho thay đổi (cập nhật kho, cảnh báo hết hàng/hết hạn)
+    // Lỗi (Code smell) : Khi kho tăng/giảm số lượng, hệ thống không có sự kiện báo cho các chức năng theo dõi (ghi log kho, cảnh báo hết hàng/hết hạn)
     // Kỹ thuật         : Observer Pattern (GoF)
-    // Trước            : Không có lớp sự kiện tồn kho và các Observer xử lý cập nhật/cảnh báo tách rời
-    // Sau              : Tạo InventoryChangedEventArgs, IInventoryObserver, CapNhatKhoObserver, CanhBaoTonKhoObserver
+    // Trước            : Chưa có lớp sự kiện và bộ lắng nghe mỗi khi tồn kho thay đổi
+    // Sau              : Tạo gói sự kiện InventoryChangedEventArgs, giao diện IInventoryObserver cùng 2 bộ lắng nghe CapNhatKhoObserver (ghi log kho) và CanhBaoTonKhoObserver (báo hết hàng/hết hạn)
     // Tác giả          : BE2
     // Hỗ trợ           : BE3
     // Kiểm tra         : QA1
