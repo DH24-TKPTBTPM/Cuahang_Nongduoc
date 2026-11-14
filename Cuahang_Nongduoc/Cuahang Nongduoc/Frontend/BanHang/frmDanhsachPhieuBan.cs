@@ -1,5 +1,7 @@
 ﻿using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.Frontend.BanHang;
+using CuahangNongduoc.Patterns.Factory;
 using CuahangNongduoc.Patterns.Strategy;
 using System;
 using System.Collections.Generic;
@@ -11,41 +13,56 @@ using System.Windows.Forms;
 
 namespace CuahangNongduoc
 {
-    public partial class frmDanhsachPhieuBanSi : Form
+    public partial class frmDanhsachPhieuBan : Form
     {
-        public frmDanhsachPhieuBanSi()
+        private LoaiPhieuBan _loaiPhieu;
+        public frmDanhsachPhieuBan(LoaiPhieuBan loaiPhieu)
         {
             InitializeComponent();
+            _loaiPhieu = loaiPhieu;
+            if (_loaiPhieu == LoaiPhieuBan.BanLe)
+            {
+                this.Text = "Danh Sách Phiếu Bán Lẻ";
+            }
+            else
+            {
+                this.Text = "Danh Sách Phiếu Bán Sỉ";
+            }
         }
 
         PhieuBanController ctrl = new PhieuBanController();
         KhachHangController ctrlKH = new KhachHangController();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
-            colKhachhang.DataSource = ctrlKH.HienthiDaiLyDataGridviewComboBox();
-            colKhachhang.DisplayMember = "HO_TEN";
-            colKhachhang.ValueMember = "ID";
-            colKhachhang.DataPropertyName = "ID_KHACH_HANG";
-            colKhachhang.HeaderText = "Đại lý";
-            ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
+            if (_loaiPhieu == LoaiPhieuBan.BanLe)
+            {
+                ctrlKH.HienthiKhachHangDataGridviewComboBox(colKhachhang); 
+                ctrl.HienthiPhieuBanLe(bindingNavigator, dataGridView);
+
+            }
+            else
+            {
+
+                ctrlKH.HienthiKhachHangDataGridviewComboBox (colKhachhang);
+                ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
+            }
         }
-        
         frmBanHang BanLe = null;
         private void dataGridView_DoubleClick(object sender, EventArgs e)
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                // ==================== [FE-01] REFACTORING ====================
-                // Lỗi (Code smell) : Argument Type Mismatch – Truyền sai constructor cho frmBanHang
-                // Kỹ thuật : Strategy Injection
-                // Trước : BanLe = new frmBanSi(ctrl);
-                // Sau : BanLe = new frmBanHang(ctrl, new BanSiStrategy());
-                // Tác giả : FE1 – Dương Thị Kim Anh
-                // Hỗ trợ : FE2 - NgUyễn Huỳnh Ngọc Anh
-                // Kiểm tra : QA1 - Huỳnh Lư Anh Minh
-                // Ngày chỉnh sửa : 07/11/2026
-                // ===========================================================
-                BanLe = new frmBanHang(ctrl, new BanSiStrategy());
+                {
+                    // Kiểm tra loại phiếu để truyền đúng Strategy
+                    if (_loaiPhieu == LoaiPhieuBan.BanLe)
+                    {
+                        BanLe = new frmBanHang(ctrl, new BanLeStrategy());
+                    }
+                    else
+                    {
+                        BanLe = new frmBanHang(ctrl, new BanSiStrategy());
+                    }
+                }
                 BanLe.Show();
             }
             else
@@ -87,6 +104,7 @@ namespace CuahangNongduoc
              DataRowView view =  (DataRowView)bindingNavigator.BindingSource.Current;
              if (view != null)
              {
+
                  if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Le", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                  {
                      ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
@@ -101,7 +119,7 @@ namespace CuahangNongduoc
              }
         }
 
-        private void toolIn_Click(object sender, EventArgs e)
+        private void toolPrint_Click(object sender, EventArgs e)
         {
             DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
             if (row != null)
@@ -116,7 +134,7 @@ namespace CuahangNongduoc
 
         private void toolTimKiem_Click(object sender, EventArgs e)
         {
-            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(true);
+            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(false);
             Point p = PointToScreen(toolTimKiem.Bounds.Location);
             p.X += toolTimKiem.Width;
             p.Y += toolTimKiem.Height;
@@ -126,6 +144,11 @@ namespace CuahangNongduoc
             {
                 ctrl.TimPhieuBan(Tim.cmbNCC.SelectedValue.ToString(), Tim.dtNgayNhap.Value.Date);
             }
+        }
+
+        private void dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }
