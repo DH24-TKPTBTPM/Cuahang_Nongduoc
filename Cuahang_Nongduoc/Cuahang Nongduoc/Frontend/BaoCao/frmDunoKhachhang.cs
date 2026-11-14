@@ -26,7 +26,11 @@ namespace CuahangNongduoc
 
             this.toolThang.SelectedIndex = DateTime.Now.Month - 1;
             this.toolNam.Text = DateTime.Now.Year.ToString();
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
 
         }
 
@@ -122,8 +126,13 @@ namespace CuahangNongduoc
         private void toolTongHop_Click(object sender, EventArgs e)
         {
             toolProgress.Visible = true;
-            //ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
-            TongHopDuNo(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text)); // FE3-[FE-CN] Form tự xử lý tiến trình và binding
+            DataTable data = ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+            toolProgress.Maximum = data.Rows.Count;
+            toolProgress.Value = data.Rows.Count;
             toolProgress.Visible = false;
         }
 
@@ -141,6 +150,18 @@ namespace CuahangNongduoc
 
         private void toolIn_Click(object sender, EventArgs e)
         {
+            // ==================== [FE-BC] REFACTORING ====================
+            // Lỗi (Code smell) : Bấm nút In khi chưa tổng hợp dữ liệu gây lỗi NullReferenceException
+            // Kỹ thuật         : Introduce Guard Clause (Kiểm tra điều kiện biên trước khi in)
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 12/11/2026
+            // =============================================================
+            if (bindingNavigator.BindingSource == null || bindingNavigator.BindingSource.Current == null)
+            {
+                MessageBox.Show("Vui lòng tổng hợp dư nợ trước khi in!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
             KhachHangController ctrlKH = new KhachHangController();
             DuNoKhachHang dn = new DuNoKhachHang();
