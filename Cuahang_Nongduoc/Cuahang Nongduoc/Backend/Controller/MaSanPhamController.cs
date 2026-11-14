@@ -58,7 +58,7 @@ namespace CuahangNongduoc.Controller
         // Trước            : LayMaSanPham(), LayMaSanPhamHetHan(), ChiTietPhieuNhap() dùng ToMaSanPham nên sinh N+1 query
         // Sau              : Gọi các hàm *DayDu() (JOIN sẵn 3 bảng) kết hợp EntityMapper.ToMaSanPhamDayDu trong 1 truy vấn
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE1
         // Kiểm tra         : QA2
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
@@ -100,7 +100,7 @@ namespace CuahangNongduoc.Controller
         // Trước            : Tự duyệt DataTable, gán tay từng thuộc tính và tự nhân SO_LUONG * DON_GIA_NHAP cho ThanhTien
         // Sau              : Gọi EntityMapper.MapList<MaSanPham>(..., EntityMapper.ToMaSanPham) để xử lý trọn gói
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================

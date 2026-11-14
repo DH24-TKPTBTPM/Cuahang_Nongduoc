@@ -70,7 +70,7 @@ namespace CuahangNongduoc.Controller
         // Trước            : Dùng LayChiTietPhieuBan() + ToChiTietPhieuBan nên với N dòng chi tiết phát sinh thêm tới 3N truy vấn phụ
         // Sau              : Gọi LayChiTietPhieuBanDayDu() + EntityMapper.ToChiTietPhieuBanDayDu để nạp toàn bộ chỉ trong 1 truy vấn
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE1
         // Kiểm tra         : QA2
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================

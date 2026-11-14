@@ -45,12 +45,16 @@ namespace CuahangNongduoc.DataLayer
             return ds.ResultTable;
         }
 
-        public void LoadSchema()
-        {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE ID = '-1'");
-            m_Ds.Load(cmd);
-        }
-
+        // ==================== [R19] REFACTORING ====================
+        // Lỗi (Code smell) : Hàm LoadSchema() là mã thừa không được bất kỳ Controller hay Form nào gọi tới
+        // Kỹ thuật         : Remove Dead Code
+        // Trước            : Giữ lại phương thức public void LoadSchema() truy vấn điều kiện ID = '-1' gây dư thừa
+        // Sau              : Xóa bỏ hoàn toàn hàm LoadSchema() khỏi MaSanPhanFactory
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public DataTable DanhsachMaSanPham(String sp)
         {
             SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = @id AND SO_LUONG > 0");
