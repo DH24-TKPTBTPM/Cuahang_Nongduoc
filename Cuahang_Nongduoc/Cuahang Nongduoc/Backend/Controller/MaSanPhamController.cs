@@ -26,13 +26,23 @@ namespace CuahangNongduoc.Controller
             return factory.Save();
         }
 
+        // ==================== [R11] REFACTORING ====================
+        // Lỗi (Code smell) : Lặp lại code đọc DataRow ở nhiều hàm và khởi tạo thừa đối tượng (sp = new MaSanPham() 2 lần liên tiếp trong ChiTietPhieuNhap)
+        // Kỹ thuật         : Extract Method + Remove Dead Code (kết hợp Mapper [D05])
+        // Trước            : Các hàm LaySanPham, LayMaSanPham, LayMaSanPhamHetHan, ChiTietPhieuNhap đều tự gán cột thủ công và có lệnh cấp phát thừa biến sp
+        // Sau              : Xóa bỏ khởi tạo thừa, tách toàn bộ phần chuyển DataRow sang dùng chung EntityMapper.ToSanPham và EntityMapper.ToMaSanPham
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         // ==================== [D05] REFACTORING ====================
         // Lỗi (Code smell) : Đoạn code chuyển DataRow sang SanPham/MaSanPham bị copy lặp lại ở 3 hàm liên tiếp
         // Kỹ thuật         : Mapper Pattern (PoEAA)
         // Trước            : Cả 3 hàm LaySanPham, LayMaSanPham, LayMaSanPhamHetHan đều tự đọc từng cột rồi gán tay vào đối tượng
         // Sau              : Dùng chung EntityMapper.ToSanPham, EntityMapper.ToMaSanPham và EntityMapper.MapList cho gọn và dễ sửa
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================

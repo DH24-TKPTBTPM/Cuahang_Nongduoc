@@ -44,13 +44,23 @@ namespace CuahangNongduoc.Controller
         }
 
 
+        // ==================== [R15] REFACTORING ====================
+        // Lỗi (Code smell) : 3 hàm overload ChiTietPhieuBan(...) có thân hàm trùng lặp hoàn toàn
+        // Kỹ thuật         : Extract Method (kết hợp Mapper [D05])
+        // Trước            : Cả 3 overload (theo idPhieuBan, theo ngày bán, theo tháng/năm) đều viết lặp vòng lặp foreach đọc từng dòng DataRow
+        // Sau              : Rút gọn cả 3 hàm về 1 dòng gọi dùng chung EntityMapper.MapList(..., EntityMapper.ToChiTietPhieuBan)
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         // ==================== [D05] REFACTORING ====================
         // Lỗi (Code smell) : Cả 3 hàm lấy chi tiết phiếu bán đều copy y hệt nhau đoạn đọc DataRow
         // Kỹ thuật         : Mapper Pattern (PoEAA)
         // Trước            : Viết lặp lại 3 vòng foreach để đọc DON_GIA, SO_LUONG, THANH_TIEN, ID_MA_SAN_PHAM cho 3 kiểu lọc khác nhau
         // Sau              : Mỗi hàm chỉ cần gọi EntityMapper.MapList(..., EntityMapper.ToChiTietPhieuBan) rất ngắn gọn
         // Tác giả          : BE2
-        // Hỗ trợ           : -
+        // Hỗ trợ           : BE3
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
