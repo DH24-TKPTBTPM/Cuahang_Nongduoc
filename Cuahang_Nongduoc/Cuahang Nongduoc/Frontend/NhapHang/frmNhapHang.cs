@@ -1,8 +1,8 @@
-﻿using CuahangNongduoc.Backend.Patterns.State;
+using CuahangNongduoc.Backend.Patterns.State;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.Frontend.Common1;
 using CuahangNongduoc.Patterns.Factory;
-using CuahangNongduoc.Backend.Patterns.State;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 
 namespace CuahangNongduoc
 {
@@ -329,9 +328,19 @@ namespace CuahangNongduoc
             ctrlSanPham.HienthiAutoComboBox(cmbSanPham);
         }
 
+        // ==================== [FE-09] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code – Xử lý DataError thủ công chỉ dùng e.Cancel
+        // Kỹ thuật         : Extract Method (Gọi hàm dùng chung từ GridErrorHelper)
+        // Trước            : e.Cancel = true;
+        // Sau              : GridErrorHelper.HandleDataError(sender, e);
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : Không
+        // Kiểm tra         : QA – <Điền họ tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =============================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            e.Cancel = true;
+            GridErrorHelper.HandleDataError(sender, e);
         }
 
          public void Allow(bool val)
