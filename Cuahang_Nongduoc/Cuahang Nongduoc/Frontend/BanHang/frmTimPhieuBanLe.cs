@@ -18,7 +18,9 @@ namespace CuahangNongduoc
         public frmTimPhieuBanLe(bool loai):this()
         {
             KhachHangController ctrlKH = new KhachHangController();
-            ctrlKH.HienthiAutoComboBox(cmbNCC, loai);
+            cmbNCC.DataSource = ctrlKH.HienthiAutoComboBox(loai);
+            cmbNCC.DisplayMember = "HO_TEN";
+            cmbNCC.ValueMember = "ID";
         }
 
     }
