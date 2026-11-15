@@ -34,24 +34,20 @@ namespace CuahangNongduoc
         KhachHangController ctrlKH = new KhachHangController();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
+            // [Sửa build 15/11/2026] Controller (R23) trả DataTable, Form tự gắn vào cột ComboBox;
+            // Bán sỉ dùng danh sách Đại lý như bản gốc frmDanhsachPhieuBanSi (trước đây gộp nhầm thành Khách hàng).
+            // Sửa: BE1 - Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 - <Họ tên>
+            bool laBanLe = (_loaiPhieu == LoaiPhieuBan.BanLe);
+            colKhachhang.DataSource = laBanLe ? ctrlKH.HienthiKhachHangDataGridviewComboBox() : ctrlKH.HienthiDaiLyDataGridviewComboBox();
             colKhachhang.DisplayMember = "HO_TEN";
             colKhachhang.ValueMember = "ID";
             colKhachhang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachhang.HeaderText = laBanLe ? "Khách hàng" : "Đại lý";
 
-            if (_loaiPhieu == LoaiPhieuBan.BanLe)
-            {
-                colKhachhang.DataSource = ctrlKH.LayDanhSachKhachHang();
-                colKhachhang.HeaderText = "Khách hàng";
+            if (laBanLe)
                 ctrl.HienthiPhieuBanLe(bindingNavigator, dataGridView);
-
-            }
             else
-            {
-
-                colKhachhang.DataSource = ctrlKH.LayDanhSachKhachHang();
-                colKhachhang.HeaderText = "Đại lý";
                 ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
-            }
         }
         frmBanHang BanLe = null;
         private void dataGridView_DoubleClick(object sender, EventArgs e)
@@ -113,7 +109,7 @@ namespace CuahangNongduoc
                   
                 }
                 ctrl.Save();
-                this.ctrl.Save();
+               
             }
         }
 
@@ -134,7 +130,7 @@ namespace CuahangNongduoc
                     }
                      bindingNavigator.BindingSource.RemoveCurrent();
                      ctrl.Save();
-                    this.ctrl.Save();
+                    
                 }
              }
         }
@@ -148,7 +144,7 @@ namespace CuahangNongduoc
                 String ma_phieu = row["ID"].ToString();
                 CuahangNongduoc.BusinessObject.PhieuBan ph = ctrlPB.LayPhieuBan(ma_phieu);
                 frmInPhieuBan frmIn = new frmInPhieuBan(ph);
-                ((Form)(object)frmIn).Show();
+                frmIn.Show();
             }
         }
 
