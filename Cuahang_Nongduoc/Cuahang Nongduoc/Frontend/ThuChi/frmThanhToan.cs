@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.DataLayer; // FE3-[FE-TC] Dùng PhieuThanhToanFactory cho Form tự binding
+//using CuahangNongduoc.DataLayer; // FE3-[FE-TC] Dùng PhieuThanhToanFactory cho Form tự binding
 using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
@@ -15,7 +15,7 @@ namespace CuahangNongduoc
     {
         KhachHangController ctrlKH = new KhachHangController();
         PhieuThanhToanController ctrl = new PhieuThanhToanController();
-        PhieuThanhToanFactory factory = new PhieuThanhToanFactory(); // FE3-[FE-TC] Khởi tạo Factory
+        //PhieuThanhToanFactory factory = new PhieuThanhToanFactory(); // FE3-[FE-TC] Khởi tạo Factory
         public frmThanhToan()
         {
             InitializeComponent();
@@ -64,7 +64,8 @@ namespace CuahangNongduoc
             colKhachHang.DataPropertyName = "ID_KHACH_HANG";
             colKhachHang.HeaderText = "Khách hàng";
             //ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
-            HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
+            //HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
+            HienthiPhieuThanhToan(ctrl.HienthiPhieuThanhToan()); // FE3-[FE-TC] Gọi qua PhieuThanhToanController đúng kiến trúc 3 lớp
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
         }
 
@@ -109,13 +110,13 @@ namespace CuahangNongduoc
             long maphieu = ThamSo.LayMaPhieuThanhToan();;
             ThamSo.GanMaPhieuThanhToan(maphieu+1);
 
-            //DataRow row = ctrl.NewRow();
-            DataRow row = factory.NewRow(); // FE3-[FE-TC] Thay cho ctrl.NewRow()
+            DataRow row = ctrl.NewRow();
+            //DataRow row = factory.NewRow(); // FE3-[FE-TC] Thay cho ctrl.NewRow()
             row["ID"] = maphieu;
             row["NGAY_THANH_TOAN"] = DateTime.Now.Date;
             row["TONG_TIEN"] = numTongTien.Value;
-            //ctrl.Add(row);
-            factory.Add(row); // FE3-[FE-TC] Thay cho ctrl.Add(row)
+            ctrl.Add(row);
+            
             bindingNavigator.BindingSource.MoveLast();
         }
 
@@ -132,8 +133,8 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu thanh toán này không?", "Phieu Thanh Toan", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                // ctrl.Save();
-                factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
+                 ctrl.Save();
+                
             }
         }
 
@@ -141,8 +142,8 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            // ctrl.Save();
-            factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
+             ctrl.Save();
+            
         }
 
         // ==================== [FE-09] REFACTORING ====================
@@ -184,7 +185,7 @@ namespace CuahangNongduoc
             if (Tim.DialogResult == DialogResult.OK)
             {
                 // Gộp nhánh R26 (Truyền Object) và FE-TC (Gọi qua Factory)
-                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(new PhieuThanhToanSearchParam
+                HienthiPhieuThanhToan(ctrl.TimPhieuThanhToan(new PhieuThanhToanSearchParam // FE3-[FE-TC] Gọi tìm kiếm qua PhieuThanhToanController
                 {
                     IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
                     Ngay = Tim.dtNgayThu.Value.Date
