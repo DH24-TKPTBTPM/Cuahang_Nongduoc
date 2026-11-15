@@ -179,7 +179,20 @@ namespace CuahangNongduoc.Controller
                 }
 
                 GanGiaTriCotSo(row, "SO_LUONG", tong_so);
-                factory.Save();
+
+                // ==================== [R28-BH] FIX ====================
+                // Lỗi (Code smell) : Lưu nhầm bảng – 'row' thuộc bảng cục bộ của LaySanPham() (localDs),
+                //                    còn factory.Save() lưu m_Ds (chưa Load) → ném "Phải gọi Load() trước…",
+                //                    nhập hàng không cộng tồn kho / không cập nhật giá nhập bình quân.
+                // Kỹ thuật         : Fix Bug – ghi thẳng 2 cột đã tính bằng UPDATE có tham số
+                // Trước            : factory.Save();
+                // Sau              : factory.CapNhatGiaVaSoLuong(id, DON_GIA_NHAP, SO_LUONG);
+                // Tác giả          : BE1 – Nguyễn Tuấn Anh
+                // Hỗ trợ           : Claude (AI)
+                // Kiểm tra         : QA1 – <Họ tên>
+                // Ngày chỉnh sửa   : 15/11/2026
+                // ===========================================================
+                factory.CapNhatGiaVaSoLuong(id, DocInt64AnToan(row["DON_GIA_NHAP"]), DocInt64AnToan(row["SO_LUONG"]));
             }
         }
 
