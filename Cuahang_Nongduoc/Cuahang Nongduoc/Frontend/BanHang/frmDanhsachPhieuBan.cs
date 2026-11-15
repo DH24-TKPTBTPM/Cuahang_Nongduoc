@@ -34,18 +34,20 @@ namespace CuahangNongduoc
         KhachHangController ctrlKH = new KhachHangController();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
-            if (_loaiPhieu == LoaiPhieuBan.BanLe)
-            {
-                ctrlKH.HienthiKhachHangDataGridviewComboBox(colKhachhang); 
+            // [Sửa build 15/11/2026] Controller (R23) trả DataTable, Form tự gắn vào cột ComboBox;
+            // Bán sỉ dùng danh sách Đại lý như bản gốc frmDanhsachPhieuBanSi (trước đây gộp nhầm thành Khách hàng).
+            // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên>
+            bool laBanLe = (_loaiPhieu == LoaiPhieuBan.BanLe);
+            colKhachhang.DataSource = laBanLe ? ctrlKH.HienthiKhachHangDataGridviewComboBox() : ctrlKH.HienthiDaiLyDataGridviewComboBox();
+            colKhachhang.DisplayMember = "HO_TEN";
+            colKhachhang.ValueMember = "ID";
+            colKhachhang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachhang.HeaderText = laBanLe ? "Khách hàng" : "Đại lý";
+
+            if (laBanLe)
                 ctrl.HienthiPhieuBanLe(bindingNavigator, dataGridView);
-
-            }
             else
-            {
-
-                ctrlKH.HienthiKhachHangDataGridviewComboBox (colKhachhang);
                 ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
-            }
         }
         frmBanHang BanLe = null;
         private void dataGridView_DoubleClick(object sender, EventArgs e)
