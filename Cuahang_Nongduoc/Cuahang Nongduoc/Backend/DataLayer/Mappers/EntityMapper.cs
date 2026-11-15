@@ -18,6 +18,8 @@ namespace CuahangNongduoc.DataLayer.Mappers
     // Kiểm tra         : QA1
     // Ngày chỉnh sửa   : 12/11/2026
     // ==============================================================
+    // [D05] ThanhTien / ConNo trong BusinessObject là giá trị tự tính (chỉ đọc) nên Mapper không gán nữa.
+    // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên> | Ngày chỉnh sửa: 15/11/2026
     public static class EntityMapper
     {
         public static IList<T> MapList<T>(DataTable tbl, RowMapper<T> mapRow)
@@ -61,7 +63,6 @@ namespace CuahangNongduoc.DataLayer.Mappers
                 Id = ToStr(row, "ID"),
                 SoLuong = soLuong,
                 GiaNhap = giaNhap,
-                ThanhTien = (long)soLuong * giaNhap,
                 NgayNhap = ToDate(row, "NGAY_NHAP"),
                 NgaySanXuat = ToDate(row, "NGAY_SAN_XUAT"),
                 NgayHetHan = ToDate(row, "NGAY_HET_HAN"),
@@ -78,7 +79,6 @@ namespace CuahangNongduoc.DataLayer.Mappers
                 NgayBan = ToDate(row, "NGAY_BAN"),
                 TongTien = ToLong(row, "TONG_TIEN"),
                 DaTra = ToLong(row, "DA_TRA"),
-                ConNo = ToLong(row, "CON_NO"),
                 KhachHang = new KhachHangController().LayKhachHang(ToStr(row, "ID_KHACH_HANG")),
                 ChiTiet = new ChiTietPhieuBanController().ChiTietPhieuBan(id)
             };
@@ -90,7 +90,6 @@ namespace CuahangNongduoc.DataLayer.Mappers
             {
                 DonGia = ToLong(row, "DON_GIA"),
                 SoLuong = ToInt(row, "SO_LUONG"),
-                ThanhTien = ToLong(row, "THANH_TIEN"),
                 MaSanPham = new MaSanPhamController().LayMaSanPham(ToStr(row, "ID_MA_SAN_PHAM"))
             };
         }
@@ -126,7 +125,6 @@ namespace CuahangNongduoc.DataLayer.Mappers
                 Id = ToStr(row, "MSP_ID"),
                 SoLuong = soLuong,
                 GiaNhap = giaNhap,
-                ThanhTien = (long)soLuong * giaNhap,
                 NgayNhap = ToDate(row, "MSP_NGAY_NHAP"),
                 NgaySanXuat = ToDate(row, "MSP_NGAY_SAN_XUAT"),
                 NgayHetHan = ToDate(row, "MSP_NGAY_HET_HAN"),
@@ -140,7 +138,6 @@ namespace CuahangNongduoc.DataLayer.Mappers
             {
                 DonGia = ToLong(row, "DON_GIA"),
                 SoLuong = ToInt(row, "SO_LUONG"),
-                ThanhTien = ToLong(row, "THANH_TIEN"),
                 MaSanPham = ToMaSanPhamDayDu(row)
             };
         }

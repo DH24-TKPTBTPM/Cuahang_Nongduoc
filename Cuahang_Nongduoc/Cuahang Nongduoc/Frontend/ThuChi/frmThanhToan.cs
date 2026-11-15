@@ -184,11 +184,15 @@ namespace CuahangNongduoc
             if (Tim.DialogResult == DialogResult.OK)
             {
                 // Gộp nhánh R26 (Truyền Object) và FE-TC (Gọi qua Factory)
-                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(new PhieuThanhToanSearchParam
+                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
+                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
+                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+                PhieuThanhToanSearchParam tim = new PhieuThanhToanSearchParam
                 {
                     IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
                     Ngay = Tim.dtNgayThu.Value.Date
-                }));
+                };
+                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(tim.IdKhachHang, tim.Ngay));
             }
         }
 
