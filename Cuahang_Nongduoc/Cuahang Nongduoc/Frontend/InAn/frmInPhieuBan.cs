@@ -47,5 +47,5 @@ namespace CuahangNongduoc
             HienThiBaoCao(this.reportViewer, this.PhieuBanBindingSource, m_PhieuBan, m_PhieuBan.TongTien); // FE3-[D10] Gọi Template Method
         }
     }
-    }
+    
 }
