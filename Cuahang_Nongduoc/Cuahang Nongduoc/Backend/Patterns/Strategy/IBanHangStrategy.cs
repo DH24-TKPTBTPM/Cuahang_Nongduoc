@@ -3,9 +3,19 @@ using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc.Patterns.Strategy
 {
+    // ==================== [STR-01] REFACTORING ====================
+    // Lỗi (Code smell) : Thiếu giao diện chuẩn (Interface) để đóng gói các thuật toán xử lý riêng cho từng hình thức bán hàng.
+    // Kỹ thuật         : Strategy Pattern (Behavioral, GoF)
+    // Trước            : Các xử lý tính giá và lọc loại khách hàng bị gom chung, gây trùng lặp và khó mở rộng.
+    // Sau              : Tạo Interface IBanHangStrategy chuẩn hóa các phương thức lấy đơn giá và kiểm tra đại lý, giúp các class chiến lược tuân thủ chung một khuôn mẫu.
+    // Tác giả          : BE2
+    // Hỗ trợ           : FE1
+    // Kiểm tra         : QA1
+    // Ngày chỉnh sửa   : 12/11/2026
+    // ==============================================================
     /// <summary>
     /// Strategy Pattern (Behavioral): Giao diện chiến lược bán hàng,
-    /// đóng gói thuật toán xác định đơn giá và lọc đối tượng khách hàng (Bán lẻ / Bán sỉ / Khuyến mãi).
+    /// đóng gói thuật toán xác định đơn giá và lọc đối tượng khách hàng (Bán lẻ / Bán sỉ).
     /// </summary>
     public interface IBanHangStrategy
     {
@@ -22,9 +32,6 @@ namespace CuahangNongduoc.Patterns.Strategy
         /// <summary>
         /// Trả về đơn giá theo chiến lược tương ứng.
         /// </summary>
-        /// <param name="sp">Đối tượng SanPham</param>
-        /// <param name="masp">Đối tượng MaSanPham</param>
-        /// <returns>Đơn giá áp dụng</returns>
         long LayDonGia(SanPham sp, MaSanPham masp);
     }
 }

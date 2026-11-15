@@ -1,11 +1,13 @@
-﻿using System;
+﻿using CuahangNongduoc.Controller;
+using CuahangNongduoc.DataLayer;//FE3-[FE-TC] Dùng PhieuChiFactory cho Form tự binding
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using CuahangNongduoc.Controller;
+using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
 {
@@ -13,28 +15,73 @@ namespace CuahangNongduoc
     {
         LyDoChiController ctrlLyDo = new LyDoChiController();
         PhieuChiController ctrl = new PhieuChiController();
+        PhieuChiFactory factory = new PhieuChiFactory();//FE3-[FE-TC] Khởi tạo Factory
         public frmPhieuChi()
         {
             InitializeComponent();
         }
 
-        private void frmThanhToan_Load(object sender, EventArgs e)
+        // ==================== [FE-TC] REFACTORING ====================
+        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (BindingNavigator, DataGridView, TextBox...) để binding
+        // Kỹ thuật         : Move Method (Chuyển logic binding dữ liệu từ Controller về Form giao diện)
+        // Trước            : ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+        // Sau              : HienthiPhieuChi(factory.DanhsachPhieuChi());
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : BE2 (Task R26)
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 08/11/2026
+        // =============================================================
+
+        private void HienthiPhieuChi(DataTable dt)
         {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = dt;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbLyDoChi.DataBindings.Clear();
+            cmbLyDoChi.DataBindings.Add("SelectedValue", bs, "ID_LY_DO_CHI");
+
+            dtNgayChi.DataBindings.Clear();
+            dtNgayChi.DataBindings.Add("Value", bs, "NGAY_CHI");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
+        } 
+        
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        private void frmThanhToan_Load(object sender, EventArgs e)
+        { 
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
             ctrlLyDo.HienthiDataGridviewComboBox(colLyDoChi);
-            ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+            HienthiPhieuChi(factory.DanhsachPhieuChi());
+            //ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
             long maphieu = ThamSo.PhieuChi;
             ThamSo.PhieuChi=maphieu+1;
-
-            DataRow row = ctrl.NewRow();
+            // FE3-[FE-TC] Thay cho ctrl.NewRow()
+            DataRow row = factory.NewRow();//DataRow row = ctrl.NewRow();
             row["ID"] = maphieu;
             row["NGAY_CHI"] = dtNgayChi.Value.Date;
             row["TONG_TIEN"] = numTongTien.Value;
-            ctrl.Add(row);
+            // FE3-[FE-TC] Thay cho ctrl.Add(row)
+            factory.Add(row);//ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
         }
 
@@ -51,7 +98,8 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu chi này không?", "Phieu Chi", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                ctrl.Save();
+                // FE3-[FE-TC] Thay cho ctrl.Save()
+                factory.Save();//ctrl.Save();
             }
         }
 
@@ -59,12 +107,23 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            ctrl.Save();
+            // FE3-[FE-TC] Thay cho ctrl.Save()
+            factory.Save();//ctrl.Save();
         }
 
+        // ==================== [FE-09] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code – Xử lý DataError thủ công chỉ dùng e.Cancel
+        // Kỹ thuật         : Extract Method (Gọi hàm dùng chung từ GridErrorHelper)
+        // Trước            : e.Cancel = true;
+        // Sau              : GridErrorHelper.HandleDataError(sender, e);
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : Không
+        // Kiểm tra         : QA – <Điền họ tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =============================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            e.Cancel = true;
+            GridErrorHelper.HandleDataError(sender, e);
         }
 
         private void toolIn_Click(object sender, EventArgs e)
@@ -97,8 +156,15 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                ctrl.TimPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu, Convert.ToInt32(Tim.cmbLyDo.SelectedValue), dtNgayChi.Value.Date);
-                
+                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
+                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
+                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+                PhieuChiSearchParam tim = new PhieuChiSearchParam
+                {
+                    LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
+                    Ngay = Tim.dtNgayChi.Value.Date
+                };
+                HienthiPhieuChi(factory.TimPhieuChi(tim.LyDo, tim.Ngay));
             }
         }
     }

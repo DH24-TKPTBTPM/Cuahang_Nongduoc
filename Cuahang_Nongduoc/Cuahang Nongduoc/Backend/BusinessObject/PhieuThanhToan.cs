@@ -18,12 +18,19 @@ namespace CuahangNongduoc.BusinessObject
             get { return m_Id; }
             set { m_Id = value; }
         }
-        private DateTime m_NgayNhap;
+// ==================== [R34] REFACTORING ====================
+// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
+// Kỹ thuật         : Encapsulate Field + Rename Field
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
+        private DateTime m_NgayThanhToan;
 
         public DateTime NgayThanhToan
         {
-            get { return m_NgayNhap; }
-            set { m_NgayNhap = value; }
+            get { return m_NgayThanhToan; }
+            set { m_NgayThanhToan = value; }
         }
         private long m_TongTien;
 

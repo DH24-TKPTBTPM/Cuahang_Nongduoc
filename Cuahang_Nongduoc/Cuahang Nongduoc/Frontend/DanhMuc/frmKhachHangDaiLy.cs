@@ -34,16 +34,39 @@ namespace CuahangNongduoc
             this.Text = _isDaiLy ? "Quản lý Đại Lý" : "Quản lý Khách Hàng";
         }
 
+        // ==================== [FE-DM] REFACTORING ====================
+        // Lỗi (Code smell) : Tight Coupling – Quản lý DataBinding UI tại Controller
+        // Kỹ thuật         : Move Method (Form gọi Controller nạp Grid/Navigator và tự làm chủ DataBinding)
+        // Trước            : Gọi trực tiếp Controller trong Form_Load mà không tách phương thức hiển thị riêng
+        // Sau              : Tách riêng HienThiDanhSach(), Form chịu trách nhiệm bind UI Control nếu có
+        // Tác giả          : FE2 - Nguyễn Huỳnh Ngọc Anh
+        // Hỗ Trợ           : Không
+        // Kiểm tra         : QA
+        // Ngày chỉnh sửa   : 11/11/2026
+        // =============================================================
         private void frmKhachHangDaiLy_Load(object sender, EventArgs e)
+        {
+            HienThiDanhSach();
+        }
+
+        private void HienThiDanhSach()
         {
             // Kiểm tra biến cờ để load đúng dữ liệu
             if (_isDaiLy)
             {
-                ctrl.HienthiDaiLyDataGridview(dataGridView, bindingNavigator);
+                DataTable tbl = ctrl.HienthiDaiLyDataGridview(true);
+                BindingSource bs = new BindingSource();
+                bs.DataSource = tbl;
+                bindingNavigator.BindingSource = bs;
+                dataGridView.DataSource = bs;
             }
             else
             {
-                ctrl.HienthiKhachHangDataGridview(dataGridView, bindingNavigator);
+                DataTable tbl = ctrl.HienthiKhachHangDataGridview(false);
+                BindingSource bs = new BindingSource();
+                bs.DataSource = tbl;
+                bindingNavigator.BindingSource = bs;
+                dataGridView.DataSource = bs;
             }
         }
 

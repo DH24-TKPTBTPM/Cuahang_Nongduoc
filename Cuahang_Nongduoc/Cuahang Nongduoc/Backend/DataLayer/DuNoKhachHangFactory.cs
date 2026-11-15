@@ -12,21 +12,33 @@ namespace CuahangNongduoc.DataLayer
         DataService m_Ds = new DataService();
 
 
-// ==================== [R28-NH] REFACTORING ====================
-// Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
-// Kỹ thuật         : Migrate Data Provider
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Hỗ trợ           : BE1 - Nguyễn Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 06/11/2026
-// Ngày kiểm thử    : 07/11/2026
-// ==============================================================
-        public void LoadSchema()
-        {
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM DU_NO_KH WHERE ID_KHACH_HANG='-1'");
-            SqlCommand cmd = new SqlCommand("SELECT * FROM DU_NO_KH WHERE ID_KHACH_HANG='-1'");
-            m_Ds.Load(cmd);
+        // ==================== [R19] REFACTORING ====================
+        // Lỗi (Code smell) : Hàm LoadSchema() là mã thừa không được bất kỳ nơi nào trong project gọi tới
+        // Kỹ thuật         : Remove Dead Code
+        // Trước            : Tồn tại phương thức LoadSchema() chạy câu SQL ID_KHACH_HANG = '-1' không dùng
+        // Sau              : Xóa bỏ hàm LoadSchema() khỏi DuNoKhachHangFactory
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
 
+// ==================== [R24] REFACTORING ====================
+// Lỗi (Code smell) : Dính control UI, N+1 query, mất dữ liệu khi Lưu lỗi
+// Kỹ thuật         : Extract Method + Safe Transaction
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 08/11/2026
+// ==============================================================
+        public static DataTable LayDuNoTheoKhachHang(int thang, int nam)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT ID_KHACH_HANG, ISNULL(SUM(CUOI_KY), 0) AS CUOI_KY FROM DU_NO_KH WHERE THANG=@thang AND NAM=@nam GROUP BY ID_KHACH_HANG");
+            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
+            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+            ds.Load(cmd);
+            return ds.ResultTable;
         }
 
 

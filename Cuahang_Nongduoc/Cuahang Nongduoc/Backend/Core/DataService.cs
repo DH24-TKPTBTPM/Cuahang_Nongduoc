@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.Patterns.Singleton;
 
 namespace CuahangNongduoc
@@ -18,18 +19,47 @@ namespace CuahangNongduoc
     // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
     // Ngày chỉnh sửa   : 04/11/2026
     // ===========================================================
-    public class DataService : DataTable
+    //
+    // ==================== [R04] REFACTORING ====================
+    // Lỗi (Code smell) : Refused Bequest – DataService kế thừa DataTable chỉ để chứa kết quả,
+    //                    nhận về hàng trăm thành viên không dùng; DAO trả "m_Ds" ra ngoài
+    //                    làm lộ cả lớp truy cập CSDL lên tầng trên
+    // Kỹ thuật         : Replace Inheritance with Delegation
+    // Trước            : public class DataService : DataTable { ... m_DataAdapter.Fill(this); ... }
+    //                    DAO: return m_Ds;
+    // Sau              : DataService giữ 1 DataTable riêng (m_Table), chỉ chuyển tiếp Rows/NewRow;
+    //                    DAO: return m_Ds.ResultTable;
+    // Tác giả          : BE1 – Nguyễn Tuấn Anh
+    // Hỗ trợ           : Claude (AI)
+    // Kiểm tra         : QA2 – <Họ tên>
+    // Ngày chỉnh sửa   : 08/11/2026
+    // ===========================================================
+    public class DataService
     {
+        private readonly DataTable m_Table = new DataTable();
+
         // Lệnh SELECT gần nhất (dùng lại khi UpdateDataTable sinh lệnh INSERT/UPDATE/DELETE)
         private SqlCommand m_Command;
         private SqlDataAdapter m_DataAdapter;
 
         public DataService() { }
 
-        /// <summary>Tương thích với cách gọi m_Ds.ResultTable trong DataLayer.</summary>
+        /// <summary>Bảng kết quả của lần Load() gần nhất.</summary>
         public DataTable ResultTable
         {
-            get { return this; }
+            get { return m_Table; }
+        }
+
+        /// <summary>Chuyển tiếp tới ResultTable.Rows (giữ cách gọi m_Ds.Rows.Add(row) của DAO).</summary>
+        public DataRowCollection Rows
+        {
+            get { return m_Table.Rows; }
+        }
+
+        /// <summary>Chuyển tiếp tới ResultTable.NewRow().</summary>
+        public DataRow NewRow()
+        {
+            return m_Table.NewRow();
         }
 
         public SqlCommand Command
@@ -77,6 +107,24 @@ namespace CuahangNongduoc
             DatabaseManager.Instance.CloseConnection();
         }
 
+        // ==================== [D08] UNIT OF WORK ====================
+        // Khi đang ở trong 1 UnitOfWork: dùng chung transaction của nó, KHÔNG tự Commit/Rollback
+        // (UnitOfWork quyết định). Ngoài UnitOfWork: tự mở transaction riêng như trước.
+        // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | Ngày chỉnh sửa: 08/11/2026
+        // ===========================================================
+        private static SqlTransaction GanGiaoDich(SqlCommand cmd, out bool tuQuanLy)
+        {
+            SqlTransaction tr = UnitOfWork.CurrentTransaction;
+            tuQuanLy = (tr == null);
+            if (tuQuanLy)
+            {
+                tr = DatabaseManager.Instance.GetOpenConnection().BeginTransaction();
+            }
+            cmd.Connection = tr.Connection;
+            cmd.Transaction = tr;
+            return tr;
+        }
+
         // ==================== [R02] REFACTORING ====================
         // Lỗi (Code smell) : Error Hiding – nuốt ngoại lệ im lặng
         // Kỹ thuật         : Replace Error Code with Exception
@@ -94,11 +142,13 @@ namespace CuahangNongduoc
             m_Command = command;
             try
             {
+                // Kết nối dùng chung: đang có transaction của UnitOfWork thì lệnh SELECT cũng phải gắn vào
                 m_Command.Connection = DatabaseManager.Instance.GetOpenConnection();
+                m_Command.Transaction = UnitOfWork.CurrentTransaction;
                 m_DataAdapter = new SqlDataAdapter(m_Command);
 
-                this.Clear();
-                m_DataAdapter.Fill(this);
+                m_Table.Clear();
+                m_DataAdapter.Fill(m_Table);
             }
             catch (Exception e)
             {
@@ -124,25 +174,22 @@ namespace CuahangNongduoc
                 throw new DataAccessException("Phải gọi Load() trước khi UpdateDataTable().", null);
 
             int result = 0;
+            bool tuQuanLy = false;
             SqlTransaction tr = null;
             try
             {
-                SqlConnection cn = DatabaseManager.Instance.GetOpenConnection();
-                tr = cn.BeginTransaction();
-
-                m_Command.Connection = cn;
-                m_Command.Transaction = tr;
+                tr = GanGiaoDich(m_Command, out tuQuanLy);
 
                 m_DataAdapter = new SqlDataAdapter(m_Command);
                 SqlCommandBuilder builder = new SqlCommandBuilder(m_DataAdapter);
 
-                result = m_DataAdapter.Update(this);
+                result = m_DataAdapter.Update(m_Table);
 
-                tr.Commit();
+                if (tuQuanLy) tr.Commit();
             }
             catch (Exception e)
             {
-                if (tr != null) tr.Rollback();
+                if (tuQuanLy && tr != null) tr.Rollback();
                 throw new DataAccessException("Lỗi lưu dữ liệu xuống CSDL.", e);
             }
             finally
@@ -158,22 +205,20 @@ namespace CuahangNongduoc
             if (cmd == null) throw new ArgumentNullException("cmd");
 
             int result = 0;
+            bool tuQuanLy = false;
             SqlTransaction tr = null;
             try
             {
-                SqlConnection cn = DatabaseManager.Instance.GetOpenConnection();
-                tr = cn.BeginTransaction();
-                cmd.Connection = cn;
-                cmd.Transaction = tr;
+                tr = GanGiaoDich(cmd, out tuQuanLy);
 
                 result = cmd.ExecuteNonQuery();
 
-                this.AcceptChanges();
-                tr.Commit();
+                m_Table.AcceptChanges();
+                if (tuQuanLy) tr.Commit();
             }
             catch (Exception e)
             {
-                if (tr != null) tr.Rollback();
+                if (tuQuanLy && tr != null) tr.Rollback();
                 throw new DataAccessException("Lỗi thực thi lệnh: " + cmd.CommandText, e);
             }
             return result;
@@ -195,17 +240,15 @@ namespace CuahangNongduoc
             if (cmd == null) throw new ArgumentNullException("cmd");
 
             object result = null;
+            bool tuQuanLy = false;
             SqlTransaction tr = null;
             try
             {
-                SqlConnection cn = DatabaseManager.Instance.GetOpenConnection();
-                tr = cn.BeginTransaction();
-                cmd.Connection = cn;
-                cmd.Transaction = tr;
+                tr = GanGiaoDich(cmd, out tuQuanLy);
 
                 result = cmd.ExecuteScalar();
 
-                tr.Commit();
+                if (tuQuanLy) tr.Commit();
 
                 if (result == DBNull.Value)
                 {
@@ -214,7 +257,7 @@ namespace CuahangNongduoc
             }
             catch (Exception e)
             {
-                if (tr != null) tr.Rollback();
+                if (tuQuanLy && tr != null) tr.Rollback();
                 throw new DataAccessException("Lỗi đọc giá trị: " + cmd.CommandText, e);
             }
             return result;

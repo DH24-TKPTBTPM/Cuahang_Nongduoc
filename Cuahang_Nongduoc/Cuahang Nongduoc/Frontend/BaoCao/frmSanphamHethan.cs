@@ -13,6 +13,9 @@ namespace CuahangNongduoc
         public frmSanphamHethan()
         {
             InitializeComponent();
+            // FE3-[FE-BC] Đồng bộ Font hiển thị và cấu hình AppDomain cho ReportViewer
+            this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);//fe3
+            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);//fe3
         }
 
         private void btnXem_Click(object sender, EventArgs e)
@@ -28,7 +31,14 @@ namespace CuahangNongduoc
 
         private void frmSanphamHethan_Load(object sender, EventArgs e)
         {
-
+            // ==================== [FE-BC] REFACTORING ====================
+            // Lỗi (Code smell) : Sự kiện Load bỏ trống, chưa khởi tạo ngày mặc định cho bộ lọc SQL Server
+            // Kỹ thuật         : Initialize Default State on Form Load
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 12/11/2026
+            // =============================================================
+            dt.Value = DateTime.Now;
         }
     }
 }

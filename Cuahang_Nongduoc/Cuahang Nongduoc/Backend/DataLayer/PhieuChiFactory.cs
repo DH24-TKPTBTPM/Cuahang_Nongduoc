@@ -12,6 +12,14 @@ namespace CuahangNongduoc.DataLayer
         DataService m_Ds = new DataService();
 
 
+// ==================== [R32-TC] REFACTORING ====================
+// Lỗi (Code smell) : Thuật toán lọc ngày phức tạp, dài dòng
+// Kỹ thuật         : Substitute Algorithm
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Hỗ trợ           :
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
 // ==================== [R28-NH] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng provider cũ OleDb thay vì SqlClient
 // Kỹ thuật         : Migrate Data Provider
@@ -24,11 +32,12 @@ namespace CuahangNongduoc.DataLayer
         public DataTable TimPhieuChi(int lydo, DateTime ngay)
         {
 // Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
-            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI >= @ngay AND NGAY_CHI < @ngayKeTiep");
 // Code cũ: cmd.Parameters.Add("lydo", OleDbType.Integer).Value = lydo;
             cmd.Parameters.Add("lydo", SqlDbType.Int).Value = lydo;
 // Code cũ: cmd.Parameters.Add("ngay", OleDbType.Date).Value = ngay;
-            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = ngay;
+            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = ngay.Date;
+            cmd.Parameters.Add("ngayKeTiep", SqlDbType.DateTime).Value = ngay.Date.AddDays(1);
 
             m_Ds.Load(cmd);
 

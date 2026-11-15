@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -20,31 +21,97 @@ namespace CuahangNongduoc.DataLayer
     {
         DataService m_Ds = new DataService();
 
-        public DataTable LayChiTietPhieuBan(String idPhieuBan)
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : Dùng SELECT * / SELECT CT.* và truy vấn rời từng dòng gây N+1 query khi nạp chi tiết phiếu bán
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : SELECT * rồi gọi lồng MaSanPhamController -> SanPhamController -> DonViTinhController cho mỗi dòng chi tiết
+        // Sau              : Chỉ rõ tên cột và bổ sung LayChiTietPhieuBanDayDu() JOIN sẵn 4 bảng trong 1 câu SQL duy nhất
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
+        private const string SqlChiTietDayDu =
+            "SELECT CT.DON_GIA, CT.SO_LUONG, CT.THANH_TIEN, " +
+            "MSP.ID AS MSP_ID, MSP.SO_LUONG AS MSP_SO_LUONG, MSP.DON_GIA_NHAP AS MSP_DON_GIA_NHAP, " +
+            "MSP.NGAY_NHAP AS MSP_NGAY_NHAP, MSP.NGAY_SAN_XUAT AS MSP_NGAY_SAN_XUAT, MSP.NGAY_HET_HAN AS MSP_NGAY_HET_HAN, " +
+            "SP.ID AS SP_ID, SP.TEN_SAN_PHAM, SP.SO_LUONG AS SP_SO_LUONG, SP.DON_GIA_NHAP AS SP_DON_GIA_NHAP, " +
+            "SP.GIA_BAN_LE, SP.GIA_BAN_SI, DVT.ID AS DVT_ID, DVT.TEN_DON_VI " +
+            "FROM CHI_TIET_PHIEU_BAN CT " +
+            "LEFT JOIN MA_SAN_PHAM MSP ON CT.ID_MA_SAN_PHAM = MSP.ID " +
+            "LEFT JOIN SAN_PHAM SP ON MSP.ID_SAN_PHAM = SP.ID " +
+            "LEFT JOIN DON_VI_TINH DVT ON SP.ID_DON_VI_TINH = DVT.ID ";
+
+        private static DataTable LoadReadOnly(SqlCommand cmd)
         {
-            SqlCommand cmd = new SqlCommand("SELECT * FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
-            m_Ds.Load(cmd);
-            return m_Ds;
+            DataService ds = new DataService();
+            ds.Load(cmd);
+            return ds.ResultTable;
         }
 
+        public DataTable LayChiTietPhieuBan(String idPhieuBan)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT ID_PHIEU_BAN, ID_MA_SAN_PHAM, SO_LUONG, DON_GIA, THANH_TIEN FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN = @id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
+            m_Ds.Load(cmd);
+            return m_Ds.ResultTable;
+        }
+
+        // ==================== [R32-BH] REFACTORING ====================
+        // Lỗi (Code smell) : Lọc ngày bằng CONVERT(date, ...) và MONTH(...)/YEAR(...) khiến SQL Server không dùng được Index trên NGAY_BAN
+        // Kỹ thuật         : Substitute Algorithm
+        // Trước            : Dùng CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban) và MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam
+        // Sau              : Đổi cả 2 hàm sang lọc theo khoảng (PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den)
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public DataTable LayChiTietPhieuBan(DateTime dtNgayBan)
         {
-            SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE CONVERT(date, PB.NGAY_BAN) = CONVERT(date, @ngayban)");
-            cmd.Parameters.Add("@ngayban", SqlDbType.DateTime).Value = dtNgayBan;
+            DateTime tu = dtNgayBan.Date;
+            SqlCommand cmd = new SqlCommand("SELECT CT.ID_PHIEU_BAN, CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
+                    " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
         }
 
         public DataTable LayChiTietPhieuBan(int thang, int nam)
         {
-            SqlCommand cmd = new SqlCommand("SELECT CT.* FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
-                    " WHERE MONTH(PB.NGAY_BAN) = @thang AND YEAR(PB.NGAY_BAN) = @nam");
-            cmd.Parameters.Add("@thang", SqlDbType.Int).Value = thang;
-            cmd.Parameters.Add("@nam", SqlDbType.Int).Value = nam;
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand("SELECT CT.ID_PHIEU_BAN, CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN FROM CHI_TIET_PHIEU_BAN CT INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID " +
+                    " WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
             m_Ds.Load(cmd);
-            return m_Ds;
+            return m_Ds.ResultTable;
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(String idPhieuBan)
+        {
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "WHERE CT.ID_PHIEU_BAN = @id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuBan;
+            return LoadReadOnly(cmd);
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(DateTime dtNgayBan)
+        {
+            DateTime tu = dtNgayBan.Date;
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddDays(1);
+            return LoadReadOnly(cmd);
+        }
+
+        public DataTable LayChiTietPhieuBanDayDu(int thang, int nam)
+        {
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand(SqlChiTietDayDu + "INNER JOIN PHIEU_BAN PB ON CT.ID_PHIEU_BAN = PB.ID WHERE PB.NGAY_BAN >= @tu AND PB.NGAY_BAN < @den");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
+            return LoadReadOnly(cmd);
         }
 
         public DataRow NewRow()
@@ -57,16 +124,101 @@ namespace CuahangNongduoc.DataLayer
             m_Ds.Rows.Add(row);
         }
 
+        // ==================== [R31] REFACTORING ====================
+        // Lỗi (Code smell) : Incomplete State Handling – Tồn kho chỉ cập nhật khi thêm mới, bỏ quên khi sửa hoặc xóa chi tiết phiếu
+        // Kỹ thuật         : Complete State Handling (Decompose Conditional)
+        // Trước            : Chỉ xử lý DataRowState.Added (trừ tồn kho), bỏ qua DataRowState.Modified và DataRowState.Deleted
+        // Sau              : Xử lý đủ 3 trạng thái của DataRow:
+        //                    - Added: Trừ tồn kho (-soLuong)
+        //                    - Modified: Bù trừ chênh lệch (-delta) hoặc đổi mã sản phẩm
+        //                    - Deleted: Hoàn trả lại số lượng tồn kho (+soLuong gốc qua DataRowVersion.Original)
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+
+        // ==================== [R27] REFACTORING ====================
+        // Lỗi (Code smell) : Non-Atomic Operations (FE BUG-02) – Trừ kho trước khi lưu chi tiết phiếu bán và thực thi rời rạc, gây lệch kho khi lưu CSDL thất bại
+        // Kỹ thuật         : Introduce Unit of Work (https://refactoring.guru)
+        // Trước            : Gọi DongBoTonKhoTheoTrangThai() trừ tồn kho trực tiếp rồi mới gọi m_Ds.UpdateDataTable() không có Transaction bảo vệ
+        // Sau              : Đưa toàn bộ thao tác đồng bộ kho và lưu chi tiết phiếu vào chung một TransactionScope (Unit of Work), tự động Rollback kho nếu lưu DB lỗi
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public bool Save()
         {
-            foreach (DataRow row in m_Ds.Rows)
+            using (TransactionScope scope = new TransactionScope())
             {
-                if (row.RowState == DataRowState.Added)
+                // 1. Đồng bộ tồn kho theo trạng thái (khi RowState và DataRowVersion.Original còn nguyên vẹn)
+                foreach (DataRow row in m_Ds.Rows)
                 {
-                    CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(Convert.ToString(row["ID_MA_SAN_PHAM"]), -Convert.ToInt32(row["SO_LUONG"]));
+                    DongBoTonKhoTheoTrangThai(row);
+                }
+
+                // 2. Lưu chi tiết phiếu bán xuống Database (nếu lỗi, TransactionScope sẽ tự động Rollback tồn kho ở bước 1)
+                bool isSaved = m_Ds.UpdateDataTable() > 0;
+                if (isSaved)
+                {
+                    scope.Complete();
+                }
+                return isSaved;
+            }
+        }
+
+        private void DongBoTonKhoTheoTrangThai(DataRow row)
+        {
+            if (row.RowState == DataRowState.Added)
+            {
+                if (row["ID_MA_SAN_PHAM"] != DBNull.Value && row["SO_LUONG"] != DBNull.Value)
+                {
+                    string masp = Convert.ToString(row["ID_MA_SAN_PHAM"]);
+                    int soLuong = Convert.ToInt32(row["SO_LUONG"]);
+                    MaSanPhanFactory.CapNhatSoLuong(masp, -soLuong);
                 }
             }
-            return m_Ds.UpdateDataTable() > 0;
+            else if (row.RowState == DataRowState.Deleted)
+            {
+                // Khi dòng bị xóa, dùng DataRowVersion.Original để đọc dữ liệu gốc và hoàn trả lại kho
+                if (row["ID_MA_SAN_PHAM", DataRowVersion.Original] != DBNull.Value &&
+                    row["SO_LUONG", DataRowVersion.Original] != DBNull.Value)
+                {
+                    string masp = Convert.ToString(row["ID_MA_SAN_PHAM", DataRowVersion.Original]);
+                    int soLuong = Convert.ToInt32(row["SO_LUONG", DataRowVersion.Original]);
+                    MaSanPhanFactory.CapNhatSoLuong(masp, soLuong);
+                }
+            }
+            else if (row.RowState == DataRowState.Modified)
+            {
+                string maspMoi = row["ID_MA_SAN_PHAM", DataRowVersion.Current] != DBNull.Value ? Convert.ToString(row["ID_MA_SAN_PHAM", DataRowVersion.Current]) : "";
+                string maspCu = row["ID_MA_SAN_PHAM", DataRowVersion.Original] != DBNull.Value ? Convert.ToString(row["ID_MA_SAN_PHAM", DataRowVersion.Original]) : "";
+                int slMoi = row["SO_LUONG", DataRowVersion.Current] != DBNull.Value ? Convert.ToInt32(row["SO_LUONG", DataRowVersion.Current]) : 0;
+                int slCu = row["SO_LUONG", DataRowVersion.Original] != DBNull.Value ? Convert.ToInt32(row["SO_LUONG", DataRowVersion.Original]) : 0;
+
+                if (maspMoi == maspCu)
+                {
+                    int delta = slMoi - slCu;
+                    if (delta != 0 && !string.IsNullOrEmpty(maspMoi))
+                    {
+                        // delta > 0: bán tăng -> trừ thêm tồn kho; delta < 0: giảm bớt -> hoàn trả lại kho
+                        MaSanPhanFactory.CapNhatSoLuong(maspMoi, -delta);
+                    }
+                }
+                else
+                {
+                    // Nếu đổi sang mã sản phẩm khác: hoàn trả kho mã cũ, trừ kho mã mới
+                    if (!string.IsNullOrEmpty(maspCu))
+                    {
+                        MaSanPhanFactory.CapNhatSoLuong(maspCu, slCu);
+                    }
+                    if (!string.IsNullOrEmpty(maspMoi))
+                    {
+                        MaSanPhanFactory.CapNhatSoLuong(maspMoi, -slMoi);
+                    }
+                }
+            }
         }
     }
 }

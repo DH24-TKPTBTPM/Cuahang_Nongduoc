@@ -1,6 +1,6 @@
 ﻿namespace CuahangNongduoc
 {
-    partial class frmDanhsachPhieuBanSi
+    partial class frmDanhsachPhieuBan
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDanhsachPhieuBanSi));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDanhsachPhieuBan));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.bindingNavigator = new System.Windows.Forms.BindingNavigator(this.components);
             this.bindingNavigatorCountItem = new System.Windows.Forms.ToolStripLabel();
             this.bindingNavigatorMoveFirstItem = new System.Windows.Forms.ToolStripButton();
@@ -44,7 +48,8 @@
             this.toolXemLai = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorDeleteItem = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolIn = new System.Windows.Forms.ToolStripButton();
+            this.toolPrint = new System.Windows.Forms.ToolStripButton();
+            this.toolTimKiem = new System.Windows.Forms.ToolStripButton();
             this.dataGridView = new System.Windows.Forms.DataGridView();
             this.colId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colKhachhang = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -52,7 +57,6 @@
             this.colTongTien = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDaTra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colConNo = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.toolTimKiem = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).BeginInit();
             this.bindingNavigator.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
@@ -77,7 +81,7 @@
             this.toolXemLai,
             this.bindingNavigatorDeleteItem,
             this.toolStripSeparator1,
-            this.toolIn,
+            this.toolPrint,
             this.toolTimKiem});
             this.bindingNavigator.Location = new System.Drawing.Point(0, 0);
             this.bindingNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
@@ -195,16 +199,27 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 46);
             // 
-            // toolIn
+            // toolPrint
             // 
-            this.toolIn.Image = global::CuahangNongduoc.Properties.Resources.printer;
-            this.toolIn.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolIn.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolIn.Name = "toolIn";
-            this.toolIn.Size = new System.Drawing.Size(55, 43);
-            this.toolIn.Text = "Trang in";
-            this.toolIn.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolIn.Click += new System.EventHandler(this.toolIn_Click);
+            this.toolPrint.Image = global::CuahangNongduoc.Properties.Resources.printer;
+            this.toolPrint.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolPrint.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolPrint.Name = "toolPrint";
+            this.toolPrint.Size = new System.Drawing.Size(55, 43);
+            this.toolPrint.Text = "Trang in";
+            this.toolPrint.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolPrint.Click += new System.EventHandler(this.toolPrint_Click);
+            // 
+            // toolTimKiem
+            // 
+            this.toolTimKiem.Image = global::CuahangNongduoc.Properties.Resources.find;
+            this.toolTimKiem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolTimKiem.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolTimKiem.Name = "toolTimKiem";
+            this.toolTimKiem.Size = new System.Drawing.Size(61, 43);
+            this.toolTimKiem.Text = "Tìm kiếm";
+            this.toolTimKiem.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTimKiem.Click += new System.EventHandler(this.toolTimKiem_Click);
             // 
             // dataGridView
             // 
@@ -226,6 +241,7 @@
             this.dataGridView.TabIndex = 1;
             this.dataGridView.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dataGridView_UserDeletingRow);
             this.dataGridView.DoubleClick += new System.EventHandler(this.dataGridView_DoubleClick);
+            this.dataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellContentClick);
             // 
             // colId
             // 
@@ -237,13 +253,16 @@
             // colKhachhang
             // 
             this.colKhachhang.DataPropertyName = "ID_KHACH_HANG";
-            this.colKhachhang.HeaderText = "Đại lý";
+            this.colKhachhang.HeaderText = "Khách hàng";
             this.colKhachhang.Name = "colKhachhang";
             this.colKhachhang.ReadOnly = true;
             // 
             // colNgayNhap
             // 
             this.colNgayNhap.DataPropertyName = "NGAY_BAN";
+            dataGridViewCellStyle1.Format = "d";
+            dataGridViewCellStyle1.NullValue = null;
+            this.colNgayNhap.DefaultCellStyle = dataGridViewCellStyle1;
             this.colNgayNhap.HeaderText = "Ngày nhập";
             this.colNgayNhap.Name = "colNgayNhap";
             this.colNgayNhap.ReadOnly = true;
@@ -251,6 +270,10 @@
             // colTongTien
             // 
             this.colTongTien.DataPropertyName = "TONG_TIEN";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N0";
+            dataGridViewCellStyle2.NullValue = "0";
+            this.colTongTien.DefaultCellStyle = dataGridViewCellStyle2;
             this.colTongTien.HeaderText = "Tổng tiền";
             this.colTongTien.Name = "colTongTien";
             this.colTongTien.ReadOnly = true;
@@ -258,6 +281,10 @@
             // colDaTra
             // 
             this.colDaTra.DataPropertyName = "DA_TRA";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle3.Format = "N0";
+            dataGridViewCellStyle3.NullValue = "0";
+            this.colDaTra.DefaultCellStyle = dataGridViewCellStyle3;
             this.colDaTra.HeaderText = "Đã trả";
             this.colDaTra.Name = "colDaTra";
             this.colDaTra.ReadOnly = true;
@@ -265,22 +292,15 @@
             // colConNo
             // 
             this.colConNo.DataPropertyName = "CON_NO";
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle4.Format = "N0";
+            dataGridViewCellStyle4.NullValue = "0";
+            this.colConNo.DefaultCellStyle = dataGridViewCellStyle4;
             this.colConNo.HeaderText = "Còn nợ";
             this.colConNo.Name = "colConNo";
             this.colConNo.ReadOnly = true;
             // 
-            // toolTimKiem
-            // 
-            this.toolTimKiem.Image = global::CuahangNongduoc.Properties.Resources.find;
-            this.toolTimKiem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolTimKiem.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolTimKiem.Name = "toolTimKiem";
-            this.toolTimKiem.Size = new System.Drawing.Size(61, 43);
-            this.toolTimKiem.Text = "Tìm kiếm";
-            this.toolTimKiem.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolTimKiem.Click += new System.EventHandler(this.toolTimKiem_Click);
-            // 
-            // frmDanhsachPhieuBanSi
+            // frmDanhsachPhieuBanLe
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -288,8 +308,9 @@
             this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.bindingNavigator);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "frmDanhsachPhieuBanSi";
-            this.Text = "DANH SACH PHIEU BAN SI";
+            this.Name = "frmDanhsachPhieuBanLe";
+            this.Text = "DANH SACH PHIEU BAN LE";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.frmDanhsachPhieuNhap_Load);
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator)).EndInit();
             this.bindingNavigator.ResumeLayout(false);
@@ -316,6 +337,7 @@
         private System.Windows.Forms.ToolStripSeparator bindingNavigatorSeparator2;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.ToolStripButton toolXemLai;
+        private System.Windows.Forms.ToolStripButton toolPrint;
         private System.Windows.Forms.DataGridViewTextBoxColumn colId;
         private System.Windows.Forms.DataGridViewComboBoxColumn colKhachhang;
         private System.Windows.Forms.DataGridViewTextBoxColumn colNgayNhap;
@@ -323,7 +345,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colDaTra;
         private System.Windows.Forms.DataGridViewTextBoxColumn colConNo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolIn;
         private System.Windows.Forms.ToolStripButton toolTimKiem;
     }
 }

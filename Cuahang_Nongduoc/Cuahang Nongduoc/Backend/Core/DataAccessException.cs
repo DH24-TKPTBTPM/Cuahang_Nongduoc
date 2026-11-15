@@ -10,9 +10,12 @@ namespace CuahangNongduoc
     /// </summary>
     public class DataAccessException : Exception
     {
+        // [D02] Mọi lỗi CSDL đều đi qua đây nên ghi log 1 chỗ là đủ, không phải sửa từng catch.
+        // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | Ngày chỉnh sửa: 08/11/2026
         public DataAccessException(string message, Exception inner)
             : base(message, inner)
         {
+            AppLogger.Instance.Error(message, inner);
         }
     }
 }

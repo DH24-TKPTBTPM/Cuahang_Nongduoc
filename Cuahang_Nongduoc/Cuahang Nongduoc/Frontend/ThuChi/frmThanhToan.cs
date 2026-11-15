@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.DataLayer; // FE3-[FE-TC] Dùng PhieuThanhToanFactory cho Form tự binding
+using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
 {
@@ -13,17 +15,88 @@ namespace CuahangNongduoc
     {
         KhachHangController ctrlKH = new KhachHangController();
         PhieuThanhToanController ctrl = new PhieuThanhToanController();
+        PhieuThanhToanFactory factory = new PhieuThanhToanFactory(); // FE3-[FE-TC] Khởi tạo Factory
         public frmThanhToan()
         {
             InitializeComponent();
         }
 
+        // ==================== [FE-TC] REFACTORING ====================
+        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (BindingNavigator, DataGridView, TextBox...) để binding
+        // Kỹ thuật         : Move Method (Chuyển logic binding dữ liệu từ Controller về Form giao diện)
+        // Trước            : ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
+        // Sau              : HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan());
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : BE2 (Task R26)
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 08/11/2026
+        // =============================================================
+        private void HienthiPhieuThanhToan(DataTable dt)
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = dt;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbKhachHang.DataBindings.Clear();
+            cmbKhachHang.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
+
+            dtNgayThanhToan.DataBindings.Clear();
+            dtNgayThanhToan.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
+        }
         private void frmThanhToan_Load(object sender, EventArgs e)
         {
-            ctrlKH.HienthiChungAutoComboBox(cmbKhachHang);
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
-            ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
+            cmbKhachHang.DataSource = ctrlKH.HienthiChungAutoComboBox();
+            cmbKhachHang.DisplayMember = "HO_TEN";
+            cmbKhachHang.ValueMember = "ID";
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
+            //ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
+            HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
+        }
+
+        // ==================== [R26] REFACTORING ====================
+        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
+        // Kỹ thuật         : Introduce Parameter Object
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        private void HienThiPhieuThanhToan(DataTable data)
+        {
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            txtMaPhieu.DataBindings.Clear();
+            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
+
+            cmbKhachHang.DataBindings.Clear();
+            cmbKhachHang.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
+
+            dtNgayThanhToan.DataBindings.Clear();
+            dtNgayThanhToan.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhiChu.DataBindings.Clear();
+            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
         }
 
         void BindingSource_AddingNew(object sender, AddingNewEventArgs e)
@@ -36,11 +109,13 @@ namespace CuahangNongduoc
             long maphieu = ThamSo.LayMaPhieuThanhToan();;
             ThamSo.GanMaPhieuThanhToan(maphieu+1);
 
-            DataRow row = ctrl.NewRow();
+            //DataRow row = ctrl.NewRow();
+            DataRow row = factory.NewRow(); // FE3-[FE-TC] Thay cho ctrl.NewRow()
             row["ID"] = maphieu;
             row["NGAY_THANH_TOAN"] = DateTime.Now.Date;
             row["TONG_TIEN"] = numTongTien.Value;
-            ctrl.Add(row);
+            //ctrl.Add(row);
+            factory.Add(row); // FE3-[FE-TC] Thay cho ctrl.Add(row)
             bindingNavigator.BindingSource.MoveLast();
         }
 
@@ -57,7 +132,8 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu thanh toán này không?", "Phieu Thanh Toan", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                ctrl.Save();
+                // ctrl.Save();
+                factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
             }
         }
 
@@ -65,12 +141,23 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            ctrl.Save();
+            // ctrl.Save();
+            factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
         }
 
+        // ==================== [FE-09] REFACTORING ====================
+        // Lỗi (Code smell) : Duplicate Code – Xử lý DataError thủ công chỉ dùng e.Cancel
+        // Kỹ thuật         : Extract Method (Gọi hàm dùng chung từ GridErrorHelper)
+        // Trước            : e.Cancel = true;
+        // Sau              : GridErrorHelper.HandleDataError(sender, e);
+        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
+        // Hỗ trợ           : Không
+        // Kiểm tra         : QA – <Điền họ tên> (QA điền khi test đạt)
+        // Ngày chỉnh sửa   : 10/11/2026
+        // =============================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            e.Cancel = true;
+            GridErrorHelper.HandleDataError(sender, e);
         }
 
         private void toolIn_Click(object sender, EventArgs e)
@@ -96,8 +183,16 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                ctrl.TimPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu,
-                    Tim.cmbKhachHang.SelectedValue.ToString(), Tim.dtNgayThu.Value.Date);
+                // Gộp nhánh R26 (Truyền Object) và FE-TC (Gọi qua Factory)
+                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
+                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
+                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+                PhieuThanhToanSearchParam tim = new PhieuThanhToanSearchParam
+                {
+                    IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
+                    Ngay = Tim.dtNgayThu.Value.Date
+                };
+                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(tim.IdKhachHang, tim.Ngay));
             }
         }
 

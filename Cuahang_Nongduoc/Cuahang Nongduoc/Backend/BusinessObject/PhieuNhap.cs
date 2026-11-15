@@ -40,12 +40,16 @@ namespace CuahangNongduoc.BusinessObject
             set { m_Datra = value; }
         }
 
-        private long m_ConNo;
-
+// ==================== [R34] REFACTORING ====================
+// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
+// Kỹ thuật         : Encapsulate Field + Rename Field
+// Tác giả          : BE3 - Bùi Lê Tuấn Anh
+// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+// Ngày chỉnh sửa   : 11/11/2026
+// ==============================================================
         public long ConNo
         {
-            get { return m_ConNo; }
-            set { m_ConNo = value; }
+            get { return m_TongTien - m_Datra; }
         }
 
         private NhaCungCap m_NCC;

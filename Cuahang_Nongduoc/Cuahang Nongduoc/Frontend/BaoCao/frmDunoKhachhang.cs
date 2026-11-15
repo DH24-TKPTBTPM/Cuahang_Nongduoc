@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.DataLayer; // FE3-[FE-CN] Dùng Factory trực tiếp cho Form tự binding
 
 
 namespace CuahangNongduoc
@@ -19,12 +20,17 @@ namespace CuahangNongduoc
         }
         DuNoKhachHangController ctrl = new DuNoKhachHangController();
         KhachHangController ctrlKH = new KhachHangController();
+        DuNoKhachHangFactory factory = new DuNoKhachHangFactory(); // FE3-[FE-CN] Khởi tạo Factory
         private void frmDunoKhachhang_Load(object sender, EventArgs e)
         {
 
             this.toolThang.SelectedIndex = DateTime.Now.Month - 1;
             this.toolNam.Text = DateTime.Now.Year.ToString();
-            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
+            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
+            colKhachHang.DisplayMember = "HO_TEN";
+            colKhachHang.ValueMember = "ID";
+            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
+            colKhachHang.HeaderText = "Khách hàng";
 
         }
 
@@ -66,17 +72,75 @@ namespace CuahangNongduoc
             }
         }
 
+        // ==================== [FE-CN] REFACTORING ====================
+        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (ToolStripProgressBar, DataGridView, BindingNavigator)
+        // Kỹ thuật         : Move Method (Chuyển logic hiển thị tiến trình và binding lưới về Form giao diện)
+        // Trước            : ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
+        // Sau              : TongHopDuNo(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Hỗ trợ           : BE2 (Task R24)
+        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
+        // Ngày chỉnh sửa   : 08/11/2026
+        // =============================================================
+        private void TongHopDuNo(int thang, int nam)
+        {
+            int ThangTruoc = 0, NamTruoc = 0;
+            ThamSo.PreMonth(ref ThangTruoc, ref NamTruoc, thang, nam);
+            factory.Clear(thang, nam);
+
+            BindingSource bs = new BindingSource();
+            bs.DataSource = factory.LayDuNoKhachHang("-1", 0, 0);
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+
+            KhachHangFactory factoryKH = new KhachHangFactory();
+            DataTable tbl = factoryKH.DanhsachKhachHang();
+            long dauky = 0, phatsinh = 0, datra = 0, cuoiky = 0;
+
+            toolProgress.Minimum = 0;
+            toolProgress.Value = 0;
+            toolProgress.Maximum = tbl.Rows.Count;
+
+            foreach (DataRow row in tbl.Rows)
+            {
+                DataRow r = factory.NewRow();
+                String kh = Convert.ToString(row["ID"]);
+
+                dauky = DuNoKhachHangFactory.LayDuNo(kh, ThangTruoc, NamTruoc);
+                phatsinh = PhieuBanFactory.LayConNo(kh, thang, nam);
+                datra = PhieuThanhToanFactory.LayTongTien(kh, thang, nam);
+                cuoiky = (dauky + phatsinh - datra);
+
+                r["ID_KHACH_HANG"] = kh;
+                r["THANG"] = thang;
+                r["NAM"] = nam;
+                r["DAU_KY"] = dauky;
+                r["PHAT_SINH"] = phatsinh;
+                r["DA_TRA"] = datra;
+                r["CUOI_KY"] = cuoiky;
+
+                factory.Add(r);
+                toolProgress.Value++;
+            }
+        }
         private void toolTongHop_Click(object sender, EventArgs e)
         {
             toolProgress.Visible = true;
-            ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
+            DataTable data = ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
+            BindingSource bs = new BindingSource();
+            bs.DataSource = data;
+            bindingNavigator.BindingSource = bs;
+            dataGridView.DataSource = bs;
+            toolProgress.Maximum = data.Rows.Count;
+            toolProgress.Value = data.Rows.Count;
             toolProgress.Visible = false;
         }
 
         private void toolLuu_Click(object sender, EventArgs e)
         {
             toolThang.Focus();
-            ctrl.Save();
+            //ctrl.Save();
+            factory.Save(); // FE3-[FE-CN] Thay cho ctrl.Save()
         }
 
         private void toolThoat_Click(object sender, EventArgs e)
@@ -86,6 +150,18 @@ namespace CuahangNongduoc
 
         private void toolIn_Click(object sender, EventArgs e)
         {
+            // ==================== [FE-BC] REFACTORING ====================
+            // Lỗi (Code smell) : Bấm nút In khi chưa tổng hợp dữ liệu gây lỗi NullReferenceException
+            // Kỹ thuật         : Introduce Guard Clause (Kiểm tra điều kiện biên trước khi in)
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 12/11/2026
+            // =============================================================
+            if (bindingNavigator.BindingSource == null || bindingNavigator.BindingSource.Current == null)
+            {
+                MessageBox.Show("Vui lòng tổng hợp dư nợ trước khi in!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
             KhachHangController ctrlKH = new KhachHangController();
             DuNoKhachHang dn = new DuNoKhachHang();

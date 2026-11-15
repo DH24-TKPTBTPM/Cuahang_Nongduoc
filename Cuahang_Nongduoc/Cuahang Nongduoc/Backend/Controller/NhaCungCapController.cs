@@ -50,10 +50,18 @@ namespace CuahangNongduoc.Controller
 
         }
         
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
         public NhaCungCap LayNCC(String id)
         {
             DataTable tbl = factory.LayNCC(id);
-            NhaCungCap ncc = new NhaCungCap();
+            NhaCungCap ncc = null;
             if (tbl.Rows.Count > 0)
             {
                 ncc.Id = Convert.ToString(tbl.Rows[0]["ID"]);

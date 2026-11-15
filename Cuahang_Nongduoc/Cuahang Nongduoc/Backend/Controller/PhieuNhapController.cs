@@ -33,9 +33,17 @@ namespace CuahangNongduoc.Controller
             bs.MoveNext();
             factory.Save();
         }
-        public void Save()
+        // ==================== [R33] REFACTORING ====================
+        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
+        // Kỹ thuật         : Standardize API Contract
+        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
+        // Hỗ trợ           : BE2 - Trần Tuấn Anh
+        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 08/11/2026
+        // ==============================================================
+        public bool Save()
         {
-            factory.Save();
+            return factory.Save();
         }
 
     
@@ -62,7 +70,6 @@ namespace CuahangNongduoc.Controller
                 // Ngày chỉnh sửa   : 05/11/2026
                 // ==============================================================
                 ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
-                ph.ConNo = Convert.ToInt64(tbl.Rows[0]["CON_NO"]);
                 ph.NhaCungCap = ctrlNCC.LayNCC(Convert.ToString(tbl.Rows[0]["ID_NHA_CUNG_CAP"]));
                 MaSanPhamController ctrl = new MaSanPhamController();
                 ph.ChiTiet = ctrl.ChiTietPhieuNhap(ph.Id);

@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Data;
 using CuahangNongduoc.DataLayer;
+using CuahangNongduoc.DataLayer.Mappers;
 using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc.Controller
@@ -25,72 +26,51 @@ namespace CuahangNongduoc.Controller
             return factory.Save();
         }
 
+        // ==================== [R11] REFACTORING ====================
+        // Lỗi (Code smell) : Lặp lại code đọc DataRow ở nhiều hàm và khởi tạo thừa đối tượng (sp = new MaSanPham() 2 lần liên tiếp trong ChiTietPhieuNhap)
+        // Kỹ thuật         : Extract Method + Remove Dead Code (kết hợp Mapper [D05])
+        // Trước            : Các hàm LaySanPham, LayMaSanPham, LayMaSanPhamHetHan, ChiTietPhieuNhap đều tự gán cột thủ công và có lệnh cấp phát thừa biến sp
+        // Sau              : Xóa bỏ khởi tạo thừa, tách toàn bộ phần chuyển DataRow sang dùng chung EntityMapper.ToSanPham và EntityMapper.ToMaSanPham
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Đoạn code chuyển DataRow sang SanPham/MaSanPham bị copy lặp lại ở 3 hàm liên tiếp
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Cả 3 hàm LaySanPham, LayMaSanPham, LayMaSanPhamHetHan đều tự đọc từng cột rồi gán tay vào đối tượng
+        // Sau              : Dùng chung EntityMapper.ToSanPham, EntityMapper.ToMaSanPham và EntityMapper.MapList cho gọn và dễ sửa
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public SanPham LaySanPham(String idMaSanPham)
         {
-            MaSanPhanFactory f = new MaSanPhanFactory();
-            DataTable tbl = f.LaySanPham(idMaSanPham);
-            SanPham sp = null;
-            DonViTinhController ctrlDVT = new DonViTinhController();
-            if (tbl.Rows.Count > 0)
-            {
-                sp =  new  SanPham();
-                sp.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                sp.TenSanPham = Convert.ToString(tbl.Rows[0]["TEN_SAN_PHAM"]);
-                sp.SoLuong = Convert.ToInt32(tbl.Rows[0]["SO_LUONG"]);
-                sp.DonGiaNhap = Convert.ToInt64(tbl.Rows[0]["DON_GIA_NHAP"]);
-                sp.GiaBanLe = Convert.ToInt64(tbl.Rows[0]["GIA_BAN_LE"]);
-                sp.GiaBanSi = Convert.ToInt64(tbl.Rows[0]["GIA_BAN_SI"]);
-                sp.DonViTinh = ctrlDVT.LayDVT(Convert.ToInt32(tbl.Rows[0]["ID_DON_VI_TINH"]));
-            }
-            return sp;
-
+            DataTable tbl = new MaSanPhanFactory().LaySanPham(idMaSanPham);
+            return tbl.Rows.Count > 0 ? EntityMapper.ToSanPham(tbl.Rows[0]) : null;
         }
 
-
+        // ==================== [R35] REFACTORING ====================
+        // Lỗi (Code smell) : N+1 query khi nạp danh sách MaSanPham (mỗi dòng gọi lại LaySanPham -> LayDVT)
+        // Kỹ thuật         : Replace Loop with Bulk Query
+        // Trước            : LayMaSanPham(), LayMaSanPhamHetHan(), ChiTietPhieuNhap() dùng ToMaSanPham nên sinh N+1 query
+        // Sau              : Gọi các hàm *DayDu() (JOIN sẵn 3 bảng) kết hợp EntityMapper.ToMaSanPhamDayDu trong 1 truy vấn
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE1
+        // Kiểm tra         : QA2
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public MaSanPham LayMaSanPham(String idMaSanPham)
         {
-            MaSanPhanFactory f = new MaSanPhanFactory();
-            DataTable tbl = f.LayMaSanPham(idMaSanPham);
-            MaSanPham sp = null;
-            SanPhamController ctrlSanPham = new SanPhamController();
-            if (tbl.Rows.Count > 0)
-            {
-                sp = new MaSanPham();
-                sp.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                sp.SoLuong = Convert.ToInt32(tbl.Rows[0]["SO_LUONG"]);
-                sp.GiaNhap = Convert.ToInt64(tbl.Rows[0]["DON_GIA_NHAP"]);
-                sp.NgayNhap = Convert.ToDateTime(tbl.Rows[0]["NGAY_NHAP"]);
-                sp.NgaySanXuat = Convert.ToDateTime(tbl.Rows[0]["NGAY_SAN_XUAT"]);
-                sp.NgayHetHan = Convert.ToDateTime(tbl.Rows[0]["NGAY_HET_HAN"]);
-                sp.SanPham = ctrlSanPham.LaySanPham(tbl.Rows[0]["ID_SAN_PHAM"].ToString());
-                
-            }
-            return sp;
-
+            DataTable tbl = new MaSanPhanFactory().LayMaSanPhamDayDu(idMaSanPham);
+            return tbl.Rows.Count > 0 ? EntityMapper.ToMaSanPhamDayDu(tbl.Rows[0]) : null;
         }
 
         public static IList<MaSanPham> LayMaSanPhamHetHan(DateTime dt)
         {
-            IList<MaSanPham> ds = new List<MaSanPham>();
-            MaSanPhanFactory f = new MaSanPhanFactory();
-            DataTable tbl = f.DanhsachMaSanPhamHetHan(dt);
-
-            MaSanPham sp = null;
-            SanPhamController ctrlSanPham = new SanPhamController();
-            foreach  ( DataRow row in tbl.Rows)
-            {
-                sp = new MaSanPham();
-                sp.Id = Convert.ToString(row["ID"]);
-                sp.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                sp.GiaNhap = Convert.ToInt64(row["DON_GIA_NHAP"]);
-                sp.NgayNhap = Convert.ToDateTime(row["NGAY_NHAP"]);
-                sp.NgaySanXuat = Convert.ToDateTime(row["NGAY_SAN_XUAT"]);
-                sp.NgayHetHan = Convert.ToDateTime(row["NGAY_HET_HAN"]);
-                sp.SanPham = ctrlSanPham.LaySanPham(row["ID_SAN_PHAM"].ToString());
-                ds.Add(sp);
-            }
-            return ds;
-
+            return EntityMapper.MapList<MaSanPham>(new MaSanPhanFactory().DanhsachMaSanPhamHetHanDayDu(dt), EntityMapper.ToMaSanPhamDayDu);
         }
 
         public void HienThiAutoComboBox(String sp, ComboBox cmb)
@@ -114,26 +94,19 @@ namespace CuahangNongduoc.Controller
             
             dg.DataSource = factory.DanhsachChiTiet(id);
         }
+        // ==================== [D05] REFACTORING ====================
+        // Lỗi (Code smell) : Lặp lại vòng lặp chuyển DataRow sang danh sách MaSanPham
+        // Kỹ thuật         : Mapper Pattern (PoEAA)
+        // Trước            : Tự duyệt DataTable, gán tay từng thuộc tính và tự nhân SO_LUONG * DON_GIA_NHAP cho ThanhTien
+        // Sau              : Gọi EntityMapper.MapList<MaSanPham>(..., EntityMapper.ToMaSanPham) để xử lý trọn gói
+        // Tác giả          : BE2
+        // Hỗ trợ           : BE3
+        // Kiểm tra         : QA1
+        // Ngày chỉnh sửa   : 12/11/2026
+        // ==============================================================
         public IList<MaSanPham> ChiTietPhieuNhap(String id)
         {
-            SanPhamController ctrlSanPham = new SanPhamController();
-            IList<MaSanPham> ds = new List<MaSanPham>();
-            DataTable tbl = factory.DanhsachChiTiet(id);
-            foreach (DataRow row in tbl.Rows)
-            {
-                MaSanPham sp = new MaSanPham();
-                sp = new MaSanPham();
-                sp.Id = Convert.ToString(row["ID"]);
-                sp.SoLuong = Convert.ToInt32(row["SO_LUONG"]);
-                sp.GiaNhap = Convert.ToInt64(row["DON_GIA_NHAP"]);
-                sp.ThanhTien = sp.SoLuong * sp.GiaNhap;
-                sp.NgayNhap = Convert.ToDateTime(row["NGAY_NHAP"]);
-                sp.NgaySanXuat = Convert.ToDateTime(row["NGAY_SAN_XUAT"]);
-                sp.NgayHetHan = Convert.ToDateTime(row["NGAY_HET_HAN"]);
-                sp.SanPham = ctrlSanPham.LaySanPham(row["ID_SAN_PHAM"].ToString());
-                ds.Add(sp);
-            }
-            return ds;
+            return EntityMapper.MapList<MaSanPham>(factory.DanhsachChiTietDayDu(id), EntityMapper.ToMaSanPhamDayDu);
         }
 
     }
