@@ -179,6 +179,7 @@
     <Compile Include="Backend\DataLayer\KhachHangFactory.cs" />
     <Compile Include="Backend\DataLayer\SanPhamFactory.cs" />
     <Compile Include="Backend\DataLayer\BaseFactory.cs" />
+    <Compile Include="Backend\DataLayer\IRepository.cs" />
     <Compile Include="Backend\DataLayer\DonViTinhFactory.cs" />
     <Compile Include="Backend\DataLayer\IUnitOfWork.cs" />
     <Compile Include="Backend\DataLayer\UnitOfWork.cs" />
