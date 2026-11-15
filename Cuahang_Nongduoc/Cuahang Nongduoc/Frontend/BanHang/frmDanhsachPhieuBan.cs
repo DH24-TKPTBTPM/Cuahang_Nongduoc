@@ -34,16 +34,22 @@ namespace CuahangNongduoc
         KhachHangController ctrlKH = new KhachHangController();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
+            colKhachhang.DisplayMember = "HO_TEN";
+            colKhachhang.ValueMember = "ID";
+            colKhachhang.DataPropertyName = "ID_KHACH_HANG";
+
             if (_loaiPhieu == LoaiPhieuBan.BanLe)
             {
-                ctrlKH.HienthiKhachHangDataGridviewComboBox(colKhachhang); 
+                colKhachhang.DataSource = ctrlKH.LayDanhSachKhachHang();
+                colKhachhang.HeaderText = "Khách hàng";
                 ctrl.HienthiPhieuBanLe(bindingNavigator, dataGridView);
 
             }
             else
             {
 
-                ctrlKH.HienthiKhachHangDataGridviewComboBox (colKhachhang);
+                colKhachhang.DataSource = ctrlKH.LayDanhSachKhachHang();
+                colKhachhang.HeaderText = "Đại lý";
                 ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
             }
         }
@@ -73,12 +79,22 @@ namespace CuahangNongduoc
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmBanHang();
+                if (_loaiPhieu == LoaiPhieuBan.BanLe)
+                {
+                    BanLe = new frmBanHang(new BanLeStrategy());
+                }
+                else
+                {
+                    BanLe = new frmBanHang(new BanSiStrategy());
+                }
                 BanLe.Show();
             }
             else
+            {
                 BanLe.Activate();
+            }
         }
+
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
@@ -94,8 +110,10 @@ namespace CuahangNongduoc
                 foreach (ChiTietPhieuBan ct in ds)
                 {
                     CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                  
                 }
                 ctrl.Save();
+                this.ctrl.Save();
             }
         }
 
@@ -112,10 +130,12 @@ namespace CuahangNongduoc
                      foreach (ChiTietPhieuBan ct in ds)
                      {
                          CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                     }
+                        
+                    }
                      bindingNavigator.BindingSource.RemoveCurrent();
                      ctrl.Save();
-                 }
+                    this.ctrl.Save();
+                }
              }
         }
 
@@ -127,14 +147,14 @@ namespace CuahangNongduoc
                 PhieuBanController ctrlPB = new PhieuBanController();
                 String ma_phieu = row["ID"].ToString();
                 CuahangNongduoc.BusinessObject.PhieuBan ph = ctrlPB.LayPhieuBan(ma_phieu);
-                frmInPhieuBan PhieuBan = new frmInPhieuBan(ph);
-                PhieuBan.Show();
+                frmInPhieuBan frmIn = new frmInPhieuBan(ph);
+                ((Form)(object)frmIn).Show();
             }
         }
 
         private void toolTimKiem_Click(object sender, EventArgs e)
         {
-            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(false);
+            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(_loaiPhieu == LoaiPhieuBan.BanSi);
             Point p = PointToScreen(toolTimKiem.Bounds.Location);
             p.X += toolTimKiem.Width;
             p.Y += toolTimKiem.Height;
