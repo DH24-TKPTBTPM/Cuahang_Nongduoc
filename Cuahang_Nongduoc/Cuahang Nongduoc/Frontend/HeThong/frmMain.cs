@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Patterns.Strategy;// [FE-03] Dùng cho BanLeStrategy, BanSiStrategy
-using Microsoft.Win32;
+//using Microsoft.Win32;// FE3-[FE-03] Remove Dead Code: Bỏ thư viện Registry cũ
 
 
 namespace CuahangNongduoc
@@ -35,42 +35,15 @@ namespace CuahangNongduoc
         private void frmMain_Load(object sender, EventArgs e)
         {
             // ==================== [FE-03] REFACTORING ====================
-            // Lỗi (Code smell) : Form giao diện gọi trực tiếp DataService.OpenConnection()
-            // Kỹ thuật         : Move Method (chuyển việc quản lý kết nối về tầng cơ sở dữ liệu)
-            // Trước            : DataService.OpenConnection();
-            // Sau              : // Đã loại bỏ việc gọi trực tiếp OpenConnection() tại tầng giao diện frmMain
+            // Lỗi (Code smell) : Đọc chuỗi kết nối từ Registry bằng key cứng (Dead Code) và thiếu lệnh đóng form khi lỗi kết nối
+            // Kỹ thuật         : Remove Dead Code (Bỏ đoạn đọc Registry, dùng App.config và bổ sung this.Close() khi lỗi kết nối)
+            // Trước            : RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\CoolSoft\\CuahangNongduoc"); ...
+            // Sau              : Loại bỏ đoạn đọc Registry, kiểm tra kết nối qua App.config và gọi this.Close() nếu kết nối thất bại
             // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
             // Hỗ trợ           : Không
             // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-            // Ngày chỉnh sửa   : 06/11/2026
+            // Ngày chỉnh sửa   : 15/11/2026
             // ===========================================================
-
-            //RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\CoolSoft\\CuahangNongduoc");
-
-            //if (regKey == null)
-            //{
-            //    DataService.m_ConnectString = "";
-            //}
-            //else
-            //{
-            //    try
-            //    {
-            //        DataService.m_ConnectString = (String)regKey.GetValue("ConnectString");
-            //    }
-            //    catch
-            //    {
-            //    }
-            //    finally
-            //    {
-            //        regKey.Close();
-            //    }
-            //}
-
-            //if (DataService.OpenConnection() == false)
-            //{
-            //    MessageBox.Show("Không thể kết nối dữ liệu!", "Cua hang Nong duoc", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    this.Close();
-            //}
 
             // [R01] Trước: DataService.OpenConnection(); (bỏ qua kết quả, lỗi kết nối bị lờ đi)
             // Sau  : kiểm tra kết quả, báo lỗi rõ ràng. Tác giả: tuananh (TL, thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa | Ngày chỉnh sửa: 02/11/2026 | Ngày kiểm thử: 03/11/2026
@@ -78,8 +51,9 @@ namespace CuahangNongduoc
             {
                 string loi = DataService.LastError != null ? DataService.LastError.Message : "";
                 MessageBox.Show("Không thể kết nối cơ sở dữ liệu!\n" + loi, "Cửa hàng Nông dược", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close(); // FE3-[FE-03] Đóng hệ thống khi không kết nối được CSDL
             }
-            
+
         }
         frmSanPham SanPham = null;
         private void mnuSanPham_Click(object sender, EventArgs e)
