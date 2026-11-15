@@ -32,9 +32,10 @@ namespace CuahangNongduoc
         public ReportBuilder WithThongTinCuaHang()
         {
             CuaHang ch = ThamSo.LayCuaHang();
-            m_Params.Add(new ReportParameter("ten_cua_hang", ch.TenCuaHang));
-            m_Params.Add(new ReportParameter("dia_chi", ch.DiaChi));
-            m_Params.Add(new ReportParameter("dien_thoai", ch.DienThoai));
+            // FE3-[D10] Kiểm tra null cho đối tượng CuaHang tránh NullReferenceException
+            m_Params.Add(new ReportParameter("ten_cua_hang", ch != null ? ch.TenCuaHang : ""));
+            m_Params.Add(new ReportParameter("dia_chi", ch != null ? ch.DiaChi : ""));
+            m_Params.Add(new ReportParameter("dien_thoai", ch != null ? ch.DienThoai : ""));
             return this;
         }
 
@@ -74,6 +75,14 @@ namespace CuahangNongduoc
         // Template Method: Khung chuẩn 4 bước để hiển thị phiếu in lên ReportViewer
         protected void HienThiBaoCao(ReportViewer viewer, BindingSource bindingSource, object dataSource, long soTien)
         {
+            // FE3-[D10] Kiểm tra null đầu vào trước khi nạp báo cáo
+            if (viewer == null || bindingSource == null || dataSource == null)
+            {
+                MessageBox.Show("Không có dữ liệu hợp lệ để hiển thị báo cáo!", "In báo cáo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+                return;
+            }
+
             ReportBuilder builder = new ReportBuilder()
                 .WithThongTinCuaHang()
                 .WithTienBangChu(soTien);
