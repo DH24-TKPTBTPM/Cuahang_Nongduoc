@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
-//using CuahangNongduoc.DataLayer; // FE3-[FE-TC] Dùng PhieuThanhToanFactory cho Form tự binding
 using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
@@ -15,7 +14,6 @@ namespace CuahangNongduoc
     {
         KhachHangController ctrlKH = new KhachHangController();
         PhieuThanhToanController ctrl = new PhieuThanhToanController();
-        //PhieuThanhToanFactory factory = new PhieuThanhToanFactory(); // FE3-[FE-TC] Khởi tạo Factory
         public frmThanhToan()
         {
             InitializeComponent();
@@ -63,8 +61,6 @@ namespace CuahangNongduoc
             colKhachHang.ValueMember = "ID";
             colKhachHang.DataPropertyName = "ID_KHACH_HANG";
             colKhachHang.HeaderText = "Khách hàng";
-            //ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
-            //HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
             HienthiPhieuThanhToan(ctrl.HienthiPhieuThanhToan()); // FE3-[FE-TC] Gọi qua PhieuThanhToanController đúng kiến trúc 3 lớp
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
         }
@@ -111,7 +107,6 @@ namespace CuahangNongduoc
             ThamSo.GanMaPhieuThanhToan(maphieu+1);
 
             DataRow row = ctrl.NewRow();
-            //DataRow row = factory.NewRow(); // FE3-[FE-TC] Thay cho ctrl.NewRow()
             row["ID"] = maphieu;
             row["NGAY_THANH_TOAN"] = DateTime.Now.Date;
             row["TONG_TIEN"] = numTongTien.Value;

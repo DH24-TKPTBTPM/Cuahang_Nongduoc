@@ -1,5 +1,4 @@
 ﻿using CuahangNongduoc.Controller;
-//using CuahangNongduoc.DataLayer;//FE3-[FE-TC] Dùng PhieuChiFactory cho Form tự binding
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +14,6 @@ namespace CuahangNongduoc
     {
         LyDoChiController ctrlLyDo = new LyDoChiController();
         PhieuChiController ctrl = new PhieuChiController();
-        //PhieuChiFactory factory = new PhieuChiFactory();//FE3-[FE-TC] Khởi tạo Factory
         public frmPhieuChi()
         {
             InitializeComponent();
@@ -67,9 +65,7 @@ namespace CuahangNongduoc
         { 
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
             ctrlLyDo.HienthiDataGridviewComboBox(colLyDoChi);
-            //HienthiPhieuChi(factory.DanhsachPhieuChi());
             HienthiPhieuChi(ctrl.HienthiPhieuChi()); // FE3-[FE-TC] Gọi qua PhieuChiController đúng kiến trúc 3 lớp
-            //ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
