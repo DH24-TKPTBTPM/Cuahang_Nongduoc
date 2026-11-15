@@ -433,27 +433,6 @@ namespace CuahangNongduoc
             }
         }
 
-        private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
-        {
-            if (MessageBox.Show("Bạn chắc chắn xóa Phiếu Nhập này không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-            {
-                e.Cancel = true;
-            }
-            else
-            {
-                numTongTien.Value -= Convert.ToInt64(e.Row.Cells["colDonGiaNhap"].Value) * Convert.ToInt64(e.Row.Cells["colSoLuong"].Value);
-            }
-        }
-
-        private void toolXoa_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                bindingNavigator.BindingSource.RemoveCurrent();
-                ctrl.Save();
-            }
-        }
-
         private void numDaTra_ValueChanged(object sender, EventArgs e)
         {
             numConNo.Value = numTongTien.Value - numDaTra.Value;

@@ -273,30 +273,48 @@ namespace CuahangNongduoc
         // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
         // Ngày chỉnh sửa   : 10/11/2026
         // =================================================================================
+        // [Sửa build 15/11/2026] Facade (BE2) nhận PhieuBan + danh sách chi tiết, không nhận 8 tham số rời
+        // → Form gom dữ liệu trên màn hình thành đúng đối tượng rồi gọi 1 lần; Facade tự biết thêm mới hay sửa.
+        // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên>
         void Luu()
         {
-            bool isThemMoi = (_currentState is StateThem);
             string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
+
+            PhieuBan phieu = new PhieuBan();
+            phieu.Id = txtMaPhieu.Text.Trim();
+            phieu.KhachHang = new KhachHang(maKhachHang);
+            phieu.NgayBan = dtNgayLapPhieu.Value;
+            phieu.TongTien = Convert.ToInt64(numTongTien.Value);
+            phieu.DaTra = Convert.ToInt64(numDaTra.Value);
+
+            IList<ChiTietPhieuBan> dsChiTiet = new List<ChiTietPhieuBan>();
+            if (dgvDanhsachSP.DataSource is BindingSource bsCT && bsCT.DataSource is DataTable tblCT)
+            {
+                foreach (DataRow r in tblCT.Rows)
+                {
+                    if (r.RowState == DataRowState.Deleted) continue;
+                    ChiTietPhieuBan ct = new ChiTietPhieuBan();
+                    ct.MaSanPham = new MaSanPham(Convert.ToString(r["ID_MA_SAN_PHAM"]), Convert.ToInt32(r["SO_LUONG"]));
+                    ct.SoLuong = Convert.ToInt32(r["SO_LUONG"]);
+                    ct.DonGia = Convert.ToInt64(r["DON_GIA"]);
+                    dsChiTiet.Add(ct);
+                }
+            }
 
             try
             {
                 // GỌI DUY NHẤT FACADE ĐỂ LƯU VÀ HOÀN TỒN KHO
-                bool thanhCong = _facade.LuuHoaDon(
-                    txtMaPhieu.Text.Trim(),
-                    maKhachHang,
-                    dtNgayLapPhieu.Value,
-                    numTongTien.Value,
-                    numDaTra.Value,
-                    numConNo.Value,
-                    deleted,
-                    isThemMoi
-                );
+                bool thanhCong = _facade.LuuHoaDon(phieu, dsChiTiet, deleted);
 
                 if (thanhCong)
                 {
                     deleted.Clear(); // Xóa bộ đệm sau khi lưu thành công
                     MessageBox.Show("Lưu phiếu bán thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     SetState(new StateXem());
+                }
+                else
+                {
+                    MessageBox.Show(_facade.LastErrorMessage, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
