@@ -90,7 +90,13 @@ namespace CuahangNongduoc
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-
+            // ==================== [FE-11] REFACTORING ====================
+            // Lỗi (Code smell) : Tiêu đề MessageBox viết tiếng Việt không dấu ("Phieu Nhap")
+            // Kỹ thuật         : Standardize UI Message (Chuẩn hóa thông báo tiếng Việt có dấu)
+            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+            // Ngày chỉnh sửa   : 15/11/2026
+            // =============================================================
 
             MaSanPhamController ctrl = new MaSanPhamController();
             MaSanPham masp = ctrl.LayMaSanPham(txtMaSo.Text.Trim());
@@ -100,7 +106,8 @@ namespace CuahangNongduoc
                 {
                     if (txtMaSo.Text.Trim().Equals(view.Cells["colMaSanPham"].Value))
                     {
-                        MessageBox.Show("Mã sản phẩm này đã tồn tại trong danh sách! Vui lòng nhập lại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show("Mã sản phẩm này đã tồn tại trong danh sách! Vui lòng nhập lại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Mã sản phẩm này đã tồn tại trong danh sách! Vui lòng nhập lại !", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                         return;
                     }
 
@@ -108,19 +115,23 @@ namespace CuahangNongduoc
 
                 if (txtMaSo.Text.Trim().Length <= 0)
                 {
-                    MessageBox.Show("Vui lòng nhập Mã sản phẩm !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //MessageBox.Show("Vui lòng nhập Mã sản phẩm !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Vui lòng nhập Mã sản phẩm !", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 }
                 else if (numGiaNhap.Value <= 0)
                 {
-                    MessageBox.Show("Vui lòng nhập Đơn giá !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //MessageBox.Show("Vui lòng nhập Đơn giá !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Vui lòng nhập Đơn giá !", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 }
                 else if (numSoLuong.Value <= 0)
                 {
-                    MessageBox.Show("Vui lòng nhập Số lượng !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //MessageBox.Show("Vui lòng nhập Số lượng !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Vui lòng nhập Số lượng !", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 }
                 else if (dtNgaySanXuat.Value >= dtNgayHetHan.Value)
                 {
-                    MessageBox.Show("Ngày hết hạn phải lớn hơn ngày sản xuất!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    //MessageBox.Show("Ngày hết hạn phải lớn hơn ngày sản xuất!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Ngày hết hạn phải lớn hơn ngày sản xuất!", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 }
                 else
                 {
@@ -152,7 +163,8 @@ namespace CuahangNongduoc
             }
             else
             {
-                MessageBox.Show("Mã sản phẩm này đã tồn tại! Vui lòng nhập lại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show("Mã sản phẩm này đã tồn tại! Vui lòng nhập lại !", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Mã sản phẩm này đã tồn tại! Vui lòng nhập lại !", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
             }
         }
 
@@ -229,7 +241,8 @@ namespace CuahangNongduoc
             string maPhieu = txtMaPhieu.Text.Trim();
             if (string.IsNullOrEmpty(maPhieu))
             {
-                MessageBox.Show("Mã phiếu nhập không được để trống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show("Mã phiếu nhập không được để trống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Mã phiếu nhập không được để trống!", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 txtMaPhieu.Focus();
                 return false;
             }
@@ -237,7 +250,8 @@ namespace CuahangNongduoc
             PhieuNhapController ctrlPN = new PhieuNhapController();
             if (ctrlPN.LayPhieuNhap(maPhieu) != null)
             {
-                MessageBox.Show("Mã Phiếu nhập này đã tồn tại trong hệ thống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show("Mã Phiếu nhập này đã tồn tại trong hệ thống!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Mã Phiếu nhập này đã tồn tại trong hệ thống!", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Error); // FE3-[FE-11]
                 txtMaPhieu.Focus();
                 return false;
             }
@@ -296,7 +310,8 @@ namespace CuahangNongduoc
         {
             if (!(currentState is XemState))
             {
-                MessageBox.Show("Vui lòng lưu lại Phiếu nhập hiện tại!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Vui lòng lưu lại Phiếu nhập hiện tại!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Vui lòng lưu lại Phiếu nhập hiện tại!", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Information); // FE3-[FE-11]
             }
             else
             {
@@ -312,7 +327,8 @@ namespace CuahangNongduoc
         {
             if (!(currentState is XemState))
             {
-                if (MessageBox.Show("Bạn có muốn lưu lại Phiếu nhập này không?", "Phieu Nhap Hang", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                //if (MessageBox.Show("Bạn có muốn lưu lại Phiếu nhập này không?", "Phieu Nhap Hang", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Bạn có muốn lưu lại Phiếu nhập này không?", "Phiếu nhập hàng", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) // FE3-[FE-11]
                 {
                     this.Luu();
                 }
@@ -375,11 +391,13 @@ namespace CuahangNongduoc
         {
             if (dataGridView.CurrentRow == null || dataGridView.CurrentRow.IsNewRow)
             {
-                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa khỏi danh sách nhập!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Vui lòng chọn sản phẩm cần xóa khỏi danh sách nhập!", "Phieu Nhap", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa khỏi danh sách nhập!", "Phiếu nhập", MessageBoxButtons.OK, MessageBoxIcon.Warning); // FE3-[FE-11]
                 return;
             }
 
-            if (MessageBox.Show("Bạn chắc chắn xóa sản phẩm này khỏi danh sách nhập?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            //if (MessageBox.Show("Bạn chắc chắn xóa sản phẩm này khỏi danh sách nhập?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Bạn chắc chắn xóa sản phẩm này khỏi danh sách nhập?", "Phiếu nhập", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) // FE3-[FE-11]
             {
                 DataGridViewRow currentRow = dataGridView.CurrentRow;
 
@@ -389,6 +407,29 @@ namespace CuahangNongduoc
                 numTongTien.Value = Math.Max(0, numTongTien.Value - (donGia * soLuong));
 
                 dataGridView.Rows.Remove(currentRow);
+            }
+        }
+
+        private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            //if (MessageBox.Show("Bạn chắc chắn xóa Phiếu Nhập này không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            if (MessageBox.Show("Bạn chắc chắn xóa Phiếu Nhập này không?", "Phiếu nhập", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No) // FE3-[FE-11]
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                numTongTien.Value -= Convert.ToInt64(e.Row.Cells["colDonGiaNhap"].Value) * Convert.ToInt64(e.Row.Cells["colSoLuong"].Value);
+            }
+        }
+
+        private void toolXoa_Click(object sender, EventArgs e)
+        {
+            //if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Nhap", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phiếu nhập", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) // FE3-[FE-11]
+            {
+                bindingNavigator.BindingSource.RemoveCurrent();
+                ctrl.Save();
             }
         }
 
