@@ -156,11 +156,15 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                HienthiPhieuChi(factory.TimPhieuChi(new PhieuChiSearchParam
+                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
+                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
+                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+                PhieuChiSearchParam tim = new PhieuChiSearchParam
                 {
                     LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
                     Ngay = Tim.dtNgayChi.Value.Date
-                }));
+                };
+                HienthiPhieuChi(factory.TimPhieuChi(tim.LyDo, tim.Ngay));
             }
         }
     }
