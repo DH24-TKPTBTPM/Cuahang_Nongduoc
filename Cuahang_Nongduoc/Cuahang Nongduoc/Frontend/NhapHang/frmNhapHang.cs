@@ -1,7 +1,7 @@
 using CuahangNongduoc.Backend.Patterns.State;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.Frontend.Common1;
+
 using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections;
@@ -11,6 +11,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace CuahangNongduoc
 {
@@ -167,21 +169,23 @@ namespace CuahangNongduoc
 
         private void toolLuuThoat_Click(object sender, EventArgs e)
         {
-            bindingNavigatorPositionItem.Focus();
-            this.Luu();
-            SetState(new XemState());
+            if (this.Luu())
+            {
+                SetState(new XemState());
+            }
         }
 
-        void Luu()
+        bool Luu()
         {
             if (currentState is ThemState)
             {
-                ThemMoi();
+                return this.ThemMoi();
 
             }
             else
             {
-                CapNhat();
+                this.CapNhat();
+                return true;
             }
         }
         void CapNhat()
@@ -200,10 +204,10 @@ namespace CuahangNongduoc
         // Kiểm tra         : QA1 – <Họ_tên>
         // Ngày chỉnh sửa   : 04/11/2026
         // ===========================================================
-        void ThemMoi()
+        bool ThemMoi()
         {
             // Bước 1: Kiểm tra hợp lệ trước khi làm bất kỳ thao tác nào
-            if (!KiemTraHopLePhieuNhap()) return;
+            if (!KiemTraHopLePhieuNhap()) return false;
 
             // Bước 2: Khởi tạo dữ liệu phiếu nhập
             DataRow row = ctrl.NewRow();
@@ -222,6 +226,7 @@ namespace CuahangNongduoc
 
             // Bước 4: Cập nhật tồn kho & giá nhập
             CapNhatGiaVaTonKho();
+            return true;
         }
 
         private bool KiemTraHopLePhieuNhap()
@@ -303,8 +308,8 @@ namespace CuahangNongduoc
                 String ma_phieu = txtMaPhieu.Text;
                 PhieuNhapController ctrlPN = new PhieuNhapController();
                 CuahangNongduoc.BusinessObject.PhieuNhap ph = ctrlPN.LayPhieuNhap(ma_phieu);
-                frmInPhieuNhap PhieuNhap = new frmInPhieuNhap(ph);
-                PhieuNhap.Show();
+                frmInPhieuNhap frmIn = new frmInPhieuNhap(ph);
+                ((Form)(object)frmIn).Show();
             }
         }
 
@@ -340,7 +345,7 @@ namespace CuahangNongduoc
         // =============================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            GridErrorHelper.HandleDataError(sender, e);
+            e.Cancel = true;
         }
 
          public void Allow(bool val)
