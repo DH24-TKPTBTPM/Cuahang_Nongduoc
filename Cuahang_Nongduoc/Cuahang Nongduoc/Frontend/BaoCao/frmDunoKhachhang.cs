@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-//using CuahangNongduoc.DataLayer; // FE3-[FE-CN] Dùng Factory trực tiếp cho Form tự binding
 
 
 namespace CuahangNongduoc
@@ -20,7 +19,6 @@ namespace CuahangNongduoc
         }
         DuNoKhachHangController ctrl = new DuNoKhachHangController();
         KhachHangController ctrlKH = new KhachHangController();
-        //DuNoKhachHangFactory factory = new DuNoKhachHangFactory(); // FE3-[FE-CN] Khởi tạo Factory
         private void frmDunoKhachhang_Load(object sender, EventArgs e)
         {
 
@@ -98,7 +96,7 @@ namespace CuahangNongduoc
         private void toolLuu_Click(object sender, EventArgs e)
         {
             toolThang.Focus();
-            ctrl.Save();// FE3-[FE-CN] Gọi ctrl.Save() để lưu dữ liệu dư nợ xuống CSDL
+            ctrl.Save();
 
         }
 
