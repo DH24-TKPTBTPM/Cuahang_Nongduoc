@@ -160,7 +160,8 @@ namespace CuahangNongduoc
                 {
                     LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
                     Ngay = Tim.dtNgayChi.Value.Date
-                }));
+                };
+                HienthiPhieuChi(factory.TimPhieuChi(tim.LyDo, tim.Ngay));
             }
         }
     }

@@ -189,7 +189,8 @@ namespace CuahangNongduoc
                 {
                     IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
                     Ngay = Tim.dtNgayThu.Value.Date
-                }));
+                };
+                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(tim.IdKhachHang, tim.Ngay));
             }
         }
 

@@ -253,7 +253,8 @@ namespace CuahangNongduoc.Patterns.Facade
 
             if (dsCT != null)
             {
-                HashSet<string> daXuLy = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                // .NET 2.0 không có HashSet → dùng Dictionary làm tập hợp (BE1 sửa build 15/11/2026)
+                Dictionary<string, bool> daXuLy = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
                 foreach (ChiTietPhieuBan ct in dsCT)
                 {
                     string idMaSP = ct.MaSanPham.Id;
@@ -265,12 +266,12 @@ namespace CuahangNongduoc.Patterns.Facade
                         row["ID_PHIEU_BAN"] = idPB;
                         row["ID_MA_SAN_PHAM"] = idMaSP;
                     }
-                    bool gopTrung = !laMoi && daXuLy.Contains(idMaSP);
+                    bool gopTrung = !laMoi && daXuLy.ContainsKey(idMaSP);
                     row["DON_GIA"] = ct.DonGia;
                     row["SO_LUONG"] = gopTrung ? checked((int)(Convert.ToInt64(row["SO_LUONG"]) + ct.SoLuong)) : ct.SoLuong;
                     row["THANH_TIEN"] = gopTrung ? Convert.ToInt64(row["THANH_TIEN"]) + ct.ThanhTien : ct.ThanhTien;
                     if (laMoi) ctFactory.Add(row);
-                    daXuLy.Add(idMaSP);
+                    daXuLy[idMaSP] = true;
                 }
             }
 
