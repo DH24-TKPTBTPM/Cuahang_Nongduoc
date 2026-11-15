@@ -27,4 +27,8 @@
 Khóa ngoại bổ sung (Access thiếu): PHIEU_BAN→KHACH_HANG, CHI_TIET_PHIEU_BAN→MA_SAN_PHAM, PHIEU_NHAP→NHA_CUNG_CAP, SAN_PHAM→DON_VI_TINH, PHIEU_CHI→LY_DO_CHI (NO ACTION: không cho xóa bản ghi đang được dùng). Dữ liệu hiện có đã kiểm tra: 0 dòng mồ côi.
 THAM_SO giữ nguyên không có khóa chính (bảng 1 dòng, code cũ đang dùng như vậy).
 
-Muốn tạo dữ liệu demo riêng: thêm `05_SampleData_Demo.sql` (QA2).
+## Dữ liệu demo (QA-08)
+`05_SampleData_Demo.sql` – chạy **sau** 01 → 04 (không nằm trong `CaiDatCSDL.bat`). Thêm 1 NCC, 1 khách lẻ, 1 đại lý, 3 sản phẩm, 1 phiếu nhập 3 lô (1 lô sắp hết hạn), 1 phiếu bán sỉ còn nợ 80.000.
+Mọi mã bắt đầu bằng `DEMO-`, chạy lại nhiều lần được, không đụng dữ liệu thật và `THAM_SO`.
+Sau khi nạp demo, `04_KiemTraDuLieu.sql` sẽ báo **LỆCH** số dòng so với Access – bình thường; muốn về dữ liệu gốc thì chạy lại `CaiDatCSDL.bat`.
+Kịch bản demo 10 bước: `Tests/KichBan_Demo.md`.
