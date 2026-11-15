@@ -1,6 +1,7 @@
 ﻿using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.BanHang;
+using CuahangNongduoc.Patterns.Facade;
 using CuahangNongduoc.Patterns.Factory;
 using CuahangNongduoc.Patterns.Strategy;
 using System;
@@ -91,11 +92,12 @@ namespace CuahangNongduoc
             else
             {
                 DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
-                ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
-                foreach (ChiTietPhieuBan ct in ds)
+                if (view != null)
                 {
-                    CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                    string maPhieu = view["ID"].ToString();
+                    // Ủy quyền việc xóa phiếu và hoàn kho cho BanHangFacade (Ẩn hoàn toàn MaSanPhanFactory khỏi Form)
+                    BanHangFacade facade = new BanHangFacade();
+                    facade.XoaPhieuBan(maPhieu); // Hoặc gọi phương thức xóa tương ứng trong Facade của nhóm
                 }
                 ctrl.Save();
             }
@@ -113,8 +115,12 @@ namespace CuahangNongduoc
                      IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
                      foreach (ChiTietPhieuBan ct in ds)
                      {
-                         CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                     }
+                        string maPhieu = view["ID"].ToString();
+
+                        // Ủy quyền việc xóa phiếu và hoàn kho cho BanHangFacade
+                        BanHangFacade facade = new BanHangFacade();
+                        facade.XoaPhieuBan(maPhieu);
+                    }
                      bindingNavigator.BindingSource.RemoveCurrent();
                      ctrl.Save();
                  }
