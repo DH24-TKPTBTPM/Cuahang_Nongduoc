@@ -74,7 +74,6 @@ namespace CuahangNongduoc
         protected void CauHinhReportViewer(ReportViewer viewer)
         {
             this.Font = new Font("Tahoma", 9F, FontStyle.Regular);
-           
         }
 
         // Template Method: Khung chuẩn 4 bước để hiển thị phiếu in lên ReportViewer
