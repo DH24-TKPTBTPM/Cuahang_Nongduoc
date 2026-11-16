@@ -1,4 +1,6 @@
-﻿using CuahangNongduoc.Controller;
+using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Controller;
+using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -70,14 +72,14 @@ namespace CuahangNongduoc
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
-            long maphieu = ThamSo.PhieuChi;
-            ThamSo.PhieuChi=maphieu+1;
-            
-            DataRow row = ctrl.NewRow();// FE3-[FE-TC] Gọi qua PhieuChiController
-            row["ID"] = maphieu;
-            row["NGAY_CHI"] = dtNgayChi.Value.Date;
-            row["TONG_TIEN"] = numTongTien.Value;
-            // FE3-[FE-TC] Thay cho ctrl.Add(row)
+            PhieuChi pc = PhieuFactory.TaoPhieuChi();
+            pc.NgayChi = dtNgayChi.Value.Date;
+            pc.TongTien = Convert.ToInt64(numTongTien.Value);
+
+            DataRow row = ctrl.NewRow();
+            row["ID"] = pc.Id;
+            row["NGAY_CHI"] = pc.NgayChi;
+            row["TONG_TIEN"] = pc.TongTien;
             ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
         }

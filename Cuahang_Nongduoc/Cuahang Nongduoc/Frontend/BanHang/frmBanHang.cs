@@ -1,8 +1,9 @@
-﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.DungChung.Statess;
 using CuahangNongduoc.Patterns.Facade;
 using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -119,7 +120,7 @@ namespace CuahangNongduoc
             // ==============================================================================
             if (_currentState is StateThem)
             {
-                txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
+                txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe).Id;
             }
         }
 
@@ -280,7 +281,7 @@ namespace CuahangNongduoc
         {
             string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
 
-            PhieuBan phieu = new PhieuBan();
+            PhieuBan phieu = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe);
             phieu.Id = txtMaPhieu.Text.Trim();
             phieu.KhachHang = new KhachHang(maKhachHang);
             phieu.NgayBan = dtNgayLapPhieu.Value;
@@ -364,13 +365,11 @@ namespace CuahangNongduoc
             }
 
             // [FE-02 - Hide Delegate]: Gọi Facade lưu phiếu bán và chi tiết phiếu
-            PhieuBan phieuBanNew = new PhieuBan
-            {
-                Id = txtMaPhieu.Text,
-                NgayBan = dtNgayLapPhieu.Value.Date,
-                TongTien = Convert.ToInt64(numTongTien.Value),
-                DaTra = Convert.ToInt64(numDaTra.Value),
-            };
+            PhieuBan phieuBanNew = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe);
+            phieuBanNew.Id = txtMaPhieu.Text;
+            phieuBanNew.NgayBan = dtNgayLapPhieu.Value.Date;
+            phieuBanNew.TongTien = Convert.ToInt64(numTongTien.Value);
+            phieuBanNew.DaTra = Convert.ToInt64(numDaTra.Value);
 
             _facade.LuuHoaDon(phieuBanNew, null, null);
 
@@ -396,7 +395,7 @@ namespace CuahangNongduoc
             // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
             deleted.Clear();
 
-            txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
+            txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe).Id;
             numTongTien.Value = 0;
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
             this.Allow(true);
