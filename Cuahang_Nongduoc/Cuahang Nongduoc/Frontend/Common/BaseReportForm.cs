@@ -63,13 +63,18 @@ namespace CuahangNongduoc
     /// </summary>
     public class BaseReportForm : Form
     {
+        // ==================== [FE-11] REFACTORING ====================
+        // Lỗi (Code smell) : Gọi ExecuteReportInCurrentAppDomain gây lỗi CAS policy khi chạy ReportViewer
+        // Kỹ thuật         : Remove Obsolete API Call (Để ReportViewer chạy bằng sandbox mặc định)
+        // Trước            : viewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
+        // Sau              : Xóa lời gọi ExecuteReportInCurrentAppDomain, giữ cấu hình Font chuẩn
+        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
+        // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
+        // Ngày chỉnh sửa   : 16/11/2026
+        // =============================================================
         protected void CauHinhReportViewer(ReportViewer viewer)
         {
             this.Font = new Font("Tahoma", 9F, FontStyle.Regular);
-            if (viewer != null)
-            {
-                viewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
-            }
         }
 
         // Template Method: Khung chuẩn 4 bước để hiển thị phiếu in lên ReportViewer
