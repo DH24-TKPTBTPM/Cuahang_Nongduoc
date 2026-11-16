@@ -3,7 +3,7 @@
 // Hỗ trợ QA2 chạy ca kiểm thử QA-06 (và kiểm tra lại D08, D11-BH, R04).
 // Chạy: double-click ChayKiemThu.bat (sau khi Build chương trình ở chế độ Debug).
 // Chương trình tự dọn dữ liệu thử và trả lại tham số như cũ.
-// Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | Ngày tạo: 15/11/2026
+// Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên> | Ngày tạo: 15/11/2026
 // =============================================================
 using System;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@
 --          (1 lô sắp hết hạn để demo báo cáo), 1 phiếu bán sỉ tháng trước còn nợ (demo công nợ).
 -- Quy ước: mọi mã đều bắt đầu bằng 'DEMO-' → chạy lại sẽ xóa bản cũ rồi nạp lại;
 --          KHÔNG đụng dữ liệu thật và bảng THAM_SO (mã phiếu tự tăng giữ nguyên).
--- Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+-- Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên>
 -- Ngày   : 15/11/2026
 -- =============================================================
 

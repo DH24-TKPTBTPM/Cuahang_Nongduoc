@@ -2,7 +2,7 @@
 chcp 65001 >nul
 REM [QA-06] Bien dich va chay kiem thu tang CSDL.
 REM Can: da Build chuong trinh (Debug) va SQL Server dang chay. Khong can Visual Studio.
-REM Tac gia: BE1 - Nguyen Tuan Anh | Ho tro: Claude (AI) | 15/11/2026
+REM Tac gia: BE1 - Nguyen Tuan Anh | Ho tro: - | 15/11/2026
 set BIN=%~dp0..\..\Cuahang_Nongduoc\Cuahang Nongduoc\bin\Debug
 set CSC=%WINDIR%\Microsoft.NET\Framework\v3.5\csc.exe
 if not exist "%BIN%\CuahangNongduoc.exe" (
