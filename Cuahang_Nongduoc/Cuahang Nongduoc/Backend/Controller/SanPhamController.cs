@@ -231,7 +231,7 @@ namespace CuahangNongduoc.Controller
 
         public SanPham LaySanPham(String id)
         {
-            return m_Repo.LayTheoMa(id) ?? new SanPham();
+            return m_Repo.LayTheoMa(id);
         }
 
         // ==================== [D05] REFACTORING ====================
