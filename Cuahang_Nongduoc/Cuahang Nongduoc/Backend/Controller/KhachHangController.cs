@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -25,6 +25,13 @@ namespace CuahangNongduoc.Controller
             return factory.DanhsachKhachHang(loai);
         }
 
+        public void HienthiAutoComboBox(System.Windows.Forms.ComboBox cmb, bool loai)
+        {
+            cmb.DataSource = HienthiAutoComboBox(loai);
+            cmb.DisplayMember = "HO_TEN";
+            cmb.ValueMember = "ID";
+        }
+
 // ==================== [R23] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
 // Kỹ thuật         : Replace Magic Number
@@ -36,6 +43,13 @@ namespace CuahangNongduoc.Controller
         public DataTable HienthiChungAutoComboBox()
         {
             return factory.DanhsachKhachHang();
+        }
+
+        public void HienthiChungAutoComboBox(System.Windows.Forms.ComboBox cmb)
+        {
+            cmb.DataSource = HienthiChungAutoComboBox();
+            cmb.DisplayMember = "HO_TEN";
+            cmb.ValueMember = "ID";
         }
 
 // ==================== [R23] REFACTORING ====================
@@ -53,6 +67,14 @@ namespace CuahangNongduoc.Controller
             return tbl;
         }
 
+        public void HienthiKhachHangDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
+        {
+            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
+            bs.DataSource = HienthiKhachHangDataGridview(false);
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
+        }
+
 // ==================== [R23] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
 // Kỹ thuật         : Replace Magic Number
@@ -64,6 +86,15 @@ namespace CuahangNongduoc.Controller
         public DataTable HienthiKhachHangChungDataGridviewComboBox()
         {
             return factory.DanhsachKhachHang();
+        }
+
+        public void HienthiKhachHangChungDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+        {
+            cmb.DataSource = HienthiKhachHangChungDataGridviewComboBox();
+            cmb.DisplayMember = "HO_TEN";
+            cmb.ValueMember = "ID";
+            cmb.DataPropertyName = "ID_KHACH_HANG";
+            cmb.HeaderText = "Khách hàng";
         }
 
 // ==================== [R23] REFACTORING ====================
@@ -79,6 +110,15 @@ namespace CuahangNongduoc.Controller
             return factory.DanhsachKhachHang(false);
         }
 
+        public void HienthiKhachHangDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+        {
+            cmb.DataSource = HienthiKhachHangDataGridviewComboBox();
+            cmb.DisplayMember = "HO_TEN";
+            cmb.ValueMember = "ID";
+            cmb.DataPropertyName = "ID_KHACH_HANG";
+            cmb.HeaderText = "Khách hàng";
+        }
+
 // ==================== [R23] REFACTORING ====================
 // Lỗi (Code smell) : Sử dụng Magic Number (số cứng) khi truy xuất cột
 // Kỹ thuật         : Replace Magic Number
@@ -90,6 +130,15 @@ namespace CuahangNongduoc.Controller
         public DataTable HienthiDaiLyDataGridviewComboBox()
         {
             return factory.DanhsachKhachHang(true);
+        }
+
+        public void HienthiDaiLyDataGridviewComboBox(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
+        {
+            cmb.DataSource = HienthiDaiLyDataGridviewComboBox();
+            cmb.DisplayMember = "HO_TEN";
+            cmb.ValueMember = "ID";
+            cmb.DataPropertyName = "ID_KHACH_HANG";
+            cmb.HeaderText = "Đại lý";
         }
 
 // ==================== [R23] REFACTORING ====================
@@ -105,6 +154,14 @@ namespace CuahangNongduoc.Controller
             DataTable tbl = factory.DanhsachKhachHang(loai);
             tbl.Columns["LOAI_KH"].DefaultValue = loai;
             return tbl;
+        }
+
+        public void HienthiDaiLyDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
+        {
+            System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
+            bs.DataSource = HienthiDaiLyDataGridview(true);
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
         }
 
         public void TimHoTen(String hoten, bool loai)
@@ -130,6 +187,7 @@ namespace CuahangNongduoc.Controller
             KhachHang kh = null;
             if (tbl.Rows.Count > 0)
             {
+                kh = new KhachHang();
                 kh.Id = Convert.ToString(tbl.Rows[0]["ID"]);
                 kh.HoTen = Convert.ToString(tbl.Rows[0]["HO_TEN"]);
                 kh.DienThoai = Convert.ToString(tbl.Rows[0]["DIEN_THOAI"]);
