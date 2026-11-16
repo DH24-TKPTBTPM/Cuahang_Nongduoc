@@ -92,14 +92,11 @@ namespace CuahangNongduoc.DataLayer
         public static long LayTongTien(String lydo, int thang, int nam)
         {
             DataService ds = new DataService();
-// Code cũ: OleDbCommand cmd = new OleDbCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
-            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(TONG_TIEN), 0) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
-// Code cũ: cmd.Parameters.Add("lydo", OleDbType.VarChar, 50).Value = lydo;
-            cmd.Parameters.Add("lydo", SqlDbType.VarChar, 50).Value = lydo;
-// Code cũ: cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
-            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
-// Code cũ: cmd.Parameters.Add("nam", OleDbType.Integer).Value = nam;
-            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand("SELECT ISNULL(SUM(TONG_TIEN), 0) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI >= @tu AND NGAY_CHI < @den");
+            cmd.Parameters.Add("@lydo", SqlDbType.VarChar, 50).Value = lydo;
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
 
             object obj = ds.ExecuteScalar(cmd);
             
