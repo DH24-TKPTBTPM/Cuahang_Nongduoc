@@ -117,7 +117,7 @@ namespace CuahangNongduoc
             // ==================== [D09-FE1] REFACTORING (STATE PATTERN) ====================
             // Lỗi (Code smell) : Conditional Complexity / Hardcoded State – Dùng cờ 'status' để phân nhánh UI
             // Kỹ thuật         : Polymorphism via State Pattern
-            // Trước            : if (status == Controll.AddNew) ... else this.Allow(false);
+            // Trước            : if (status == FormEditState.AddNew) ... else this.Allow(false);
             // Sau              : Kiểm tra (_currentState is StateThem) và giao việc Allow() cho State tự xử lý
             // Tác giả          : FE1 – Dương Thị Kim Anh
             // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
@@ -175,7 +175,7 @@ namespace CuahangNongduoc
             // ==================== [D09] REFACTORING (STATE PATTERN) ====================
             // Lỗi (Code smell) : Inappropriate Intimacy – Phụ thuộc vào biến trạng thái cũ
             // Kỹ thuật         : Type Check Refactoring via State
-            // Trước            : if (status == Controll.Normal) ...
+            // Trước            : if (status == FormEditState.View) ...
             // Sau              : if (_currentState is StateXem) ...
             // Tác giả          : FE1 – Dương Thị Kim Anh
             // Hỗ trợ           : FE2 - Nguyễn Huỳnh Ngọc Anh
@@ -385,7 +385,7 @@ namespace CuahangNongduoc
         // Lỗi (Code smell) : Xóa dòng khi đang Thêm mới vẫn đưa vào danh sách hoàn kho (deleted)
         // Kỹ thuật         : Fix Bug / State Validation
         // Trước            : Xóa dòng ở trạng thái Thêm mới (AddNew) vẫn ghi nhận vào danh sách deleted và gọi hoàn kho, gây lỗi tồn kho sai lệch.
-        // Sau              : Kiểm tra trạng thái (status != Controll.AddNew) trước khi add vào deleted và gọi deleted.Clear() khi nhấn Thêm mới.
+        // Sau              : Kiểm tra trạng thái (status != FormEditState.AddNew) trước khi add vào deleted và gọi deleted.Clear() khi nhấn Thêm mới.
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : -
         // Kiểm tra         : QA
