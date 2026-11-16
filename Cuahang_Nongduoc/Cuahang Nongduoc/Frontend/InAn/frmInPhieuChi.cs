@@ -24,25 +24,18 @@ namespace CuahangNongduoc
         {
             // ==================== [D10] DESIGN PATTERN (GoF) ====================
             // Mẫu thiết kế     : Builder + Template Method (GoF)
-            // Lỗi (Code smell) : Duplicate Code – Lặp lại 11 dòng khởi tạo ReportParameter và gán DataSource
+            // Lỗi (Code smell) : Duplicate Code & Thiếu kiểm tra null trước khi truy cập m_PhieuChi.TongTien
             // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
             // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
-            // Ngày chỉnh sửa   : 12/11/2026
+            // Ngày chỉnh sửa   : 15/11/2026
             // ====================================================================
+            if (m_PhieuChi == null) // FE3-[D10] Kiểm tra null tránh NullReferenceException
+            {
+                MessageBox.Show("Không có dữ liệu phiếu chi để in!", "In phiếu chi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+                return;
+            }
             HienThiBaoCao(this.reportViewer, this.PhieuChiBindingSource, m_PhieuChi, m_PhieuChi.TongTien); // FE3-[D10] Gọi Template Method
-
-            //Num2Str num = new Num2Str();
-            //IList<Microsoft.Reporting.WinForms.ReportParameter> param = new List<Microsoft.Reporting.WinForms.ReportParameter>();
-            //CuahangNongduoc.BusinessObject.CuaHang ch = ThamSo.LayCuaHang();
-            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("ten_cua_hang", ch.TenCuaHang));
-            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dia_chi", ch.DiaChi));
-            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("dien_thoai", ch.DienThoai));
-
-            //param.Add(new Microsoft.Reporting.WinForms.ReportParameter("bang_chu", num.NumberToString(m_PhieuChi.TongTien.ToString())));
-
-            //this.reportViewer.LocalReport.SetParameters(param);
-            //this.PhieuChiBindingSource.DataSource = m_PhieuChi;
-            //this.reportViewer.RefreshReport();
         }
     }
 }
