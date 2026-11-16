@@ -179,15 +179,12 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                // Gộp nhánh R26 (Truyền Object) và FE-TC (Gọi qua Factory)
-                HienthiPhieuThanhToan(ctrl.TimPhieuThanhToan(new PhieuThanhToanSearchParam // FE3-[FE-TC] Gọi tìm kiếm qua PhieuThanhToanController
+                HienthiPhieuThanhToan(ctrl.TimPhieuThanhToan(new PhieuThanhToanSearchParam
                 {
                     IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
                     Ngay = Tim.dtNgayThu.Value.Date
-                };
-                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(tim.IdKhachHang, tim.Ngay));
+                }));
             }
         }
-
     }
 }

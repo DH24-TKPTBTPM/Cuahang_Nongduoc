@@ -151,13 +151,11 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                //HienthiPhieuChi(factory.TimPhieuChi(new PhieuChiSearchParam
-                HienthiPhieuChi(ctrl.TimPhieuChi(new PhieuChiSearchParam // FE3-[FE-TC] Gọi tìm kiếm qua PhieuChiController
+                HienthiPhieuChi(ctrl.TimPhieuChi(new PhieuChiSearchParam
                 {
                     LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
                     Ngay = Tim.dtNgayChi.Value.Date
-                };
-                HienthiPhieuChi(factory.TimPhieuChi(tim.LyDo, tim.Ngay));
+                }));
             }
         }
     }
