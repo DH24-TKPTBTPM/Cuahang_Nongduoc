@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -40,21 +40,15 @@ namespace CuahangNongduoc.Controller
 
         }
         
-        // ==================== [R33] REFACTORING ====================
-        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
-        // Kỹ thuật         : Standardize API Contract
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : BE2 - Trần Tuấn Anh
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
         public LyDoChi LayLyDoChi(long id)
         {
             DataTable tbl = factory.LayLyDoChi(id);
-            if (tbl.Rows.Count == 0) return null;
             LyDoChi lydo = new LyDoChi();
-            lydo.Id = Convert.ToInt64(tbl.Rows[0]["ID"]);
-            lydo.LyDo = Convert.ToString(tbl.Rows[0]["LY_DO"]);
+            if (tbl.Rows.Count > 0)
+            {
+                lydo.Id = Convert.ToInt64(tbl.Rows[0]["ID"]);
+                lydo.LyDo = Convert.ToString(tbl.Rows[0]["LY_DO"]);
+            }
             return lydo;
         }
 

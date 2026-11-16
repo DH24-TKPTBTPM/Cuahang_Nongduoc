@@ -49,6 +49,7 @@ namespace CuahangNongduoc
             this.reportViewer.LocalReport.ReportEmbeddedResource = "CuahangNongduoc.Report.rptDuNoKhachHang.rdlc";
             this.reportViewer.Location = new System.Drawing.Point(0, 0);
             this.reportViewer.Name = "reportViewer";
+            this.reportViewer.ServerReport.BearerToken = null;
             this.reportViewer.Size = new System.Drawing.Size(518, 372);
             this.reportViewer.TabIndex = 0;
             // 
@@ -60,6 +61,7 @@ namespace CuahangNongduoc
             this.Controls.Add(this.reportViewer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmInDunoKhachHang";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmInDunoKhachHang";
             this.Load += new System.EventHandler(this.frmInDunoKhachHang_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DuNoKhachHangBindingSource)).EndInit();

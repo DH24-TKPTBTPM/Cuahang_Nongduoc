@@ -72,6 +72,10 @@
           <DataField>NhaCungCap</DataField>
           <rd:TypeName>CuahangNongduoc.BusinessObject.NhaCungCap</rd:TypeName>
         </Field>
+        <Field Name="TenNhaCungCap">
+          <DataField>TenNhaCungCap</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <Query>
         <DataSourceName>DummyDataSource</DataSourceName>
@@ -121,7 +125,7 @@
         <CanGrow>true</CanGrow>
         <Left>3.5cm</Left>
         <Height>0.63492cm</Height>
-        <Value>=Fields!NhaCungCap.Value.HoTen</Value>
+        <Value>=Fields!TenNhaCungCap.Value</Value>
       </Textbox>
       <Textbox Name="textbox8">
         <Top>6.25cm</Top>

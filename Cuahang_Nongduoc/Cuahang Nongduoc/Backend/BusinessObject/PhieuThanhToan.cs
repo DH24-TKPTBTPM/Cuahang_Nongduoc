@@ -11,29 +11,22 @@ namespace CuahangNongduoc.BusinessObject
         {
             m_Id = id;
         }
-        private String m_Id;
 
+        private String m_Id;
         public String Id
         {
             get { return m_Id; }
             set { m_Id = value; }
         }
-// ==================== [R34] REFACTORING ====================
-// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
-// Kỹ thuật         : Encapsulate Field + Rename Field
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 11/11/2026
-// ==============================================================
-        private DateTime m_NgayThanhToan;
 
+        private DateTime m_NgayNhap;
         public DateTime NgayThanhToan
         {
-            get { return m_NgayThanhToan; }
-            set { m_NgayThanhToan = value; }
+            get { return m_NgayNhap; }
+            set { m_NgayNhap = value; }
         }
-        private long m_TongTien;
 
+        private long m_TongTien;
         public long TongTien
         {
             get { return m_TongTien; }
@@ -41,7 +34,6 @@ namespace CuahangNongduoc.BusinessObject
         }
 
         private KhachHang m_KH;
-
         public KhachHang KhachHang
         {
             get { return m_KH; }
@@ -49,14 +41,26 @@ namespace CuahangNongduoc.BusinessObject
         }
 
         private String m_GhiChu;
-
         public String GhiChu
         {
             get { return m_GhiChu; }
             set { m_GhiChu = value; }
         }
-	
 
-	
+        // Các property phẳng để report đọc được
+        public String TenKhachHang
+        {
+            get { return m_KH != null ? m_KH.HoTen : ""; }
+        }
+
+        public String DiaChiKhachHang
+        {
+            get { return m_KH != null ? m_KH.DiaChi : ""; }
+        }
+
+        public String DienThoaiKhachHang
+        {
+            get { return m_KH != null ? m_KH.DienThoai : ""; }
+        }
     }
 }

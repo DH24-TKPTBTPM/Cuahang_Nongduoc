@@ -28,6 +28,18 @@ namespace CuahangNongduoc.BusinessObject
             get { return m_SanPham; }
             set { m_SanPham = value; }
         }
+
+        // Tên sản phẩm dạng chuỗi phẳng cho báo cáo RDLC (tránh #Error khi truy cập SanPham.TenSanPham).
+        public String TenSanPham
+        {
+            get { return (m_SanPham == null || m_SanPham.TenSanPham == null) ? String.Empty : m_SanPham.TenSanPham; }
+        }
+
+        // Tên hiển thị trên báo cáo hết hạn: chỉ hiện ở dòng đầu của mỗi sản phẩm.
+        public String TenSanPhamHienThi { get; set; }
+
+        // Đánh dấu dòng cuối của một nhóm sản phẩm để báo cáo kẻ đường ngăn cách.
+        public bool LaDongCuoiNhom { get; set; }
         private long m_GiaNhap;
 
         public long GiaNhap
@@ -43,16 +55,12 @@ namespace CuahangNongduoc.BusinessObject
             set { m_SoLuong = value; }
         }
 
-// ==================== [R34] REFACTORING ====================
-// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
-// Kỹ thuật         : Encapsulate Field + Rename Field
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 11/11/2026
-// ==============================================================
+        private long m_ThanhTien;
+
         public long ThanhTien
         {
-            get { return m_SoLuong * m_GiaNhap; }
+            get { return m_ThanhTien; }
+            set { m_ThanhTien = value; }
         }
 
 

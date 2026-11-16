@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace CuahangNongduoc
@@ -11,31 +10,72 @@ namespace CuahangNongduoc
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            // [R02] Sau khi DataService thôi nuốt lỗi, mọi lỗi CSDL chưa được Form bắt
-            // sẽ hiện thông báo ở đây thay vì làm tắt chương trình.
-            // Tác giả: tuananh (Team Lead, làm thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa | Ngày chỉnh sửa: 02/11/2026 | Ngày kiểm thử: 03/11/2026
-            Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
+            if (args != null && Array.Exists(args, x => String.Equals(x, "--migrate-discount-report", StringComparison.OrdinalIgnoreCase)))
+            {
+                try
+                {
+                    DataService.EnsureColumn("PHIEU_BAN", "ID_NGUOI_DUNG", "LONG");
+                    MessageBox.Show("Đã cập nhật database: PHIEU_BAN.ID_NGUOI_DUNG.", "Migration hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Không cập nhật được database: " + ex.Message, "Migration thất bại", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
-        }
 
-        static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            Exception ex = e.Exception;
-            // [D02] Ghi lại lỗi chưa được Form bắt (lỗi CSDL đã được DataAccessException tự ghi)
-            // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | Ngày chỉnh sửa: 08/11/2026
-            if (!(ex is DataAccessException))
+            while (true)
             {
-                AppLogger.Instance.Error("Lỗi chưa được xử lý", ex);
+                Auth.UserSession.Logout();
+
+                using (var login = new frmDangNhap())
+                {
+                    if (login.ShowDialog() != DialogResult.OK || !Auth.UserSession.IsLoggedIn)
+                        return;
+                }
+
+                // Bắt buộc đổi mật khẩu trước khi truy cập màn hình chính.
+                try
+                {
+                    var accountData = new Auth.NguoiDungData();
+                    var account = accountData.LayTheoId(Auth.UserSession.UserId);
+                    if (account == null) { Auth.UserSession.Logout(); return; }
+                    if (account.MustChangePwd)
+                    {
+                        using (var change = new frmDoiMatKhau()) change.ShowDialog();
+                        account = accountData.LayTheoId(Auth.UserSession.UserId);
+                        if (account == null || account.MustChangePwd)
+                        {
+                            MessageBox.Show("Bạn phải đổi mật khẩu trước khi sử dụng hệ thống.", "Yêu cầu bảo mật");
+                            Auth.UserSession.Logout();
+                            return;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Không thể kiểm tra trạng thái tài khoản: " + ex.Message,
+                        "Lỗi đăng nhập", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Auth.UserSession.Logout(); return;
+                }
+
+                Application.Run(new frmMain());
+
+                // Đăng xuất sẽ xóa phiên và quay lại màn hình đăng nhập.
+                // Đóng ứng dụng bình thường vẫn giữ phiên đến đây và kết thúc vòng lặp.
+                if (!Auth.UserSession.IsLoggedIn)
+                    continue;
+
+                Auth.UserSession.Logout();
+                return;
             }
-            string chiTiet = ex.InnerException != null ? "\n\nChi tiết: " + ex.InnerException.Message : "";
-            MessageBox.Show(ex.Message + chiTiet, "Cửa hàng Nông dược - Lỗi",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            Application.Run(new frmMain());
         }
     }
 }
