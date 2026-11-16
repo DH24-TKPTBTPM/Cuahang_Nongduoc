@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,6 +25,25 @@ namespace CuahangNongduoc
             dataGridView.MultiSelect = false;
             ctrlNCC.HienthiDataGridviewComboBox(colNhaCungCap);
             ctrl.HienthiPhieuNhap(bindingNavigator, dataGridView);
+
+            // Thiết lập trạng thái ban đầu: Thêm mới sáng, Xem lại sáng; Chỉnh sửa đen, Xóa đen. Khi click lưới: Thêm mới đen, Chỉnh sửa và Xóa sáng.
+            FormToolbarHelper.ThietLapTrangThai(this, dataGridView, bindingNavigatorAddNewItem, toolChinhSua, toolXemLai, bindingNavigatorDeleteItem);
+            dataGridView.ClearSelection();
+        }
+
+        // ==================== HÀM RIÊNG QUẢN LÝ ẨN/HIỆN NÚT ====================
+        private void CapNhatTrangThaiNut(bool coChonDong)
+        {
+            FormToolbarHelper.CapNhatTrangThaiNut(coChonDong, bindingNavigatorAddNewItem, toolChinhSua, toolXemLai, bindingNavigatorDeleteItem);
+            if (!coChonDong && dataGridView != null)
+            {
+                dataGridView.ClearSelection();
+            }
+        }
+
+        private void CapNhatTrangThaiNut()
+        {
+            CapNhatTrangThaiNut(false);
         }
 
         frmNhapHang NhapHang = null;
@@ -34,7 +53,15 @@ namespace CuahangNongduoc
         {
             ctrl.HienthiPhieuNhap(bindingNavigator, dataGridView);
             if (!String.IsNullOrEmpty(maPhieuCanChon))
+            {
                 ctrl.ChonPhieuNhap(maPhieuCanChon);
+                CapNhatTrangThaiNut(true);
+            }
+            else
+            {
+                CapNhatTrangThaiNut(false);
+                dataGridView.ClearSelection();
+            }
         }
 
         // Form nhập hàng đóng lại (đã lưu/xóa/sửa) thì làm mới danh sách để thấy dữ liệu mới.
@@ -182,6 +209,8 @@ namespace CuahangNongduoc
                 MessageBox.Show("Không thể xóa phiếu nhập " + idPhieu + ": " + ex.Message, "Lỗi",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            CapNhatTrangThaiNut();
         }
 
         private void toolTimKiem_Click(object sender, EventArgs e)
@@ -201,6 +230,7 @@ namespace CuahangNongduoc
                     return;
                 }
                 ctrl.TimPhieuNhap(TimPhieu.cmbNCC.SelectedValue.ToString(), TimPhieu.dtNgayNhap.Value.Date);
+                CapNhatTrangThaiNut();
             }
         }
     }

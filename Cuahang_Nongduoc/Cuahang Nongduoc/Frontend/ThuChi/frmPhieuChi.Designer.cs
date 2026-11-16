@@ -1,4 +1,4 @@
-﻿namespace CuahangNongduoc
+namespace CuahangNongduoc
 {
     partial class frmPhieuChi
     {
@@ -423,7 +423,7 @@
             this.toolAdd.Name = "toolAdd";
             this.toolAdd.RightToLeftAutoMirrorImage = true;
             this.toolAdd.Size = new System.Drawing.Size(50, 48);
-            this.toolAdd.Text = "Thêm";
+            this.toolAdd.Text = "Thêm mới";
             this.toolAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolAdd.Click += new System.EventHandler(this.toolAdd_Click);
             // 
@@ -434,7 +434,7 @@
             this.toolDelete.Name = "toolDelete";
             this.toolDelete.RightToLeftAutoMirrorImage = true;
             this.toolDelete.Size = new System.Drawing.Size(55, 48);
-            this.toolDelete.Text = "  Xóa  ";
+            this.toolDelete.Text = "Xóa";
             this.toolDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolDelete.Click += new System.EventHandler(this.toolDelete_Click);
             // 
@@ -444,8 +444,8 @@
             this.toolSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolSave.Name = "toolSave";
-            this.toolSave.Size = new System.Drawing.Size(53, 48);
-            this.toolSave.Text = "  Lưu  ";
+            this.toolSave.Size = new System.Drawing.Size(65, 48);
+            this.toolSave.Text = "Chỉnh sửa";
             this.toolSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolSave.Click += new System.EventHandler(this.toolSave_Click);
             // 
@@ -483,7 +483,7 @@
             this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(53, 48);
-            this.btnReload.Text = "Tải lại";
+            this.btnReload.Text = "Xem lại";
             this.btnReload.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnReload.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 

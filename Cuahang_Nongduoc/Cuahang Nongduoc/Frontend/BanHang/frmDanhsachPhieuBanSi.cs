@@ -26,6 +26,14 @@ namespace CuahangNongduoc
             dataGridView.DataError += dataGridView_DataError;
             ctrlDL.HienthiDaiLyDataGridviewComboBox(colKhachHang);
             ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
+
+            FormToolbarHelper.ThietLapTrangThai(this, dataGridView, bindingNavigatorAddNewItem, toolChinhSua, toolXemLai, bindingNavigatorDeleteItem);
+            dataGridView.ClearSelection();
+        }
+
+        private void toolChinhSua_Click(object sender, EventArgs e)
+        {
+            dataGridView_DoubleClick(sender, e);
         }
 
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -37,6 +45,8 @@ namespace CuahangNongduoc
         {
             ctrl = new PhieuBanController();
             ctrl.HienthiPhieuBanSi(bindingNavigator, dataGridView);
+            FormToolbarHelper.CapNhatTrangThaiNut(false, bindingNavigatorAddNewItem, toolChinhSua, toolXemLai, bindingNavigatorDeleteItem);
+            dataGridView.ClearSelection();
         }
 
         private void ToolXemLai_Click(object sender, EventArgs e)

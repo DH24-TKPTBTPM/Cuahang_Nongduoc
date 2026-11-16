@@ -1,4 +1,4 @@
-﻿namespace CuahangNongduoc
+namespace CuahangNongduoc
 {
     partial class frmDanhsachPhieuBanLe
     {
@@ -49,6 +49,7 @@
             this.bindingNavigatorMoveLastItem = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.bindingNavigatorAddNewItem = new System.Windows.Forms.ToolStripButton();
+            this.toolChinhSua = new System.Windows.Forms.ToolStripButton();
             this.toolXemLai = new System.Windows.Forms.ToolStripButton();
             this.bindingNavigatorDeleteItem = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -92,6 +93,7 @@
             this.bindingNavigatorMoveLastItem,
             this.bindingNavigatorSeparator2,
             this.bindingNavigatorAddNewItem,
+            this.toolChinhSua,
             this.toolXemLai,
             this.bindingNavigatorDeleteItem,
             this.toolStripSeparator1,
@@ -186,6 +188,16 @@
             this.bindingNavigatorAddNewItem.Text = "Thêm mới";
             this.bindingNavigatorAddNewItem.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.bindingNavigatorAddNewItem.Click += new System.EventHandler(this.bindingNavigatorAddNewItem_Click);
+            // 
+            // toolChinhSua
+            // 
+            this.toolChinhSua.Image = global::CuahangNongduoc.Properties.Resources.edit;
+            this.toolChinhSua.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolChinhSua.Name = "toolChinhSua";
+            this.toolChinhSua.Size = new System.Drawing.Size(77, 48);
+            this.toolChinhSua.Text = "Chỉnh sửa";
+            this.toolChinhSua.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolChinhSua.Click += new System.EventHandler(this.toolChinhSua_Click);
             // 
             // toolXemLai
             // 
@@ -458,6 +470,7 @@
 
         private System.Windows.Forms.BindingNavigator bindingNavigator;
         private System.Windows.Forms.ToolStripButton bindingNavigatorAddNewItem;
+        private System.Windows.Forms.ToolStripButton toolChinhSua;
         private System.Windows.Forms.ToolStripLabel bindingNavigatorCountItem;
         private System.Windows.Forms.ToolStripButton bindingNavigatorDeleteItem;
         private System.Windows.Forms.ToolStripButton bindingNavigatorMoveFirstItem;
