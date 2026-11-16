@@ -445,7 +445,9 @@ namespace CuahangNongduoc
             ctrlNCC.HienthiAutoComboBox(cmbNhaCungCap);
         }
 
+        private void grpThongtin_Enter(object sender, EventArgs e)
+        {
 
-
+        }
     }
 }

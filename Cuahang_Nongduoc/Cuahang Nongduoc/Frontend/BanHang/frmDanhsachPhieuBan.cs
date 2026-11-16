@@ -38,7 +38,7 @@ namespace CuahangNongduoc
         {
             // [Sửa build 15/11/2026] Controller (R23) trả DataTable, Form tự gắn vào cột ComboBox;
             // Bán sỉ dùng danh sách Đại lý như bản gốc frmDanhsachPhieuBanSi (trước đây gộp nhầm thành Khách hàng).
-            // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên>
+            // Sửa: BE1 - Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 - <Họ tên>
             bool laBanLe = (_loaiPhieu == LoaiPhieuBan.BanLe);
             colKhachhang.DataSource = laBanLe ? ctrlKH.HienthiKhachHangDataGridviewComboBox() : ctrlKH.HienthiDaiLyDataGridviewComboBox();
             colKhachhang.DisplayMember = "HO_TEN";
@@ -58,11 +58,11 @@ namespace CuahangNongduoc
             {
                 if (_loaiPhieu == LoaiPhieuBan.BanLe)
                 {
-                    BanLe = new frmBanHang(new BanLeStrategy());
+                    BanLe = new frmBanHang(ctrl, new BanLeStrategy());
                 }
                 else
                 {
-                    BanLe = new frmBanHang(new BanSiStrategy());
+                    BanLe = new frmBanHang(ctrl, new BanSiStrategy());
                 }
                 BanLe.Show();
             }
@@ -92,6 +92,7 @@ namespace CuahangNongduoc
             }
         }
 
+
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (MessageBox.Show("Bạn có chắc chắn xóa không?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
@@ -103,8 +104,13 @@ namespace CuahangNongduoc
                 DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
                 if (view != null)
                 {
-                    _facade.XoaPhieuBan(view["ID"].ToString());
-                    ctrl.Save();
+                    bool ketQua = _facade.XoaPhieuBan(view["ID"].ToString());
+                    if (!ketQua)
+                    {
+                        MessageBox.Show(_facade.LastErrorMessage); 
+                        e.Cancel = true; 
+                    }
+                    
                 }
             }
         }
@@ -116,9 +122,15 @@ namespace CuahangNongduoc
             {
                 if (MessageBox.Show("Bạn có chắc chắn xóa không?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    _facade.XoaPhieuBan(view["ID"].ToString());
-                    bindingNavigator.BindingSource.RemoveCurrent();
-                    ctrl.Save();
+                    bool ketQua = _facade.XoaPhieuBan(view["ID"].ToString());
+                    if (ketQua)
+                    {
+                        bindingNavigator.BindingSource.RemoveCurrent();
+                    }
+                    else
+                    {
+                        MessageBox.Show(_facade.LastErrorMessage); 
+                    }
                 }
             }
         }
@@ -131,8 +143,8 @@ namespace CuahangNongduoc
                 PhieuBanController ctrlPB = new PhieuBanController();
                 String ma_phieu = row["ID"].ToString();
                 CuahangNongduoc.BusinessObject.PhieuBan ph = ctrlPB.LayPhieuBan(ma_phieu);
-                frmInPhieuBan PhieuBan = new frmInPhieuBan(ph);
-                PhieuBan.Show();
+                frmInPhieuBan frmIn = new frmInPhieuBan(ph);
+                frmIn.Show();
             }
         }
 
