@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
 {
@@ -32,6 +33,8 @@ namespace CuahangNongduoc
 
             // Tự động đổi tên tiêu đề Form cho phù hợp
             this.Text = _isDaiLy ? "Quản lý Đại Lý" : "Quản lý Khách Hàng";
+
+            this.dataGridView.DataError += dataGridView_DataError;
         }
 
         // ==================== [FE-DM] REFACTORING ====================
@@ -70,6 +73,20 @@ namespace CuahangNongduoc
             }
         }
 
+        // ==================== [FE-09] BUG-09 / REFACTORING ====================
+        // Lỗi (Code smell) : Chưa bắt sự kiện DataError để báo rõ cột nhập sai định dạng
+        // Kỹ thuật         : Extract Method (Tái sử dụng GridErrorHelper)
+        // Trước            : Form chưa đăng ký sự kiện dataGridView_DataError
+        // Sau              : Gắn sự kiện DataError và gọi GridErrorHelper thông báo rõ cột lỗi
+        // Tác giả          : FE2 - Nguyễn Huỳnh Ngọc Anh
+        // Hỗ Trợ           : Không
+        // Kiểm tra         : QA
+        // Ngày chỉnh sửa   : 16/11/2026
+        // ======================================================================
+        private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            GridErrorHelper.HandleDataError(sender, e);
+        }
         private void toolLuu_Click(object sender, EventArgs e)
         {
             bindingNavigatorPositionItem.Focus();
