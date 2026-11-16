@@ -48,7 +48,7 @@ namespace CuahangNongduoc.Patterns.TemplateMethod
                 foreach (MaSanPham sp in _dsXoa)
                 {
                     if (sp != null && !string.IsNullOrEmpty(sp.Id))
-                        MaSanPhanFactory.CapNhatSoLuong(sp.Id, sp.SoLuong);
+                        MaSanPhamFactory.CapNhatSoLuong(sp.Id, sp.SoLuong);
                 }
             }
 
@@ -57,7 +57,7 @@ namespace CuahangNongduoc.Patterns.TemplateMethod
                 foreach (ChiTietPhieuBan ct in _dsChiTiet)
                 {
                     if (ct != null && ct.MaSanPham != null && !string.IsNullOrEmpty(ct.MaSanPham.Id))
-                        MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, -ct.SoLuong);
+                        MaSanPhamFactory.CapNhatSoLuong(ct.MaSanPham.Id, -ct.SoLuong);
                 }
             }
             return true;

@@ -27,10 +27,10 @@ namespace CuahangNongduoc
     {
 
         // ==================== [FE-02] REFACTORING ====================
-        // Lỗi (Code smell) : Violating Facade / Direct Subsystem Access – Form UI gọi trực tiếp MaSanPhanFactory ở DataLayer
+        // Lỗi (Code smell) : Violating Facade / Direct Subsystem Access – Form UI gọi trực tiếp MaSanPhamFactory ở DataLayer
         // Kỹ thuật         : Hide Delegate / Move Method
-        // Trước            : Form trực tiếp khởi tạo và gọi CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong() trong Form
-        // Sau              : Nút Lưu và các thao tác lưu dữ liệu ủy quyền hoàn toàn qua _facade.LuuHoaDon(), loại bỏ gọi MaSanPhanFactory
+        // Trước            : Form trực tiếp khởi tạo và gọi CuahangNongduoc.DataLayer.MaSanPhamFactory.CapNhatSoLuong() trong Form
+        // Sau              : Nút Lưu và các thao tác lưu dữ liệu ủy quyền hoàn toàn qua _facade.LuuHoaDon(), loại bỏ gọi MaSanPhamFactory
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
         // Kiểm tra         : QA2 – Huỳnh Lư Anh Minh
@@ -261,9 +261,9 @@ namespace CuahangNongduoc
         }
 
         // ==================== [FE-02] REFACTORING ====================
-        // Lỗi (Code smell) : Violating Facade Pattern - Nút Lưu/Form gọi trực tiếp MaSanPhanFactory và các Controller
+        // Lỗi (Code smell) : Violating Facade Pattern - Nút Lưu/Form gọi trực tiếp MaSanPhamFactory và các Controller
         // Kỹ thuật         : Hide Delegate / Move Method
-        // Trước            : Form trực tiếp gọi MaSanPhanFactory.CapNhatSoLuong(), ctrlChiTiet.Save(), ctrlPhieuBan.Save()
+        // Trước            : Form trực tiếp gọi MaSanPhamFactory.CapNhatSoLuong(), ctrlChiTiet.Save(), ctrlPhieuBan.Save()
         // Sau              : Form chỉ gọi duy nhất _facade.LuuHoaDon(...) để xử lý lưu phiếu bán và điều phối hoàn kho
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
@@ -271,9 +271,9 @@ namespace CuahangNongduoc
         // Ngày chỉnh sửa   : 10/11/2026
         // ===========================================================
         // ==================== [D09] REFACTORING (FACADE PATTERN) ====================
-        // Lỗi (Code smell) : Direct Factory Access / Feature Envy – UI Form trực tiếp gọi MaSanPhanFactory
+        // Lỗi (Code smell) : Direct Factory Access / Feature Envy – UI Form trực tiếp gọi MaSanPhamFactory
         // Kỹ thuật         : Hide Delegate / Move Method via Facade
-        // Trước            : Form gọi hàm Luu() tự phân nhánh và loop gọi MaSanPhanFactory.CapNhatSoLuong(...)
+        // Trước            : Form gọi hàm Luu() tự phân nhánh và loop gọi MaSanPhamFactory.CapNhatSoLuong(...)
         // Sau              : Nút Lưu CHỈ GỌI DUY NHẤT `_facade.LuuHoaDon(...)` và chuyển state sang StateXem()
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh
@@ -332,7 +332,7 @@ namespace CuahangNongduoc
         
         void CapNhat()
         {
-            // [FE-02 - Hide Delegate]: Bỏ gọi trực tiếp MaSanPhanFactory.CapNhatSoLuong() ở Form. 
+            // [FE-02 - Hide Delegate]: Bỏ gọi trực tiếp MaSanPhamFactory.CapNhatSoLuong() ở Form. 
             // Truyền danh sách deleted vào Facade để Facade tự điều phối cập nhật số lượng tồn kho.
             PhieuBan phieuBanCurrent = ctrlPhieuBan.LayPhieuBan(txtMaPhieu.Text);
             _facade.LuuHoaDon(phieuBanCurrent, null, deleted);
@@ -505,7 +505,7 @@ namespace CuahangNongduoc
         // ==================== [D09] REFACTORING (FACADE PATTERN) ====================
         // Lỗi (Code smell) : Direct Factory Access – Form tự vòng lặp gọi Factory hoàn tồn kho khi xóa phiếu
         // Kỹ thuật         : Hide Delegate / Move Method via Facade
-        // Trước            : Tự gọi ChiTietPhieuBanController lấy danh sách và lặp MaSanPhanFactory.CapNhatSoLuong
+        // Trước            : Tự gọi ChiTietPhieuBanController lấy danh sách và lặp MaSanPhamFactory.CapNhatSoLuong
         // Sau              : Ủy nhiệm hoàn toàn cho phương thức _facade.XoaPhieuBan(maPhieu, ctrlPhieuBan)
         // Tác giả          : FE1 – Dương Thị Kim Anh
         // Hỗ trợ           : FE2 – Nguyễn Huỳnh Ngọc Anh

@@ -44,7 +44,7 @@ namespace CuahangNongduoc.Patterns.TemplateMethod
                 {
                     if (ct != null && ct.MaSanPham != null && !string.IsNullOrEmpty(ct.MaSanPham.Id))
                     {
-                        MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                        MaSanPhamFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
                         if (ct.MaSanPham.SanPham != null)
                             ctrlSP.CapNhatGiaNhap(ct.MaSanPham.SanPham.Id, ct.DonGia, ct.SoLuong);
                     }

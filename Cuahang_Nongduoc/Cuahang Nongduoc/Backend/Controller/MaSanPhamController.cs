@@ -11,7 +11,7 @@ namespace CuahangNongduoc.Controller
 {
     public class MaSanPhamController
     {
-        MaSanPhanFactory factory = new MaSanPhanFactory();
+        MaSanPhamFactory factory = new MaSanPhamFactory();
 
         public DataRow NewRow()
         {
@@ -48,7 +48,7 @@ namespace CuahangNongduoc.Controller
         // ==============================================================
         public SanPham LaySanPham(String idMaSanPham)
         {
-            DataTable tbl = new MaSanPhanFactory().LaySanPham(idMaSanPham);
+            DataTable tbl = new MaSanPhamFactory().LaySanPham(idMaSanPham);
             return tbl.Rows.Count > 0 ? EntityMapper.ToSanPham(tbl.Rows[0]) : null;
         }
 
@@ -64,13 +64,13 @@ namespace CuahangNongduoc.Controller
         // ==============================================================
         public MaSanPham LayMaSanPham(String idMaSanPham)
         {
-            DataTable tbl = new MaSanPhanFactory().LayMaSanPhamDayDu(idMaSanPham);
+            DataTable tbl = new MaSanPhamFactory().LayMaSanPhamDayDu(idMaSanPham);
             return tbl.Rows.Count > 0 ? EntityMapper.ToMaSanPhamDayDu(tbl.Rows[0]) : null;
         }
 
         public static IList<MaSanPham> LayMaSanPhamHetHan(DateTime dt)
         {
-            return EntityMapper.MapList<MaSanPham>(new MaSanPhanFactory().DanhsachMaSanPhamHetHanDayDu(dt), EntityMapper.ToMaSanPhamDayDu);
+            return EntityMapper.MapList<MaSanPham>(new MaSanPhamFactory().DanhsachMaSanPhamHetHanDayDu(dt), EntityMapper.ToMaSanPhamDayDu);
         }
 
         public void HienThiAutoComboBox(String sp, ComboBox cmb)
