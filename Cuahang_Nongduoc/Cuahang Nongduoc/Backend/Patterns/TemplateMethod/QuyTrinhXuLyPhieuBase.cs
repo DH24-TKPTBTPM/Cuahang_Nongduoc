@@ -11,29 +11,25 @@ namespace CuahangNongduoc.Patterns.TemplateMethod
     // ==============================================================
     public abstract class QuyTrinhXuLyPhieuBase
     {
+        private string m_LastErrorMessage;
+
+        public string LastErrorMessage
+        {
+            get { return m_LastErrorMessage; }
+            protected set { m_LastErrorMessage = value; }
+        }
+
         public bool XuLyPhieu()
         {
-            if (!KiemTraHopLe())
-            {
-                return false;
-            }
+            m_LastErrorMessage = null;
 
-            if (!CapNhatKho())
-            {
-                return false;
-            }
-
-            if (!GhiDuLieu())
-            {
-                return false;
-            }
+            if (!KiemTraHopLe()) return false;
+            if (!CapNhatKho()) return false;
+            if (!GhiDuLieu()) return false;
 
             CapNhatCongNo();
 
-            if (CanInAn())
-            {
-                InAn();
-            }
+            if (CanInAn()) InAn();
 
             return true;
         }
