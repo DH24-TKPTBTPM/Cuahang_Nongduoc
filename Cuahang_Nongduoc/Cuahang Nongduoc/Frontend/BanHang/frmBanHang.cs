@@ -1,4 +1,4 @@
-﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.DungChung.Statess;
 using CuahangNongduoc.Patterns.Facade;

@@ -135,6 +135,16 @@ namespace CuahangNongduoc.Controller
         // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
         // Ngày chỉnh sửa   : 08/11/2026
         // ==============================================================
+        public DuNoKhachHangFactory Factory
+        {
+            get { return factory; }
+        }
+
+        public DataTable DanhsachDuNo(int thang, int nam)
+        {
+            return factory.DanhsachDuNo(thang, nam);
+        }
+
         public bool Save()
         {
             if (pendingTable == null)
@@ -143,16 +153,29 @@ namespace CuahangNongduoc.Controller
             }
 
             DataTable bangTam = pendingTable.Copy();
+            if (pendingThang == 0 && bangTam.Rows.Count > 0)
+            {
+                pendingThang = Convert.ToInt32(bangTam.Rows[0]["THANG"]);
+                pendingNam = Convert.ToInt32(bangTam.Rows[0]["NAM"]);
+            }
+
             try
             {
                 using (IUnitOfWork transaction = new UnitOfWork())
                 {
-                    factory.Clear(pendingThang, pendingNam);
-                    NapLaiDuLieuChoLuu(bangTam);
-                    if (!factory.Save())
+                    if (pendingThang > 0 && pendingNam > 0)
                     {
-                        transaction.Rollback();
-                        return false;
+                        factory.Clear(pendingThang, pendingNam);
+                    }
+
+                    if (bangTam.Rows.Count > 0)
+                    {
+                        NapLaiDuLieuChoLuu(bangTam);
+                        if (!factory.Save())
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
                     }
 
                     transaction.Commit();
@@ -165,6 +188,15 @@ namespace CuahangNongduoc.Controller
                 pendingTable = null;
                 return false;
             }
+        }
+
+        public bool Save(DataTable bangDuLieu)
+        {
+            if (bangDuLieu != null)
+            {
+                pendingTable = bangDuLieu;
+            }
+            return Save();
         }
     }
 }
