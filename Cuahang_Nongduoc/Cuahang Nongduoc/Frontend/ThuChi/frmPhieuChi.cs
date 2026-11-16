@@ -1,5 +1,4 @@
 ﻿using CuahangNongduoc.Controller;
-using CuahangNongduoc.DataLayer;//FE3-[FE-TC] Dùng PhieuChiFactory cho Form tự binding
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,7 +14,6 @@ namespace CuahangNongduoc
     {
         LyDoChiController ctrlLyDo = new LyDoChiController();
         PhieuChiController ctrl = new PhieuChiController();
-        PhieuChiFactory factory = new PhieuChiFactory();//FE3-[FE-TC] Khởi tạo Factory
         public frmPhieuChi()
         {
             InitializeComponent();
@@ -67,21 +65,20 @@ namespace CuahangNongduoc
         { 
             ctrlLyDo.HienthiAutoComboBox(cmbLyDoChi);
             ctrlLyDo.HienthiDataGridviewComboBox(colLyDoChi);
-            HienthiPhieuChi(factory.DanhsachPhieuChi());
-            //ctrl.HienthiPhieuChi(bindingNavigator, dataGridView, cmbLyDoChi, txtMaPhieu, dtNgayChi, numTongTien, txtGhiChu);
+            HienthiPhieuChi(ctrl.HienthiPhieuChi()); // FE3-[FE-TC] Gọi qua PhieuChiController đúng kiến trúc 3 lớp
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
             long maphieu = ThamSo.PhieuChi;
             ThamSo.PhieuChi=maphieu+1;
-            // FE3-[FE-TC] Thay cho ctrl.NewRow()
-            DataRow row = factory.NewRow();//DataRow row = ctrl.NewRow();
+            
+            DataRow row = ctrl.NewRow();// FE3-[FE-TC] Gọi qua PhieuChiController
             row["ID"] = maphieu;
             row["NGAY_CHI"] = dtNgayChi.Value.Date;
             row["TONG_TIEN"] = numTongTien.Value;
             // FE3-[FE-TC] Thay cho ctrl.Add(row)
-            factory.Add(row);//ctrl.Add(row);
+            ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
         }
 
@@ -98,8 +95,7 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu chi này không?", "Phieu Chi", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                // FE3-[FE-TC] Thay cho ctrl.Save()
-                factory.Save();//ctrl.Save();
+               ctrl.Save();
             }
         }
 
@@ -107,8 +103,7 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            // FE3-[FE-TC] Thay cho ctrl.Save()
-            factory.Save();//ctrl.Save();
+            ctrl.Save();
         }
 
         // ==================== [FE-09] REFACTORING ====================
@@ -156,15 +151,11 @@ namespace CuahangNongduoc
             Tim.ShowDialog();
             if (Tim.DialogResult == DialogResult.OK)
             {
-                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
-                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
-                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
-                PhieuChiSearchParam tim = new PhieuChiSearchParam
+                HienthiPhieuChi(ctrl.TimPhieuChi(new PhieuChiSearchParam
                 {
                     LyDo = Convert.ToInt32(Tim.cmbLyDo.SelectedValue),
                     Ngay = Tim.dtNgayChi.Value.Date
-                };
-                HienthiPhieuChi(factory.TimPhieuChi(tim.LyDo, tim.Ngay));
+                }));
             }
         }
     }
