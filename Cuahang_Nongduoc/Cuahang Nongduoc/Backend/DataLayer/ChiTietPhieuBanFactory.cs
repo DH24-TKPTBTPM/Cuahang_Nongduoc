@@ -176,7 +176,7 @@ namespace CuahangNongduoc.DataLayer
                 {
                     string masp = Convert.ToString(row["ID_MA_SAN_PHAM"]);
                     int soLuong = Convert.ToInt32(row["SO_LUONG"]);
-                    MaSanPhanFactory.CapNhatSoLuong(masp, -soLuong);
+                    MaSanPhamFactory.CapNhatSoLuong(masp, -soLuong);
                 }
             }
             else if (row.RowState == DataRowState.Deleted)
@@ -187,7 +187,7 @@ namespace CuahangNongduoc.DataLayer
                 {
                     string masp = Convert.ToString(row["ID_MA_SAN_PHAM", DataRowVersion.Original]);
                     int soLuong = Convert.ToInt32(row["SO_LUONG", DataRowVersion.Original]);
-                    MaSanPhanFactory.CapNhatSoLuong(masp, soLuong);
+                    MaSanPhamFactory.CapNhatSoLuong(masp, soLuong);
                 }
             }
             else if (row.RowState == DataRowState.Modified)
@@ -203,7 +203,7 @@ namespace CuahangNongduoc.DataLayer
                     if (delta != 0 && !string.IsNullOrEmpty(maspMoi))
                     {
                         // delta > 0: bán tăng -> trừ thêm tồn kho; delta < 0: giảm bớt -> hoàn trả lại kho
-                        MaSanPhanFactory.CapNhatSoLuong(maspMoi, -delta);
+                        MaSanPhamFactory.CapNhatSoLuong(maspMoi, -delta);
                     }
                 }
                 else
@@ -211,11 +211,11 @@ namespace CuahangNongduoc.DataLayer
                     // Nếu đổi sang mã sản phẩm khác: hoàn trả kho mã cũ, trừ kho mã mới
                     if (!string.IsNullOrEmpty(maspCu))
                     {
-                        MaSanPhanFactory.CapNhatSoLuong(maspCu, slCu);
+                        MaSanPhamFactory.CapNhatSoLuong(maspCu, slCu);
                     }
                     if (!string.IsNullOrEmpty(maspMoi))
                     {
-                        MaSanPhanFactory.CapNhatSoLuong(maspMoi, -slMoi);
+                        MaSanPhamFactory.CapNhatSoLuong(maspMoi, -slMoi);
                     }
                 }
             }

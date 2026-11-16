@@ -168,7 +168,7 @@
     <Compile Include="Backend\DataLayer\ChiTietPhieuBanFactory.cs" />
     <Compile Include="Backend\DataLayer\ChiTietPhieuNhapFactory.cs" />
     <Compile Include="Backend\DataLayer\PhieuNhapFactory.cs" />
-    <Compile Include="Backend\DataLayer\MaSanPhanFactory.cs" />
+    <Compile Include="Backend\DataLayer\MaSanPhamFactory.cs" />
     <Compile Include="Backend\DataLayer\PhieuBanFactory.cs" />
     <Compile Include="Frontend\BanHang\frmBanHang.cs">
       <SubType>Form</SubType>

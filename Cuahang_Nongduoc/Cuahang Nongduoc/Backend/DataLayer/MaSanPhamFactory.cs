@@ -16,7 +16,15 @@ namespace CuahangNongduoc.DataLayer
     // Kiểm tra         : QA1
     // Ngày chỉnh sửa   : 06/11/2026
     // ==============================================================
-    public class MaSanPhanFactory
+// ==================== [R20] REFACTORING ====================
+// Lỗi (Code smell) : Tên Class sai chính tả (MaSanPhanFactory)
+// Kỹ thuật         : Rename Class
+// Tác giả          : BE2 - Trần Tuấn Anh
+// Hỗ trợ           : FE1 - Dương Thị Kim Anh
+// Kiểm duyệt       : QA1 - Huỳnh Lư Anh Minh
+// Ngày chỉnh sửa   : 16/11/2026
+// ==============================================================
+    public class MaSanPhamFactory
     {
         DataService m_Ds = new DataService();
 
@@ -49,7 +57,7 @@ namespace CuahangNongduoc.DataLayer
         // Lỗi (Code smell) : Hàm LoadSchema() là mã thừa không được bất kỳ Controller hay Form nào gọi tới
         // Kỹ thuật         : Remove Dead Code
         // Trước            : Giữ lại phương thức public void LoadSchema() truy vấn điều kiện ID = '-1' gây dư thừa
-        // Sau              : Xóa bỏ hoàn toàn hàm LoadSchema() khỏi MaSanPhanFactory
+        // Sau              : Xóa bỏ hoàn toàn hàm LoadSchema() khỏi MaSanPhamFactory
         // Tác giả          : BE2
         // Hỗ trợ           : BE3
         // Kiểm tra         : QA2
