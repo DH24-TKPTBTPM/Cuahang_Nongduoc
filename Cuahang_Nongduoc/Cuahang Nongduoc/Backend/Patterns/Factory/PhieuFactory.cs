@@ -33,6 +33,11 @@ namespace CuahangNongduoc.Patterns.Factory
             return pb;
         }
 
+        public static PhieuBan TaoPhieuBan()
+        {
+            return TaoPhieuBan(LoaiPhieu.BanLe);
+        }
+
         public static PhieuNhap TaoPhieuNhap()
         {
             PhieuNhap pn = new PhieuNhap();
@@ -46,6 +51,9 @@ namespace CuahangNongduoc.Patterns.Factory
         public static PhieuChi TaoPhieuChi()
         {
             PhieuChi pc = new PhieuChi();
+            long maphieu = ThamSo.PhieuChi;
+            ThamSo.PhieuChi = maphieu + 1;
+            pc.Id = maphieu.ToString();
             pc.NgayChi = DateTime.Now;
             pc.TongTien = 0;
             return pc;
@@ -54,6 +62,9 @@ namespace CuahangNongduoc.Patterns.Factory
         public static PhieuThanhToan TaoPhieuThanhToan()
         {
             PhieuThanhToan ptt = new PhieuThanhToan();
+            long maphieu = ThamSo.LayMaPhieuThanhToan();
+            ThamSo.GanMaPhieuThanhToan(maphieu + 1);
+            ptt.Id = maphieu.ToString();
             ptt.NgayThanhToan = DateTime.Now;
             ptt.TongTien = 0;
             return ptt;

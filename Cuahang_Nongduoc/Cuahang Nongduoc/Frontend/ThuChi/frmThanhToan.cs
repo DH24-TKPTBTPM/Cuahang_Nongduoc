@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
+using CuahangNongduoc.Patterns.Factory;
 using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
@@ -103,13 +105,14 @@ namespace CuahangNongduoc
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
-            long maphieu = ThamSo.LayMaPhieuThanhToan();;
-            ThamSo.GanMaPhieuThanhToan(maphieu+1);
+            PhieuThanhToan ptt = PhieuFactory.TaoPhieuThanhToan();
+            ptt.NgayThanhToan = dtNgayThanhToan.Value.Date;
+            ptt.TongTien = Convert.ToInt64(numTongTien.Value);
 
             DataRow row = ctrl.NewRow();
-            row["ID"] = maphieu;
-            row["NGAY_THANH_TOAN"] = DateTime.Now.Date;
-            row["TONG_TIEN"] = numTongTien.Value;
+            row["ID"] = ptt.Id;
+            row["NGAY_THANH_TOAN"] = ptt.NgayThanhToan;
+            row["TONG_TIEN"] = ptt.TongTien;
             ctrl.Add(row);
             
             bindingNavigator.BindingSource.MoveLast();
