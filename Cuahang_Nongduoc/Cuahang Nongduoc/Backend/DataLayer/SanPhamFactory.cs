@@ -30,24 +30,36 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds.ResultTable;
         }
 
+        // ==================== [R28-BH] FIX ====================
+        // Lỗi (Code smell) : Tìm kiếm nạp vào localDs rồi bị bỏ → lưới frmSanPham (gắn với m_Ds) không lọc
+        // Kỹ thuật         : Fix Bug – tìm kiếm nạp lại vào m_Ds như bản gốc (lưới gắn đúng bảng này,
+        //                    Save() sau khi tìm vẫn lưu đúng bảng). Hàm chỉ đọc (LaySanPham, LaySoLuongTon) giữ localDs.
+        // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA1 – <Họ tên> | Ngày chỉnh sửa: 15/11/2026
+        // ===========================================================
         public DataTable TimMaSanPham(String id)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM SAN_PHAM WHERE ID LIKE '%' + @id + '%'");
             cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
-
-            DataService localDs = new DataService();
-            localDs.Load(cmd);
-            return localDs.ResultTable;
+            m_Ds.Load(cmd);
+            return m_Ds.ResultTable;
         }
 
         public DataTable TimTenSanPham(String ten)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM SAN_PHAM WHERE TEN_SAN_PHAM LIKE '%' + @ten + '%'");
             cmd.Parameters.Add("@ten", SqlDbType.NVarChar, 50).Value = ten;
+            m_Ds.Load(cmd);
+            return m_Ds.ResultTable;
+        }
 
-            DataService localDs = new DataService();
-            localDs.Load(cmd);
-            return localDs.ResultTable;
+        /// <summary>[R28-BH] Ghi giá nhập bình quân và tồn kho mới của 1 sản phẩm (dùng khi lưu phiếu nhập).</summary>
+        public int CapNhatGiaVaSoLuong(String id, long donGiaNhap, long soLuong)
+        {
+            SqlCommand cmd = new SqlCommand("UPDATE SAN_PHAM SET DON_GIA_NHAP = @gia, SO_LUONG = @sl WHERE ID = @id");
+            cmd.Parameters.Add("@gia", SqlDbType.BigInt).Value = donGiaNhap;
+            cmd.Parameters.Add("@sl", SqlDbType.BigInt).Value = soLuong;
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
+            return new DataService().ExecuteNoneQuery(cmd);
         }
 
         public DataTable LaySanPham(String id)
