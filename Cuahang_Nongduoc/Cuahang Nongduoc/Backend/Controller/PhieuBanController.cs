@@ -4,6 +4,7 @@ using System.Text;
 using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.DataLayer.Mappers;
 using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Patterns.TemplateMethod;
 using System.Windows.Forms;
 using System.Data;
 
@@ -149,6 +150,11 @@ namespace CuahangNongduoc.Controller
                     return SaveResult.Failed("Không thể lưu dữ liệu phiếu bán vào cơ sở dữ liệu!");
                 }
             }
+        }
+
+        public bool LuuTheoQuyTrinh(PhieuBan phieuBan, IList<ChiTietPhieuBan> dsChiTiet, IList<MaSanPham> dsXoa)
+        {
+            return new QuyTrinhBanHang(phieuBan, dsChiTiet, dsXoa).XuLyPhieu();
         }
         public void HienthiPhieuBanLe(BindingNavigator bn, DataGridView dg)
         {

@@ -1,8 +1,9 @@
-﻿using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.DungChung.Statess;
 using CuahangNongduoc.Patterns.Facade;
 using CuahangNongduoc.Patterns.Strategy;
+using CuahangNongduoc.Patterns.Factory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -50,6 +51,12 @@ namespace CuahangNongduoc
     
         // Biến lưu trữ Strategy
         private IBanHangStrategy _strategy;
+
+        // Xác định loại phiếu động dựa theo Strategy đang dùng (Bán sỉ cho đại lý hay Bán lẻ)
+        private LoaiPhieu LayLoaiPhieuHienTai()
+        {
+            return (_strategy != null && _strategy.IsDaiLy) ? LoaiPhieu.BanSi : LoaiPhieu.BanLe;
+        }
 
         // 1. Constructor không tham số (Bắt buộc cho Visual Studio Designer)
         public frmBanHang()
@@ -119,7 +126,7 @@ namespace CuahangNongduoc
             // ==============================================================================
             if (_currentState is StateThem)
             {
-                txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
+                txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai()).Id;
             }
         }
 
@@ -280,8 +287,7 @@ namespace CuahangNongduoc
         {
             string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
 
-            PhieuBan phieu = new PhieuBan();
-            phieu.Id = txtMaPhieu.Text.Trim();
+            PhieuBan phieu = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai());            phieu.Id = txtMaPhieu.Text.Trim();
             phieu.KhachHang = new KhachHang(maKhachHang);
             phieu.NgayBan = dtNgayLapPhieu.Value;
             phieu.TongTien = Convert.ToInt64(numTongTien.Value);
@@ -364,13 +370,11 @@ namespace CuahangNongduoc
             }
 
             // [FE-02 - Hide Delegate]: Gọi Facade lưu phiếu bán và chi tiết phiếu
-            PhieuBan phieuBanNew = new PhieuBan
-            {
-                Id = txtMaPhieu.Text,
-                NgayBan = dtNgayLapPhieu.Value.Date,
-                TongTien = Convert.ToInt64(numTongTien.Value),
-                DaTra = Convert.ToInt64(numDaTra.Value),
-            };
+            PhieuBan phieuBanNew = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai());
+            phieuBanNew.Id = txtMaPhieu.Text;
+            phieuBanNew.NgayBan = dtNgayLapPhieu.Value.Date;
+            phieuBanNew.TongTien = Convert.ToInt64(numTongTien.Value);
+            phieuBanNew.DaTra = Convert.ToInt64(numDaTra.Value);
 
             _facade.LuuHoaDon(phieuBanNew, null, null);
 
@@ -396,7 +400,7 @@ namespace CuahangNongduoc
             // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
             deleted.Clear();
 
-            txtMaPhieu.Text = ThamSo.LayMaPhieuBan().ToString();
+            txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai()).Id;
             numTongTien.Value = 0;
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
             this.Allow(true);

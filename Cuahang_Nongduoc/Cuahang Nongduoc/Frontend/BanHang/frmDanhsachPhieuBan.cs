@@ -1,6 +1,7 @@
 ﻿using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Frontend.BanHang;
+using CuahangNongduoc.Patterns.Facade;
 using CuahangNongduoc.Patterns.Factory;
 using CuahangNongduoc.Patterns.Strategy;
 using System;
@@ -32,6 +33,7 @@ namespace CuahangNongduoc
 
         PhieuBanController ctrl = new PhieuBanController();
         KhachHangController ctrlKH = new KhachHangController();
+        private readonly BanHangFacade _facade = new BanHangFacade();
         private void frmDanhsachPhieuNhap_Load(object sender, EventArgs e)
         {
             // [Sửa build 15/11/2026] Controller (R23) trả DataTable, Form tự gắn vào cột ComboBox;
@@ -54,21 +56,20 @@ namespace CuahangNongduoc
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
+                if (_loaiPhieu == LoaiPhieuBan.BanLe)
                 {
-                    // Kiểm tra loại phiếu để truyền đúng Strategy
-                    if (_loaiPhieu == LoaiPhieuBan.BanLe)
-                    {
-                        BanLe = new frmBanHang(ctrl, new BanLeStrategy());
-                    }
-                    else
-                    {
-                        BanLe = new frmBanHang(ctrl, new BanSiStrategy());
-                    }
+                    BanLe = new frmBanHang(ctrl, new BanLeStrategy());
+                }
+                else
+                {
+                    BanLe = new frmBanHang(ctrl, new BanSiStrategy());
                 }
                 BanLe.Show();
             }
             else
+            {
                 BanLe.Activate();
+            }
         }
 
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
@@ -94,45 +95,44 @@ namespace CuahangNongduoc
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Le", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            if (MessageBox.Show("Bạn có chắc chắn xóa không?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
             }
             else
             {
                 DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
-                ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
-                foreach (ChiTietPhieuBan ct in ds)
+                if (view != null)
                 {
-                    CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                  
+                    bool ketQua = _facade.XoaPhieuBan(view["ID"].ToString());
+                    if (!ketQua)
+                    {
+                        MessageBox.Show(_facade.LastErrorMessage); 
+                        e.Cancel = true; 
+                    }
+                    
                 }
-                ctrl.Save();
-               
             }
         }
 
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
         {
-             DataRowView view =  (DataRowView)bindingNavigator.BindingSource.Current;
-             if (view != null)
-             {
-
-                 if (MessageBox.Show("Bạn có chắc chắn xóa không?", "Phieu Ban Le", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                 {
-                     ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
-                     IList<ChiTietPhieuBan> ds = ctrl.ChiTietPhieuBan(view["ID"].ToString());
-                     foreach (ChiTietPhieuBan ct in ds)
-                     {
-                         CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                        
+            DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
+            if (view != null)
+            {
+                if (MessageBox.Show("Bạn có chắc chắn xóa không?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    bool ketQua = _facade.XoaPhieuBan(view["ID"].ToString());
+                    if (ketQua)
+                    {
+                        bindingNavigator.BindingSource.RemoveCurrent();
                     }
-                     bindingNavigator.BindingSource.RemoveCurrent();
-                     ctrl.Save();
-                    
+                    else
+                    {
+                        MessageBox.Show(_facade.LastErrorMessage); 
+                    }
                 }
-             }
+            }
         }
 
         private void toolPrint_Click(object sender, EventArgs e)

@@ -7,6 +7,7 @@ using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.Patterns.Singleton;
 using CuahangNongduoc.Patterns.Strategy;
 using CuahangNongduoc.Patterns.Factory; // Import Factory ở Backend
+using CuahangNongduoc.Patterns.TemplateMethod;
 
 
 namespace CuahangNongduoc.Patterns.Facade
@@ -121,6 +122,18 @@ namespace CuahangNongduoc.Patterns.Facade
                 AppLogger.Instance.Error("BanHangFacade.LuuHoaDon thất bại (đã Rollback)", ex);
                 return false;
             }
+        }
+
+        public bool LuuTheoQuyTrinh(PhieuBan phieuBan, IList<ChiTietPhieuBan> danhSachChiTiet, IList<MaSanPham> dsXoa)
+        {
+            LastErrorMessage = null;
+            QuyTrinhXuLyPhieuBase quyTrinh = new QuyTrinhBanHang(phieuBan, danhSachChiTiet, dsXoa);
+            bool thanhCong = quyTrinh.XuLyPhieu();
+            if (!thanhCong)
+            {
+                LastErrorMessage = quyTrinh.LastErrorMessage;
+            }
+            return thanhCong;
         }
 
         // ==================== [FE-02] REFACTORING (MOVE METHOD) ====================

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -51,12 +51,10 @@ namespace CuahangNongduoc.Controller
         public LyDoChi LayLyDoChi(long id)
         {
             DataTable tbl = factory.LayLyDoChi(id);
-            LyDoChi lydo = null;
-            if (tbl.Rows.Count > 0)
-            {
-                lydo.Id = Convert.ToInt64(tbl.Rows[0]["ID"]);
-                lydo.LyDo = Convert.ToString(tbl.Rows[0]["LY_DO"]);
-            }
+            if (tbl.Rows.Count == 0) return null;
+            LyDoChi lydo = new LyDoChi();
+            lydo.Id = Convert.ToInt64(tbl.Rows[0]["ID"]);
+            lydo.LyDo = Convert.ToString(tbl.Rows[0]["LY_DO"]);
             return lydo;
         }
 
