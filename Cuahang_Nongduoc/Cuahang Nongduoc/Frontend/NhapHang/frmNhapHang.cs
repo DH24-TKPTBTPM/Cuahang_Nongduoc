@@ -26,7 +26,7 @@ namespace CuahangNongduoc
         // ==================== [FE-FE2] REFACTORING ====================
         // Lỗi (Code smell) : Primitive Obsession / Hardcoded State – Quản lý trạng thái giao diện bằng enum 'status' gây phân nhánh rải rác
         // Kỹ thuật         : Replace State/Strategy with State Pattern & Encapsulate Field
-        // Trước            : Controll status = Controll.Normal; (dùng if/else kiểm tra status ở các nút bấm & hàm Allow để private)
+        // Trước            : FormEditState status = FormEditState.View; (dùng if/else kiểm tra status ở các nút bấm & hàm Allow để private)
         // Sau              : private IFrmNhapHangState currentState; (chuyển giao quản lý cho các lớp State & đổi Allow() thành public)
         // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
         // Hỗ trợ           : <Không>
