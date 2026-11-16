@@ -188,7 +188,7 @@ namespace CuahangNongduoc.Controller
                 // Trước            : factory.Save();
                 // Sau              : factory.CapNhatGiaVaSoLuong(id, DON_GIA_NHAP, SO_LUONG);
                 // Tác giả          : BE1 – Nguyễn Tuấn Anh
-                // Hỗ trợ           : Claude (AI)
+                // Hỗ trợ           : —
                 // Kiểm tra         : QA1 – <Họ tên>
                 // Ngày chỉnh sửa   : 15/11/2026
                 // ===========================================================

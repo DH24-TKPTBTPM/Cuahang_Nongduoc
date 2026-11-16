@@ -34,7 +34,7 @@ namespace CuahangNongduoc.DataLayer
         // Lỗi (Code smell) : Tìm kiếm nạp vào localDs rồi bị bỏ → lưới frmSanPham (gắn với m_Ds) không lọc
         // Kỹ thuật         : Fix Bug – tìm kiếm nạp lại vào m_Ds như bản gốc (lưới gắn đúng bảng này,
         //                    Save() sau khi tìm vẫn lưu đúng bảng). Hàm chỉ đọc (LaySanPham, LaySoLuongTon) giữ localDs.
-        // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên> | Ngày chỉnh sửa: 15/11/2026
+        // Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA1 – <Họ tên> | Ngày chỉnh sửa: 15/11/2026
         // ===========================================================
         public DataTable TimMaSanPham(String id)
         {
