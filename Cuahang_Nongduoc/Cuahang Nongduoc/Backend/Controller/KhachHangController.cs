@@ -8,10 +8,13 @@ using CuahangNongduoc.DataLayer;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối danh mục khách hàng, Data Binding và các truy vấn phục vụ bán hàng/công nợ.</summary>
     public class KhachHangController
     {
         KhachHangFactory factory = new KhachHangFactory();
 
+        /// <summary>Nạp khách hàng theo loại nghiệp vụ vào ComboBox bằng khóa ID.</summary>
+        /// <param name="cmb">ComboBox nhận dữ liệu.</param><param name="loai">True là khách hàng bán lẻ.</param>
         public void HienthiAutoComboBox(System.Windows.Forms.ComboBox cmb, bool loai)
         {
             cmb.DataSource = factory.DanhsachKhachHang(loai);
@@ -32,6 +35,8 @@ namespace CuahangNongduoc.Controller
             cmb.ValueMember = "ID";
         }
 
+        /// <summary>Nạp danh sách khách hàng vào lưới và BindingNavigator của màn hình danh mục.</summary>
+        /// <param name="dg">Lưới hiển thị khách hàng.</param><param name="bn">Bộ điều hướng bản ghi.</param>
         public void HienthiKhachHangDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
         {
             System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();

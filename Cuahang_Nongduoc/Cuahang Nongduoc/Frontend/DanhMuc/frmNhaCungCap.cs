@@ -6,12 +6,15 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Data.SqlClient;
 using CuahangNongduoc.Auth;
 
 namespace CuahangNongduoc
 {
+    /// <summary>Màn hình quản lý nhà cung cấp và thông tin liên hệ phục vụ nghiệp vụ nhập hàng.</summary>
     public partial class frmNhaCungCap : Form
     {
+        private FormEditState editState = FormEditState.View;
         private readonly CuahangNongduoc.Controller.NhaCungCapController ctrl = new CuahangNongduoc.Controller.NhaCungCapController();
 
         public frmNhaCungCap()
@@ -27,24 +30,41 @@ namespace CuahangNongduoc
         {
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // Khóa mã số không cho sửa thủ công
+            // Mã nhà cung cấp là khóa nghiệp vụ do hệ thống cấp; cho sửa tay sẽ làm sai các quan hệ nhập hàng.
             txtMaNhaCungCap.ReadOnly = true;
             txtMaNhaCungCap.BackColor = Color.WhiteSmoke;
 
-            // Mở khóa địa chỉ cho phép người dùng nhập
+            // Địa chỉ là dữ liệu nghiệp vụ do người dùng cập nhật, không phải khóa liên kết.
             txtDiaChi.ReadOnly = false;
 
-            // Giới hạn số điện thoại tối đa 10 ký tự
+            // Giới hạn theo chuẩn số di động Việt Nam để dữ liệu liên hệ nhất quán trước khi ghi DB.
             txtSDT.MaxLength = 10;
 
-            // Nạp dữ liệu và liên kết DataBindings với TextBoxes và DataGridView
+            // Data Binding dùng chung một BindingSource để thay đổi trên TextBox và lưới được lưu cùng bản ghi.
             ctrl.HienthiDataGridview(dataGridView, bindingNavigator, txtMaNhaCungCap, txtNhaCungCap, txtDiaChi, txtSDT);
 
-            // Đồng bộ mã nhà cung cấp tiếp theo
+            // Đồng bộ bộ cấp mã với dữ liệu thực tế để tránh trùng khóa khi thêm nhà cung cấp.
             CapNhatThamSoMa();
             ApDungPhanQuyen();
+            SetState(FormEditState.View);
         }
 
+        /// <summary>Áp dụng UI State và ngăn sửa dữ liệu nhà cung cấp khi đang ở chế độ View.</summary>
+        /// <param name="state">View, Add hoặc Edit theo thao tác của người dùng.</param>
+        private void SetState(FormEditState state)
+        {
+            editState = state;
+            bool editing = state != FormEditState.View;
+            bindingNavigatorAddNewItem.Enabled = !editing;
+            bindingNavigatorDeleteItem.Enabled = !editing;
+            toolLuu.Enabled = editing;
+            dataGridView.ReadOnly = !editing;
+            txtNhaCungCap.ReadOnly = !editing;
+            txtDiaChi.ReadOnly = !editing;
+            txtSDT.ReadOnly = !editing;
+        }
+
+        /// <summary>Giới hạn thao tác theo quyền sửa danh mục nhà cung cấp của người dùng hiện tại.</summary>
         private void ApDungPhanQuyen()
         {
             bool coQuyenSua = AuthorizationService.CoQuyen(AuthorizationService.Permission.SuaNhaCungCap);
@@ -57,6 +77,7 @@ namespace CuahangNongduoc
             txtSDT.ReadOnly = !coQuyenSua;
         }
 
+        /// <summary>Đưa bộ cấp mã lên sau ID lớn nhất đang có trong Data Binding.</summary>
         private void CapNhatThamSoMa()
         {
             long maxId = 0;
@@ -134,6 +155,8 @@ namespace CuahangNongduoc
         /// Kiểm tra số điện thoại có đúng định dạng số di động Việt Nam hay không:
         /// Gồm đúng 10 chữ số, bắt đầu bằng các đầu số nhà mạng VN: 03, 05, 07, 08, 09.
         /// </summary>
+        /// <summary>Kiểm tra số điện thoại nhà cung cấp theo định dạng di động Việt Nam.</summary>
+        /// <param name="sdt">Số điện thoại cần xác thực.</param><returns>True nếu hợp lệ.</returns>
         private bool KiemTraSoDienThoaiVN(string sdt)
         {
             if (string.IsNullOrWhiteSpace(sdt))
@@ -150,6 +173,10 @@ namespace CuahangNongduoc
         /// <param name="tenTrung">Tên nhà cung cấp bị trùng (nếu có)</param>
         /// <param name="idTrung">Mã nhà cung cấp bị trùng (nếu có)</param>
         /// <returns>True nếu trùng, False nếu không trùng</returns>
+        /// <summary>Phối hợp Controller kiểm tra trùng số trong bộ nhớ và trong SQL Server.</summary>
+        /// <param name="sdt">Số điện thoại cần kiểm tra.</param><param name="currentId">ID đang sửa, được loại khỏi phép so sánh.</param>
+        /// <param name="tenTrung">Tên nhà cung cấp trùng nếu có.</param><param name="idTrung">ID nhà cung cấp trùng nếu có.</param>
+        /// <returns>True nếu số điện thoại đã được sử dụng.</returns>
         private bool KiemTraTrungSoDienThoai(string sdt, string currentId, out string tenTrung, out string idTrung)
         {
             DataTable tbl = bindingNavigator.BindingSource?.DataSource as DataTable;
@@ -165,7 +192,7 @@ namespace CuahangNongduoc
             if (bindingNavigator.BindingSource == null)
                 return;
 
-            // Kiểm tra: nếu dòng hiện tại chưa hoàn tất thông tin thì yêu cầu nhập đầy đủ trước khi thêm
+            // Chặn bản ghi chưa hoàn chỉnh để DataTable không tích lũy dữ liệu dở dang trước khi ghi SQL Server.
             if (bindingNavigator.BindingSource.Current is DataRowView cur && cur.Row.RowState != DataRowState.Deleted)
             {
                 string curTen = Convert.ToString(cur["HO_TEN"]).Trim();
@@ -202,6 +229,7 @@ namespace CuahangNongduoc
             }
 
             long newId = LayMaNhaCungCapMoi();
+            SetState(FormEditState.Add);
 
             DataRowView newRow = (DataRowView)bindingNavigator.BindingSource.AddNew();
             newRow["ID"] = newId.ToString();
@@ -333,8 +361,9 @@ namespace CuahangNongduoc
                 bindingNavigator.BindingSource.EndEdit();
                 bindingNavigatorPositionItem.Focus();
 
-                // 9. Lưu vào cơ sở dữ liệu
+                // Controller chuyển thay đổi từ DataTable qua Data Access Layer; chỉ sau bước này mới kết thúc Edit State.
                 ctrl.Save();
+                SetState(FormEditState.View);
 
                 MessageBox.Show("Đã lưu thông tin nhà cung cấp thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -346,11 +375,30 @@ namespace CuahangNongduoc
 
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
         {
-            if (bindingNavigator.BindingSource?.Current != null)
+                if (bindingNavigator.BindingSource?.Current != null)
             {
+                    // Kiểm tra Foreign Key trước khi xóa để tránh lỗi constraint và giữ nguyên lịch sử nhập hàng.
+                DataRowView current = bindingNavigator.BindingSource.Current as DataRowView;
+                if (current != null && current.Row.RowState != DataRowState.Added)
+                {
+                    using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
+                    using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM PHIEU_NHAP WHERE ID_NHA_CUNG_CAP = @id", connection))
+                    {
+                        command.Parameters.AddWithValue("@id", Convert.ToString(current["ID"]));
+                        connection.Open();
+                        if (Convert.ToInt32(command.ExecuteScalar()) > 0)
+                        {
+                            MessageBox.Show("Không thể xóa Nhà Cung Cấp này vì đã có lịch sử Nhập hàng!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+                }
                 if (MessageBox.Show("Bạn có chắc chắn muốn xóa nhà cung cấp này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     bindingNavigator.BindingSource.RemoveCurrent();
+                    ctrl.Save();
+                    ctrl.TaiLaiNhaCungCap(bindingNavigator.BindingSource);
+                    SetState(FormEditState.View);
                 }
             }
         }

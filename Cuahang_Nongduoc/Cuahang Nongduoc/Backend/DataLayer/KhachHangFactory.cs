@@ -6,10 +6,13 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
+    /// <summary>Data Access Layer truy vấn khách hàng và tập dữ liệu kết hợp khách hàng/đại lý.</summary>
     public class KhachHangFactory
     {
         DataService m_Ds = new DataService();
 
+        /// <summary>Tải khách hàng theo cờ loại để tách đúng nghiệp vụ bán lẻ hoặc bán sỉ.</summary>
+        /// <param name="loai">Loại khách hàng cần lấy.</param><returns>DataTable khách hàng.</returns>
         public DataTable DanhsachKhachHang(bool loai)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM KHACH_HANG WHERE LOAI_KH = " + (loai ? "1" : "0"));
@@ -43,8 +46,8 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds;
         }
 
-        // Danh sách chọn đối tượng chung cho Phiếu thu/Dư nợ.
-        // Không gộp hay ghi dữ liệu: chỉ đọc KHACH_HANG và DAI_LY để hiển thị.
+        /// <summary>Tạo tập dữ liệu chỉ đọc kết hợp khách hàng và đại lý cho phiếu thu/công nợ.</summary>
+        /// <returns>DataTable thống nhất cột hiển thị, không ghi ngược vào hai bảng nguồn.</returns>
         public DataTable DanhSachKhachHangVaDaiLy()
         {
             DataTable ketQua = new DataTable();
@@ -73,6 +76,8 @@ namespace CuahangNongduoc.DataLayer
             return ketQua;
         }
 
+        /// <summary>Đọc một khách hàng theo ID để phục vụ nghiệp vụ bán hàng.</summary>
+        /// <param name="id">Khóa khách hàng.</param><returns>DataTable kết quả truy vấn.</returns>
         public DataTable LayKhachHang(String id)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM KHACH_HANG WHERE ID = @id");

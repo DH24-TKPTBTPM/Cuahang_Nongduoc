@@ -3,18 +3,20 @@ using System.Data;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc
 {
+    /// <summary>Màn hình quản lý khách hàng cá nhân dùng trong nghiệp vụ bán hàng và công nợ.</summary>
     public partial class frmKhachHang : Form
     {
+        private FormEditState editState = FormEditState.View;
         private readonly CuahangNongduoc.Controller.KhachHangController ctrl = new CuahangNongduoc.Controller.KhachHangController();
 
         public frmKhachHang()
         {
             InitializeComponent();
 
-            // Đảm bảo Form hiển thị chính giữa màn hình
             this.StartPosition = FormStartPosition.CenterScreen;
 
         }
@@ -23,18 +25,19 @@ namespace CuahangNongduoc
         {
             try
             {
-                // Khóa không cho phép người dùng sửa Mã số
+                // ID là khóa tham chiếu trong PHIEU_BAN nên chỉ được cấp tự động, không cho sửa trực tiếp.
                 txtMa.ReadOnly = true;
                 txtMa.BackColor = Color.WhiteSmoke;
 
-                // Hiển thị dữ liệu lên DataGridView và BindingNavigator
+                // Nạp DataTable một lần để lưới, BindingNavigator và các ô chi tiết dùng cùng nguồn dữ liệu.
                 ctrl.HienthiKhachHangDataGridview(dataGridView, bindingNavigator);
 
-                // Binding dữ liệu cho các TextBox nhập liệu
+                // Data Binding giúp thay đổi trên form được phản ánh vào DataRow trước khi Controller Save.
                 BindControl(txtMa, "ID");
                 BindControl(txtHoTen, "HO_TEN");
                 BindControl(txtDiaChi, "DIA_CHI");
                 BindControl(txtDienThoai, "DIEN_THOAI");
+                SetState(FormEditState.View);
             }
             catch (Exception ex)
             {
@@ -42,6 +45,24 @@ namespace CuahangNongduoc
             }
         }
 
+        /// <summary>Điều khiển UI State để dữ liệu khách hàng chỉ được sửa trong Add/Edit.</summary>
+        /// <param name="state">Trạng thái View, Add hoặc Edit.</param>
+        private void SetState(FormEditState state)
+        {
+            editState = state;
+            bool editing = state != FormEditState.View;
+            bindingNavigatorAddNewItem.Enabled = !editing;
+            bindingNavigatorDeleteItem.Enabled = !editing;
+            toolLuu.Enabled = editing;
+            toolHuy.Enabled = editing;
+            txtHoTen.ReadOnly = !editing;
+            txtDiaChi.ReadOnly = !editing;
+            txtDienThoai.ReadOnly = !editing;
+            dataGridView.ReadOnly = !editing;
+        }
+
+        /// <summary>Liên kết thuộc tính hiển thị của control với cột tương ứng trong BindingSource.</summary>
+        /// <param name="control">Control nhận dữ liệu.</param><param name="propertyName">Tên cột DataTable.</param>
         private void BindControl(Control control, string propertyName)
         {
             if (control != null && bindingNavigator.BindingSource != null)
@@ -55,7 +76,7 @@ namespace CuahangNongduoc
         {
             try
             {
-                // 1. Kiểm tra trường Họ tên không được để trống hoặc chỉ có khoảng trắng
+                // Chặn dữ liệu thiếu trước khi Data Binding đẩy bản ghi không hợp lệ xuống Data Access Layer.
                 string hoTen = txtHoTen.Text.Trim();
                 if (string.IsNullOrWhiteSpace(hoTen))
                 {
@@ -64,7 +85,7 @@ namespace CuahangNongduoc
                     return;
                 }
 
-                // 2. Kiểm tra số điện thoại di động Việt Nam (10 số, đầu số hợp lệ)
+                // Chuẩn hóa số điện thoại giúp các nghiệp vụ liên hệ và kiểm tra trùng hoạt động ổn định.
                 string sdt = txtDienThoai.Text.Trim();
                 if (string.IsNullOrWhiteSpace(sdt))
                 {
@@ -84,7 +105,7 @@ namespace CuahangNongduoc
                         return;
                     }
 
-                    // 3. Kiểm tra trùng lặp số điện thoại với các dòng khác trong BindingSource / DataTable
+                    // Kiểm tra trùng ngay trên bộ nhớ để phản hồi nhanh trước khi phát sinh lệnh ghi SQL Server.
                     if (bindingNavigator.BindingSource != null && bindingNavigator.BindingSource.DataSource is DataTable dt)
                     {
                         var currentRow = ((DataRowView)bindingNavigator.BindingSource.Current)?.Row;
@@ -106,14 +127,14 @@ namespace CuahangNongduoc
                     }
                 }
 
-                // 4. Tự động chuẩn hóa khoảng trắng (Trim & loại bỏ khoảng trắng thừa giữa các từ)
+                // Chuẩn hóa dữ liệu trình bày để tìm kiếm và đối soát khách hàng không phụ thuộc khoảng trắng thừa.
                 txtHoTen.Text = Regex.Replace(hoTen, @"\s+", " ");
                 if (!string.IsNullOrEmpty(txtDiaChi.Text))
                 {
                     txtDiaChi.Text = Regex.Replace(txtDiaChi.Text.Trim(), @"\s+", " ");
                 }
 
-                // 5. Buộc BindingSource kết thúc quá trình chỉnh sửa để cập nhật vào DataTable
+                // Kết thúc Data Binding trước Save để Controller nhận đầy đủ thay đổi của bản ghi hiện tại.
                 if (bindingNavigator.BindingSource != null)
                 {
                     bindingNavigator.BindingSource.EndEdit();
@@ -123,7 +144,7 @@ namespace CuahangNongduoc
 
                 BindingSource source = bindingNavigator.BindingSource;
                 string savedId = (source.Current as DataRowView)?["ID"]?.ToString();
-                // 6. Gọi lệnh lưu xuống CSDL thông qua Controller
+                // Controller chuyển bản ghi đã xác thực xuống Data Access Layer và SQL Server.
                 ctrl.Save();
 
                 ctrl.TaiLaiKhachHang(true, source);
@@ -140,6 +161,7 @@ namespace CuahangNongduoc
                 }
 
                 MessageBox.Show("Đã lưu dữ liệu thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                SetState(FormEditState.View);
             }
             catch (Exception ex)
             {
@@ -149,6 +171,7 @@ namespace CuahangNongduoc
 
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
+            SetState(FormEditState.Add);
             if (bindingNavigator.BindingSource != null)
             {
                 long maso = ThamSo.KhachHang;
@@ -161,6 +184,7 @@ namespace CuahangNongduoc
                 // Tăng tham số tự động sau khi cấp mã thành công
                 ThamSo.KhachHang = maso + 1;
             }
+
             txtHoTen.Focus();
         }
 
@@ -173,8 +197,7 @@ namespace CuahangNongduoc
                     BindingSource source = bindingNavigator.BindingSource;
                     try
                     {
-                        // Lưu các chỉnh sửa đang có trước để việc lưu xóa không vô tình
-                        // ghi đè các thay đổi trên một DataTable mới được tải lại.
+                        // Đồng bộ Data Binding trước khi kiểm tra/xóa để ID dùng kiểm tra Foreign Key là giá trị mới nhất.
                         source.EndEdit();
                         if (source.Current is DataRowView currentRow)
                         {
@@ -184,6 +207,18 @@ namespace CuahangNongduoc
                                 source.RemoveCurrent();
                                 return;
                             }
+                            // Kiểm tra Foreign Key với PHIEU_BAN để không xóa khách hàng đã có lịch sử mua hàng.
+                            using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
+                            using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @id", connection))
+                            {
+                                command.Parameters.AddWithValue("@id", id);
+                                connection.Open();
+                                if (Convert.ToInt32(command.ExecuteScalar()) > 0)
+                                {
+                                    MessageBox.Show("Không thể xóa Khách hàng này vì đã có lịch sử Mua hàng!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
+                            }
                         }
 
                         source.RemoveCurrent();
@@ -191,6 +226,11 @@ namespace CuahangNongduoc
                         {
                             ctrl.TaiLaiKhachHang(true, source);
                             MessageBox.Show("Không có dữ liệu nào được xóa.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            ctrl.TaiLaiKhachHang(true, source);
+                            SetState(FormEditState.View);
                         }
                     }
                     catch (Exception ex)

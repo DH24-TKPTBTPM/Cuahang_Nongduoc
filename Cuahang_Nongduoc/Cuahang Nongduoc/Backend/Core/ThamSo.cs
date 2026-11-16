@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc
 {
+    /// <summary>Trạng thái xử lý nội bộ của các màn hình nghiệp vụ cũ.</summary>
     public enum Controll
     {
         Normal,
@@ -13,10 +14,13 @@ namespace CuahangNongduoc
         Edit
     }
 
+    /// <summary>
+    /// Mô tả quyền chỉnh sửa của giao diện: chỉ xem, thêm bản ghi mới hoặc sửa bản ghi hiện hữu.
+    /// </summary>
     public enum FormEditState
     {
-        Normal,
-        AddNew,
+        View,
+        Add,
         Edit
     }
 

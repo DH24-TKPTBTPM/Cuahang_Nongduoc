@@ -8,6 +8,7 @@ using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối các lô hàng, mã lô và chi tiết lô trên phiếu nhập.</summary>
     public class MaSanPhamController
     {
         MaSanPhanFactory factory = new MaSanPhanFactory();
@@ -46,7 +47,7 @@ namespace CuahangNongduoc.Controller
 
         }
 
-        //Nhập hàng 
+        /// <summary>Các truy vấn phục vụ nghiệp vụ nhập hàng và kiểm tra lô đã phát sinh bán.</summary>
          public DataTable LayCacLoMoi()
         {
             return factory.LayCacLoMoi();
@@ -55,10 +56,14 @@ namespace CuahangNongduoc.Controller
         {
             return factory.GetDataService();
         }
+        /// <summary>Kiểm tra một lô đã được sử dụng trong chi tiết phiếu bán hay chưa.</summary>
+        /// <param name="idMaLo">Mã lô cần kiểm tra.</param><returns>True nếu lô đã bán.</returns>
         public bool CoLoDaBan(String idMaLo)
         {
             return factory.CoLoDaBan(idMaLo);
         }
+        /// <summary>Kiểm tra toàn bộ lô của phiếu trước khi cho phép xóa phiếu.</summary>
+        /// <param name="idPhieuNhap">Mã phiếu nhập.</param><returns>True nếu có lô đã bán.</returns>
         public bool CoLoDaBanTrongPhieuNhap(String idPhieuNhap)
         {
             return factory.CoLoDaBanTrongPhieuNhap(idPhieuNhap);
@@ -154,6 +159,8 @@ namespace CuahangNongduoc.Controller
             cmb.HeaderText = "Mã sản phẩm";
         }
 
+        /// <summary>Đưa các lô thuộc phiếu nhập vào DataGridView chi tiết.</summary>
+        /// <param name="id">Mã phiếu nhập.</param><param name="dg">Lưới nhận DataSource.</param>
         public void HienThiChiTietPhieuNhap(String id, DataGridView dg)
         {
             

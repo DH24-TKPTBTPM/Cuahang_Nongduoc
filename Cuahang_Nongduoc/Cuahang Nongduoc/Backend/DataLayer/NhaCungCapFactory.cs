@@ -6,10 +6,13 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
+    /// <summary>Data Access Layer truy vấn bảng NHA_CUNG_CAP bằng SqlCommand tham số hóa.</summary>
     public class NhaCungCapFactory
     {
         DataService m_Ds = new DataService();
 
+        /// <summary>Tải toàn bộ nhà cung cấp cho danh mục và các ComboBox nghiệp vụ.</summary>
+        /// <returns>DataTable dữ liệu nhà cung cấp.</returns>
         public DataTable DanhsachNCC()
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM NHA_CUNG_CAP");
@@ -17,6 +20,8 @@ namespace CuahangNongduoc.DataLayer
 
             return m_Ds;
         }
+        /// <summary>Tìm nhà cung cấp theo một phần địa chỉ.</summary>
+        /// <param name="diachi">Từ khóa địa chỉ.</param><returns>DataTable kết quả tìm kiếm.</returns>
         public DataTable TimDiaChi(String diachi)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM NHA_CUNG_CAP WHERE DIA_CHI LIKE '%' + @diachi + '%' ");
@@ -25,6 +30,8 @@ namespace CuahangNongduoc.DataLayer
 
             return m_Ds;
         }
+        /// <summary>Tìm nhà cung cấp theo một phần tên.</summary>
+        /// <param name="hoten">Từ khóa tên.</param><returns>DataTable kết quả tìm kiếm.</returns>
         public DataTable TimHoTen(String hoten)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM NHA_CUNG_CAP WHERE HO_TEN LIKE '%' + @hoten + '%' ");
@@ -34,6 +41,8 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds;
         }
 
+        /// <summary>Đọc nhà cung cấp theo khóa chính để phục vụ phiếu nhập.</summary>
+        /// <param name="id">ID nhà cung cấp.</param><returns>DataTable kết quả.</returns>
         public DataTable LayNCC(String id)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM NHA_CUNG_CAP WHERE ID = @id");

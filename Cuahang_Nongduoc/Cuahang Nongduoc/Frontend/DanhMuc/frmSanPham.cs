@@ -5,45 +5,61 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 using CuahangNongduoc.Controller;
 using CuahangNongduoc.Auth;
 
 namespace CuahangNongduoc
 {
     /// <summary>
-    /// Form quan ly san pham - cho phep xem, them, sua, xoa va tim kiem san pham.
-    /// Refactored: Extract Method, Guard Clauses, Remove Dead Code, Fix logic loi.
+    /// Màn hình quản lý danh mục sản phẩm, bao gồm tồn kho tổng hợp, giá nhập và giá bán.
+    /// Data Binding liên kết các ô nhập với DataTable do Controller tải từ SQL Server.
     /// </summary>
     public partial class frmSanPham : Form
     {
-        // =====================================================================
-        // FIELDS
-        // =====================================================================
+        private FormEditState editState = FormEditState.View;
         private readonly SanPhamController ctrl = new SanPhamController();
         private readonly DonViTinhController ctrlDVT = new DonViTinhController();
 
         /// <summary>
-        /// Flag tranh goi TimSanPham() 2 lan khi nhan Enter (Enter se kich hoat Leave).
+        /// Ngăn luồng tìm kiếm bị thực thi hai lần khi phím Enter đồng thời kích hoạt sự kiện Leave.
         /// </summary>
         private bool _dangTimKiem = false;
 
-        // =====================================================================
-        // CONSTRUCTOR
-        // =====================================================================
         public frmSanPham()
         {
             InitializeComponent();
         }
 
-        // =====================================================================
-        // LOAD FORM
-        // =====================================================================
+        /// Nạp danh mục đơn vị tính và sản phẩm trước khi thiết lập UI State mặc định là View.
         private void frmSanPham_Load(object sender, EventArgs e)
         {
             NapDanhSachDonViTinh();
             NapCotDonViTinhChoGrid();
             NapDanhSachSanPham();
             ApDungPhanQuyen();
+            SetState(FormEditState.View);
+        }
+
+        /// <summary>
+        /// Đồng bộ UI State với quyền chỉnh sửa dữ liệu; View phải bảo toàn dữ liệu đã lưu,
+        /// còn Add/Edit cho phép BindingSource nhận thay đổi để Controller ghi xuống SQL Server.
+        /// </summary>
+        /// <param name="state">Trạng thái giao diện cần áp dụng.</param>
+        private void SetState(FormEditState state)
+        {
+            editState = state;
+            bool editing = state != FormEditState.View;
+            bindingNavigatorAddNewItem.Enabled = !editing;
+            bindingNavigatorDeleteItem.Enabled = !editing;
+            toolLuu.Enabled = editing;
+            dataGridView.ReadOnly = !editing;
+            txtTenSanPham.ReadOnly = !editing;
+            cmbDVT.Enabled = editing;
+            numSoLuong.Enabled = editing;
+            numDonGiaNhap.Enabled = editing;
+            numGiaBanSi.Enabled = editing;
+            numGiaBanLe.Enabled = editing;
         }
 
         private void ApDungPhanQuyen()
@@ -62,12 +78,8 @@ namespace CuahangNongduoc
             btnThemDVT.Enabled = AuthorizationService.CoQuyen(AuthorizationService.Permission.SuaDonViTinh);
         }
 
-        // =====================================================================
-        // PRIVATE METHODS - Extract Method
-        // =====================================================================
-
         /// <summary>
-        /// Nap danh sach don vi tinh vao ComboBox cmbDVT.
+        /// Tải danh mục đơn vị tính để ComboBox hiển thị tên nhưng lưu khóa ID.
         /// </summary>
         private void NapDanhSachDonViTinh()
         {
@@ -75,8 +87,7 @@ namespace CuahangNongduoc
         }
 
         /// <summary>
-        /// Them cot ComboBox "Don vi tinh" vao DataGridView neu chua ton tai.
-        /// LOI CU: goi Columns.Add moi lan Load -> cot bi trung lap.
+        /// Bổ sung cột chọn đơn vị tính một lần; tránh tạo cột trùng sau mỗi lần tải lại dữ liệu.
         /// </summary>
         private void NapCotDonViTinhChoGrid()
         {
@@ -89,7 +100,7 @@ namespace CuahangNongduoc
         }
 
         /// <summary>
-        /// Nap (hoac lam moi) danh sach san pham len DataGridView va cac control input.
+        /// Tải lại danh sách sản phẩm và thiết lập Data Binding cho các control nhập liệu.
         /// </summary>
         private void NapDanhSachSanPham()
         {
@@ -99,8 +110,7 @@ namespace CuahangNongduoc
         }
 
         /// <summary>
-        /// Thuc hien tim kiem san pham theo tieu chi dang duoc chon.
-        /// Extract Method - gom logic tim kiem tu nhieu event handler.
+        /// Điều phối tìm kiếm theo mã hoặc tên, giữ kết quả trong tầng Data Access thông qua Controller.
         /// </summary>
         private void TimSanPham()
         {
@@ -115,8 +125,7 @@ namespace CuahangNongduoc
         }
 
         /// <summary>
-        /// Kiem tra ten san pham nhap vao co hop le khong.
-        /// Guard Clause - tach validation ra ham rieng.
+        /// Kiểm tra dữ liệu tối thiểu trước khi cho phép ghi sản phẩm vào cơ sở dữ liệu.
         /// </summary>
         private bool TenSanPhamHopLe()
         {
@@ -130,20 +139,12 @@ namespace CuahangNongduoc
             return true;
         }
 
-        // =====================================================================
-        // SU KIEN TOOLBAR - LUU
-        // =====================================================================
         private void toolLuu_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.SuaSanPham, "s?a s?n ph?m")) return;
             if (!TenSanPhamHopLe()) return;
 
-            // FIX: Commit pending edits truoc khi luu
-            // - dataGridView.EndEdit(): commit neu nguoi dung dang sua truc tiep tren grid
-            // - BindingSource.EndEdit(): dam bao tat ca gia tri tu controls (txt, num, cmb)
-            //   duoc push vao DataRow truoc khi m_DataAdapter.Update() duoc goi
-            // Khong dung bindingNavigatorPositionItem.Focus() vi ToolStrip items
-            // khong tham gia focus chain thong thuong, khong dam bao trigger Leave event
+            // Kết thúc Data Binding trước khi Save để mọi giá trị đang nằm ở control được đẩy vào DataRow.
             dataGridView.EndEdit();
             bindingNavigator.BindingSource.EndEdit();
 
@@ -161,12 +162,10 @@ namespace CuahangNongduoc
         }
 
 
-        // =====================================================================
-        // SU KIEN TOOLBAR - THEM MOI
-        // =====================================================================
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.SuaSanPham, "th�m s?n ph?m")) return;
+            SetState(FormEditState.Add);
             DataRow row = ctrl.NewRow();
 
             long maSanPhamMoi = ThamSo.SanPham;
@@ -191,15 +190,29 @@ namespace CuahangNongduoc
             txtTenSanPham.Focus();
         }
 
-        // =====================================================================
-        // SU KIEN TOOLBAR - XOA
-        // =====================================================================
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.SuaSanPham, "x�a s?n ph?m")) return;
             if (bindingNavigator.BindingSource == null ||
                 bindingNavigator.BindingSource.Count == 0)
                 return;
+
+            // Kiểm tra Foreign Key trước khi xóa để tránh SQL Server phát sinh lỗi và bảo toàn lịch sử bán hàng.
+            DataRowView current = bindingNavigator.BindingSource.Current as DataRowView;
+            if (current != null && current.Row.RowState != DataRowState.Added)
+            {
+                using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
+                using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN CT INNER JOIN MA_SAN_PHAM MSP ON CT.ID_MA_SAN_PHAM = MSP.ID WHERE MSP.ID_SAN_PHAM = @id", connection))
+                {
+                    command.Parameters.AddWithValue("@id", Convert.ToString(current["ID"]));
+                    connection.Open();
+                    if (Convert.ToInt32(command.ExecuteScalar()) > 0)
+                    {
+                        MessageBox.Show("Không thể xóa Sản phẩm này vì đã phát sinh trong Phiếu Bán!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+            }
 
             var xacNhan = MessageBox.Show(
                 "Ban co chac chan muon xoa san pham nay khong?",
@@ -210,41 +223,23 @@ namespace CuahangNongduoc
             if (xacNhan != DialogResult.Yes) return;
 
             bindingNavigator.BindingSource.RemoveCurrent();
-
-            //bool xoaThanhCong = ctrl.Save();
-            //if (!xoaThanhCong)
-            //{
-            //    MessageBox.Show("Xoa that bai. Co the san pham dang duoc su dung trong phieu nhap/ban.",
-            //        "Loi xoa", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            //    // FIX: Goi RejectChanges() thay vi NapDanhSachSanPham()
-            //    // - RejectChanges() hoan nguyen row tu trang thai Deleted ve Unchanged trong m_Ds
-            //    // - BindingSource tu cap nhat lai giao dien (row hien ra lai day du)
-            //    // - Tranh loi lech binding khi NapDanhSachSanPham() tao moi BindingSource
-            //    ctrl.RejectChanges();
-            //}
+            if (ctrl.Save())
+            {
+                NapDanhSachSanPham();
+                SetState(FormEditState.View);
+            }
         }
 
-
-        // =====================================================================
-        // SU KIEN TOOLBAR - THOAT
-        // =====================================================================
         private void toolThoat_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        // =====================================================================
-        // SU KIEN DATAGRIDVIEW - XU LY LOI DU LIEU
-        // =====================================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             e.Cancel = true;
         }
 
-        // =====================================================================
-        // SU KIEN NUT THEM DON VI TINH
-        // =====================================================================
         private void btnThemDVT_Click(object sender, EventArgs e)
         {
             frmDonViTinh dvtForm = new frmDonViTinh();
@@ -260,9 +255,6 @@ namespace CuahangNongduoc
             NapCotDonViTinhChoGrid();
         }
 
-        // =====================================================================
-        // SU KIEN TIM KIEM - CHON TIEU CHI
-        // =====================================================================
         private void toolTimMaSanPham_Click(object sender, EventArgs e)
         {
             toolTimMaSanPham.Checked = true;
@@ -277,9 +269,6 @@ namespace CuahangNongduoc
             toolTimSanPham.Text = string.Empty;
         }
 
-        // =====================================================================
-        // SU KIEN TIM KIEM - NHAP TU KHOA
-        // =====================================================================
         private void toolTimSanPham_Enter(object sender, EventArgs e)
         {
             toolTimSanPham.Text = string.Empty;

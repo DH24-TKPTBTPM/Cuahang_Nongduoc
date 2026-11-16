@@ -6,10 +6,13 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
+    /// <summary>Data Access Layer thao tác với bảng SAN_PHAM bằng SqlCommand có tham số.</summary>
     public class SanPhamFactory
     {
         DataService m_Ds = new DataService();
 
+        /// <summary>Tải toàn bộ danh mục sản phẩm phục vụ màn hình quản lý và ComboBox.</summary>
+        /// <returns>DataTable chứa dữ liệu sản phẩm.</returns>
         public DataTable DanhsachSanPham()
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM SAN_PHAM");
@@ -36,6 +39,8 @@ namespace CuahangNongduoc.DataLayer
         }
 
 
+        /// <summary>Truy vấn sản phẩm theo khóa chính để đọc hoặc cập nhật giá nhập bình quân.</summary>
+        /// <param name="id">Mã sản phẩm.</param><returns>DataTable kết quả truy vấn.</returns>
         public DataTable LaySanPham(String id)
         {
             SqlCommand cmd = new SqlCommand("SELECT * FROM SAN_PHAM WHERE ID = @id");
@@ -44,6 +49,8 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds;
         }
 
+        /// <summary>Tổng hợp tồn kho từ các lô trong MA_SAN_PHAM theo từng sản phẩm.</summary>
+        /// <returns>DataTable có số lượng tồn dùng cho báo cáo nghiệp vụ.</returns>
         public DataTable LaySoLuongTon()
         {
             SqlCommand cmd = new SqlCommand("SELECT SP.ID, SP.TEN_SAN_PHAM, SP.DON_GIA_NHAP, SP.GIA_BAN_SI, SP.GIA_BAN_LE, SP.ID_DON_VI_TINH , SP.SO_LUONG , SUM(MA.SO_LUONG) AS SO_LUONG_TON "
@@ -68,8 +75,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Hoan nguyen toan bo thay doi chua commit trong DataTable ve trang thai ban dau.
-        /// Dung de undo sau khi Save() that bai (vi du: xoa bi loi constraint).
+        /// Hoàn nguyên thay đổi chưa commit để giao diện không giữ trạng thái sai sau lỗi Foreign Key hoặc lỗi ghi DB.
         /// </summary>
         public void RejectChanges()
         {
