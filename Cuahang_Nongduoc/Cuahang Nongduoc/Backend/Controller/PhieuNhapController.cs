@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.BusinessObject;
+using CuahangNongduoc.Patterns.TemplateMethod;
 using System.Windows.Forms;
 using System.Data;
 
@@ -44,6 +45,11 @@ namespace CuahangNongduoc.Controller
         public bool Save()
         {
             return factory.Save();
+        }
+
+        public bool LuuTheoQuyTrinh(PhieuNhap phieuNhap, IList<ChiTietPhieuNhap> dsChiTiet)
+        {
+            return new QuyTrinhNhapHang(phieuNhap, dsChiTiet).XuLyPhieu();
         }
 
     
