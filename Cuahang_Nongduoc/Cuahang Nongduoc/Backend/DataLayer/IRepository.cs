@@ -11,7 +11,7 @@ namespace CuahangNongduoc.DataLayer
     /// Mục đích : tầng trên (Controller) lấy thẳng đối tượng nghiệp vụ (SanPham...) qua 1 interface chung,
     ///            không phải biết DataTable/DataRow và tên cột của từng DAO
     /// Thay thế : Controller tự gọi Factory lấy DataTable rồi tự map DataRow -> đối tượng
-    /// Tác giả  : BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+    /// Tác giả  : BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên>
     /// Ngày tạo : 15/11/2026
     /// </summary>
     public interface IRepository<T>
@@ -26,7 +26,7 @@ namespace CuahangNongduoc.DataLayer
     /// <summary>
     /// [D04] Repository mẫu cho Sản phẩm – dùng lại SanPhamFactory (truy vấn) và EntityMapper (D05).
     /// BE2/BE3 làm theo mẫu này cho các bảng khác khi cần.
-    /// Tác giả  : BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
+    /// Tác giả  : BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên>
     /// Ngày tạo : 15/11/2026
     /// </summary>
     public class SanPhamRepository : IRepository<SanPham>

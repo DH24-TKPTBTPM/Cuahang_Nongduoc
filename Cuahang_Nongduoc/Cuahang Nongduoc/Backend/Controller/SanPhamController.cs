@@ -213,7 +213,7 @@ namespace CuahangNongduoc.Controller
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
         // [D04] Lấy đối tượng qua IRepository thay vì tự đọc DataTable; giữ nguyên kết quả cũ
-        // (không có thì trả SanPham rỗng). Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên> | 15/11/2026
+        // (không có thì trả SanPham rỗng). Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên> | 15/11/2026
         private readonly IRepository<SanPham> m_Repo = new SanPhamRepository();
 
         public SanPham LaySanPham(String id)
