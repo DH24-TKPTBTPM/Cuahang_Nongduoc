@@ -132,12 +132,23 @@ namespace CuahangNongduoc.DataLayer
 // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
 // Ngày chỉnh sửa   : 08/11/2026
 // ==============================================================
+// ==================== [R32-BH] REFACTORING ====================
+// Lỗi (Code smell) : Dùng MONTH(NGAY_BAN) và YEAR(NGAY_BAN) trong WHERE làm SQL Server phải quét toàn bảng (không dùng được Index)
+// Kỹ thuật         : Substitute Algorithm
+// Trước            : WHERE MONTH(NGAY_BAN)=@thang AND YEAR(NGAY_BAN)=@nam GROUP BY ID_KHACH_HANG
+// Sau              : Chuyển sang lọc theo khoảng đầu-cuối tháng (NGAY_BAN >= @tu AND NGAY_BAN < @den) để tận dụng Index
+// Tác giả          : BE2
+// Hỗ trợ           : -
+// Kiểm tra         : QA2
+// Ngày chỉnh sửa   : 16/11/2026
+// ==============================================================
         public static DataTable LayConNoTheoKhachHang(int thang, int nam)
         {
             DataService ds = new DataService();
-            SqlCommand cmd = new SqlCommand("SELECT ID_KHACH_HANG, ISNULL(SUM(CON_NO), 0) AS CON_NO FROM PHIEU_BAN WHERE MONTH(NGAY_BAN)=@thang AND YEAR(NGAY_BAN)=@nam GROUP BY ID_KHACH_HANG");
-            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
-            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
+            DateTime tu = new DateTime(nam, thang, 1);
+            SqlCommand cmd = new SqlCommand("SELECT ID_KHACH_HANG, ISNULL(SUM(CON_NO), 0) AS CON_NO FROM PHIEU_BAN WHERE NGAY_BAN >= @tu AND NGAY_BAN < @den GROUP BY ID_KHACH_HANG");
+            cmd.Parameters.Add("@tu", SqlDbType.DateTime).Value = tu;
+            cmd.Parameters.Add("@den", SqlDbType.DateTime).Value = tu.AddMonths(1);
             ds.Load(cmd);
             return ds.ResultTable;
         }
