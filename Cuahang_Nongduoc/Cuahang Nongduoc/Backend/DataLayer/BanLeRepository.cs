@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Auth;
 
@@ -217,7 +217,7 @@ namespace CuahangNongduoc.DataLayer
             if (loaiHoaDon == LoaiHoaDonBan.BanLe && chiPhi.GiaoHang && chiPhi.KhoangCachKm > 15 && chiPhi.PhiVanChuyen <= 0)
                 throw new InvalidOperationException("Phí vận chuyển trên 15 km phải lớn hơn 0.");
             //đưa tất cả các thao tác lưu phiếu bán vào một transaction để đảm bảo tính toàn vẹn dữ liệu (Lỗi thì rollback tất cả các thao tác)
-            DataService.ExecuteTransaction(delegate (OleDbConnection connection, OleDbTransaction transaction)
+            DataService.ExecuteTransaction(delegate (SqlConnection connection, SqlTransaction transaction)
             {
                 if (laPhieuMoi && PhieuDaTonTai(connection, transaction, maPhieu))
                     throw new InvalidOperationException("Mã phiếu bán đã tồn tại.");
@@ -299,14 +299,14 @@ namespace CuahangNongduoc.DataLayer
             return ketQua;
         }
 
-        private void KiemTraTonTrongTransaction(OleDbConnection connection, OleDbTransaction transaction,
+        private void KiemTraTonTrongTransaction(SqlConnection connection, SqlTransaction transaction,
             IList<PhanBoLoXuat> chiTiet)
         {
             foreach (PhanBoLoXuat dong in chiTiet)
             {
-                OleDbCommand cmd = new OleDbCommand(
+                SqlCommand cmd = new SqlCommand(
                     "SELECT SO_LUONG FROM MA_SAN_PHAM WHERE ID=@id", connection, transaction);
-                cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = dong.MaLo;
+                cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = dong.MaLo;
                 object ton = cmd.ExecuteScalar();
                 if (ton == null || ton == DBNull.Value || Convert.ToInt32(ton) < dong.SoLuong)
                     throw new InvalidOperationException("Tồn kho lô " + dong.MaLo + " không đủ khi lưu phiếu. Hãy tải lại và kiểm tra số lượng.");
@@ -316,8 +316,8 @@ namespace CuahangNongduoc.DataLayer
         public ThongTinChiPhiPhieuBan LayChiPhiPhieu(string maPhieu)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_BAN WHERE ID=@id");
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_BAN WHERE ID=@id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
             ds.Load(cmd);
             ThongTinChiPhiPhieuBan chiPhi = new ThongTinChiPhiPhieuBan();
             if (ds.Rows.Count == 0) return chiPhi;
@@ -358,8 +358,8 @@ namespace CuahangNongduoc.DataLayer
         public IList<DichVuPhieuBan> LayDichVu(string maPhieu)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT ID, ID_PHIEU_BAN, TEN_DICH_VU, SO_TIEN FROM CHI_TIET_DICH_VU_PHIEU_BAN WHERE ID_PHIEU_BAN=@id ORDER BY ID");
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+            SqlCommand cmd = new SqlCommand("SELECT ID, ID_PHIEU_BAN, TEN_DICH_VU, SO_TIEN FROM CHI_TIET_DICH_VU_PHIEU_BAN WHERE ID_PHIEU_BAN=@id ORDER BY ID");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
             ds.Load(cmd);
             IList<DichVuPhieuBan> result = new List<DichVuPhieuBan>();
             foreach (DataRow row in ds.Rows)
@@ -381,13 +381,13 @@ namespace CuahangNongduoc.DataLayer
             if (thanhToan.DaTraMoi < thanhToan.DaTraBanDau || thanhToan.DaTraMoi < 0)
                 throw new InvalidOperationException("Số tiền đã trả không được thấp hơn số đã ghi nhận trước đó.");
 
-            DataService.ExecuteTransaction(delegate (OleDbConnection connection, OleDbTransaction transaction)
+            DataService.ExecuteTransaction(delegate (SqlConnection connection, SqlTransaction transaction)
             {
-                OleDbCommand select = new OleDbCommand("SELECT DA_TRA, TONG_TIEN FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
-                select.Parameters.Add("id", OleDbType.VarChar, 50).Value = thanhToan.MaPhieu;
+                SqlCommand select = new SqlCommand("SELECT DA_TRA, TONG_TIEN FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
+                select.Parameters.Add("id", SqlDbType.VarChar, 50).Value = thanhToan.MaPhieu;
                 long daTraHienTai;
                 long tongTienHienTai;
-                using (OleDbDataReader reader = select.ExecuteReader())
+                using (SqlDataReader reader = select.ExecuteReader())
                 {
                     if (!reader.Read()) throw new InvalidOperationException("Không tìm thấy phiếu bán cần cập nhật.");
                     daTraHienTai = reader["DA_TRA"] == DBNull.Value ? 0 : Convert.ToInt64(reader["DA_TRA"]);
@@ -398,10 +398,10 @@ namespace CuahangNongduoc.DataLayer
                 if (thanhToan.DaTraMoi < daTraHienTai || thanhToan.DaTraMoi > tongTienHienTai)
                     throw new InvalidOperationException("Số tiền đã trả phải từ số đã ghi nhận đến tổng thanh toán.");
 
-                OleDbCommand update = new OleDbCommand("UPDATE PHIEU_BAN SET DA_TRA=@tra, CON_NO=@no WHERE ID=@id", connection, transaction);
-                update.Parameters.Add("tra", OleDbType.Currency).Value = thanhToan.DaTraMoi;
-                update.Parameters.Add("no", OleDbType.Currency).Value = tongTienHienTai - thanhToan.DaTraMoi;
-                update.Parameters.Add("id", OleDbType.VarChar, 50).Value = thanhToan.MaPhieu;
+                SqlCommand update = new SqlCommand("UPDATE PHIEU_BAN SET DA_TRA=@tra, CON_NO=@no WHERE ID=@id", connection, transaction);
+                update.Parameters.Add("tra", SqlDbType.Decimal).Value = thanhToan.DaTraMoi;
+                update.Parameters.Add("no", SqlDbType.Decimal).Value = tongTienHienTai - thanhToan.DaTraMoi;
+                update.Parameters.Add("id", SqlDbType.VarChar, 50).Value = thanhToan.MaPhieu;
                 if (update.ExecuteNonQuery() != 1) throw new InvalidOperationException("Không cập nhật được phiếu bán.");
             });
         }
@@ -409,23 +409,23 @@ namespace CuahangNongduoc.DataLayer
         public DataTable LayChiTiet(string maPhieu)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN, CT.GIA_VON, MSP.NGAY_HET_HAN, SP.TEN_SAN_PHAM " +
+            SqlCommand cmd = new SqlCommand("SELECT CT.ID_MA_SAN_PHAM, CT.SO_LUONG, CT.DON_GIA, CT.THANH_TIEN, CT.GIA_VON, MSP.NGAY_HET_HAN, SP.TEN_SAN_PHAM " +
                 "FROM (CHI_TIET_PHIEU_BAN CT INNER JOIN MA_SAN_PHAM MSP ON CT.ID_MA_SAN_PHAM=MSP.ID) " +
                 "INNER JOIN SAN_PHAM SP ON MSP.ID_SAN_PHAM=SP.ID WHERE CT.ID_PHIEU_BAN=@id");
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
             ds.Load(cmd);
             return ds;
         }
 
         public void XoaPhieu(string maPhieu)
         {
-            DataService.ExecuteTransaction(delegate (OleDbConnection connection, OleDbTransaction transaction)
+            DataService.ExecuteTransaction(delegate (SqlConnection connection, SqlTransaction transaction)
             {
                 HoanTonChiTietCu(connection, transaction, maPhieu);
                 XoaChiTiet(connection, transaction, maPhieu);
                 XoaDichVu(connection, transaction, maPhieu);
-                OleDbCommand xoa = new OleDbCommand("DELETE FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
-                xoa.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+                SqlCommand xoa = new SqlCommand("DELETE FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
+                xoa.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
                 if (xoa.ExecuteNonQuery() != 1)
                     throw new InvalidOperationException("Không tìm thấy phiếu cần xóa.");
             });
@@ -443,9 +443,9 @@ namespace CuahangNongduoc.DataLayer
             sql += cachChon == CachChonLo.HetHanTruoc
                 ? " ORDER BY MSP.NGAY_HET_HAN, MSP.NGAY_NHAP, MSP.ID"
                 : " ORDER BY MSP.NGAY_NHAP, MSP.ID";
-            OleDbCommand cmd = new OleDbCommand(sql);
-            cmd.Parameters.Add("sp", OleDbType.VarChar, 50).Value = maSanPham;
-            if (!baoGomHetHan) cmd.Parameters.Add("ngay", OleDbType.Date).Value = DateTime.Today;
+            SqlCommand cmd = new SqlCommand(sql);
+            cmd.Parameters.Add("sp", SqlDbType.VarChar, 50).Value = maSanPham;
+            if (!baoGomHetHan) cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = DateTime.Today;
             ds.Load(cmd);
 
             IList<MaSanPham> result = new List<MaSanPham>();
@@ -547,13 +547,13 @@ namespace CuahangNongduoc.DataLayer
             return result;
         }
 
-        private void HoanTonChiTietCu(OleDbConnection connection, OleDbTransaction transaction, string maPhieu)
+        private void HoanTonChiTietCu(SqlConnection connection, SqlTransaction transaction, string maPhieu)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT ID_MA_SAN_PHAM, SO_LUONG FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN=@id", connection, transaction);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+            SqlCommand cmd = new SqlCommand("SELECT ID_MA_SAN_PHAM, SO_LUONG FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN=@id", connection, transaction);
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
             IList<string> maLoCu = new List<string>();
             IList<int> soLuongCu = new List<int>();
-            using (OleDbDataReader reader = cmd.ExecuteReader())
+            using (SqlDataReader reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -574,14 +574,14 @@ namespace CuahangNongduoc.DataLayer
                 CapNhatTon(connection, transaction, cap.Key, cap.Value, false);
         }
 
-        private void CapNhatTon(OleDbConnection connection, OleDbTransaction transaction, string maLo, int thayDoi, bool kiemTraTon)
+        private void CapNhatTon(SqlConnection connection, SqlTransaction transaction, string maLo, int thayDoi, bool kiemTraTon)
         {
             string sql = kiemTraTon
                 ? "UPDATE MA_SAN_PHAM SET SO_LUONG=SO_LUONG-@so WHERE ID=@id AND SO_LUONG>=@so"
                 : "UPDATE MA_SAN_PHAM SET SO_LUONG=SO_LUONG+@so WHERE ID=@id";
-            OleDbCommand cmd = new OleDbCommand(sql, connection, transaction);
-            cmd.Parameters.Add("so", OleDbType.Integer).Value = Math.Abs(thayDoi);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = maLo;
+            SqlCommand cmd = new SqlCommand(sql, connection, transaction);
+            cmd.Parameters.Add("so", SqlDbType.Int).Value = Math.Abs(thayDoi);
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maLo;
             if (cmd.ExecuteNonQuery() != 1)
                 throw new InvalidOperationException("Tồn kho lô đã thay đổi hoặc không đủ. Hãy tải lại phiếu.");
         }
@@ -594,103 +594,103 @@ namespace CuahangNongduoc.DataLayer
                 return;
             }
 
-            DataService.ExecuteTransaction(delegate (OleDbConnection connection, OleDbTransaction transaction)
+            DataService.ExecuteTransaction(delegate (SqlConnection connection, SqlTransaction transaction)
             {
                 XoaChiTiet(connection, transaction, maPhieu);
                 XoaDichVu(connection, transaction, maPhieu);
-                OleDbCommand xoa = new OleDbCommand("DELETE FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
-                xoa.Parameters.Add("id", OleDbType.VarChar, 50).Value = maPhieu;
+                SqlCommand xoa = new SqlCommand("DELETE FROM PHIEU_BAN WHERE ID=@id", connection, transaction);
+                xoa.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maPhieu;
                 if (xoa.ExecuteNonQuery() != 1)
                     throw new InvalidOperationException("Không tìm thấy phiếu cần xóa.");
             });
         }
 
-        private bool PhieuDaTonTai(OleDbConnection c, OleDbTransaction t, string id)
+        private bool PhieuDaTonTai(SqlConnection c, SqlTransaction t, string id)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID=@id", c, t);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID=@id", c, t);
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = id;
             return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
         }
 
-        private void ThemPhieu(OleDbConnection c, OleDbTransaction t, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
+        private void ThemPhieu(SqlConnection c, SqlTransaction t, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
         {
             if (!UserSession.IsLoggedIn) throw new InvalidOperationException("Vui lòng đăng nhập trước khi lập hóa đơn.");
-            OleDbCommand cmd = new OleDbCommand("INSERT INTO PHIEU_BAN (ID, ID_KHACH_HANG, NGAY_BAN, TONG_TIEN, DA_TRA, CON_NO, TIEN_HANG, TONG_DICH_VU, GIAO_HANG, KHOANG_CACH_KM, PHI_VAN_CHUYEN, LOAI_GIAM_GIA, TY_LE_GIAM_GIA, TIEN_GIAM_GIA, ID_NGUOI_DUNG) VALUES (@id,@kh,@ngay,@tong,@tra,@no,@hang,@dichvu,@giaohang,@km,@ship,@loaigiam,@tyle,@tiengiam,@nguoidung)", c, t);
+            SqlCommand cmd = new SqlCommand("INSERT INTO PHIEU_BAN (ID, ID_KHACH_HANG, NGAY_BAN, TONG_TIEN, DA_TRA, CON_NO, TIEN_HANG, TONG_DICH_VU, GIAO_HANG, KHOANG_CACH_KM, PHI_VAN_CHUYEN, LOAI_GIAM_GIA, TY_LE_GIAM_GIA, TIEN_GIAM_GIA, ID_NGUOI_DUNG) VALUES (@id,@kh,@ngay,@tong,@tra,@no,@hang,@dichvu,@giaohang,@km,@ship,@loaigiam,@tyle,@tiengiam,@nguoidung)", c, t);
             ThemThamSoChiPhi(cmd, id, kh, ngay, chiPhi, daTra);
-            cmd.Parameters.Add("nguoidung", OleDbType.Integer).Value = UserSession.UserId;
+            cmd.Parameters.Add("nguoidung", SqlDbType.Int).Value = UserSession.UserId;
             cmd.ExecuteNonQuery();
         }
 
-        private void CapNhatPhieu(OleDbConnection c, OleDbTransaction t, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
+        private void CapNhatPhieu(SqlConnection c, SqlTransaction t, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
         {
-            OleDbCommand cmd = new OleDbCommand("UPDATE PHIEU_BAN SET ID_KHACH_HANG=@kh, NGAY_BAN=@ngay, TONG_TIEN=@tong, DA_TRA=@tra, CON_NO=@no, TIEN_HANG=@hang, TONG_DICH_VU=@dichvu, GIAO_HANG=@giaohang, KHOANG_CACH_KM=@km, PHI_VAN_CHUYEN=@ship, LOAI_GIAM_GIA=@loaigiam, TY_LE_GIAM_GIA=@tyle, TIEN_GIAM_GIA=@tiengiam WHERE ID=@id", c, t);
-            cmd.Parameters.Add("kh", OleDbType.VarChar, 50).Value = kh;
-            cmd.Parameters.Add("ngay", OleDbType.Date).Value = ngay.Date;
+            SqlCommand cmd = new SqlCommand("UPDATE PHIEU_BAN SET ID_KHACH_HANG=@kh, NGAY_BAN=@ngay, TONG_TIEN=@tong, DA_TRA=@tra, CON_NO=@no, TIEN_HANG=@hang, TONG_DICH_VU=@dichvu, GIAO_HANG=@giaohang, KHOANG_CACH_KM=@km, PHI_VAN_CHUYEN=@ship, LOAI_GIAM_GIA=@loaigiam, TY_LE_GIAM_GIA=@tyle, TIEN_GIAM_GIA=@tiengiam WHERE ID=@id", c, t);
+            cmd.Parameters.Add("kh", SqlDbType.VarChar, 50).Value = kh;
+            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = ngay.Date;
             GanThamSoChiPhi(cmd, chiPhi, daTra);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = id;
             if (cmd.ExecuteNonQuery() != 1) throw new InvalidOperationException("Không tìm thấy phiếu bán cần cập nhật.");
         }
 
-        private void ThemThamSoChiPhi(OleDbCommand cmd, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
+        private void ThemThamSoChiPhi(SqlCommand cmd, string id, string kh, DateTime ngay, ThongTinChiPhiPhieuBan chiPhi, long daTra)
         {
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
-            cmd.Parameters.Add("kh", OleDbType.VarChar, 50).Value = kh;
-            cmd.Parameters.Add("ngay", OleDbType.Date).Value = ngay.Date;
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = id;
+            cmd.Parameters.Add("kh", SqlDbType.VarChar, 50).Value = kh;
+            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = ngay.Date;
             GanThamSoChiPhi(cmd, chiPhi, daTra);
         }
 
-        private void GanThamSoChiPhi(OleDbCommand cmd, ThongTinChiPhiPhieuBan chiPhi, long daTra)
+        private void GanThamSoChiPhi(SqlCommand cmd, ThongTinChiPhiPhieuBan chiPhi, long daTra)
         {
-            cmd.Parameters.Add("tong", OleDbType.Currency).Value = chiPhi.TongThanhToan;
-            cmd.Parameters.Add("tra", OleDbType.Currency).Value = daTra;
-            cmd.Parameters.Add("no", OleDbType.Currency).Value = chiPhi.TongThanhToan - daTra;
-            cmd.Parameters.Add("hang", OleDbType.Currency).Value = chiPhi.TienHang;
-            cmd.Parameters.Add("dichvu", OleDbType.Currency).Value = chiPhi.TongDichVu;
-            cmd.Parameters.Add("giaohang", OleDbType.Boolean).Value = chiPhi.GiaoHang;
-            cmd.Parameters.Add("km", OleDbType.Double).Value = Convert.ToDouble(chiPhi.KhoangCachKm);
-            cmd.Parameters.Add("ship", OleDbType.Currency).Value = chiPhi.PhiVanChuyen;
-            cmd.Parameters.Add("loaigiam", OleDbType.VarWChar, 20).Value = String.IsNullOrEmpty(chiPhi.LoaiGiamGia) ? (object)DBNull.Value : chiPhi.LoaiGiamGia;
-            cmd.Parameters.Add("tyle", OleDbType.Double).Value = Convert.ToDouble(chiPhi.TyLeGiamGia);
-            cmd.Parameters.Add("tiengiam", OleDbType.Currency).Value = chiPhi.TienGiamGia;
+            cmd.Parameters.Add("tong", SqlDbType.Decimal).Value = chiPhi.TongThanhToan;
+            cmd.Parameters.Add("tra", SqlDbType.Decimal).Value = daTra;
+            cmd.Parameters.Add("no", SqlDbType.Decimal).Value = chiPhi.TongThanhToan - daTra;
+            cmd.Parameters.Add("hang", SqlDbType.Decimal).Value = chiPhi.TienHang;
+            cmd.Parameters.Add("dichvu", SqlDbType.Decimal).Value = chiPhi.TongDichVu;
+            cmd.Parameters.Add("giaohang", SqlDbType.Bit).Value = chiPhi.GiaoHang;
+            cmd.Parameters.Add("km", SqlDbType.Float).Value = Convert.ToDouble(chiPhi.KhoangCachKm);
+            cmd.Parameters.Add("ship", SqlDbType.Decimal).Value = chiPhi.PhiVanChuyen;
+            cmd.Parameters.Add("loaigiam", SqlDbType.NVarChar, 20).Value = String.IsNullOrEmpty(chiPhi.LoaiGiamGia) ? (object)DBNull.Value : chiPhi.LoaiGiamGia;
+            cmd.Parameters.Add("tyle", SqlDbType.Float).Value = Convert.ToDouble(chiPhi.TyLeGiamGia);
+            cmd.Parameters.Add("tiengiam", SqlDbType.Decimal).Value = chiPhi.TienGiamGia;
         }
 
-        private void XoaDichVu(OleDbConnection c, OleDbTransaction t, string id)
+        private void XoaDichVu(SqlConnection c, SqlTransaction t, string id)
         {
-            OleDbCommand cmd = new OleDbCommand("DELETE FROM CHI_TIET_DICH_VU_PHIEU_BAN WHERE ID_PHIEU_BAN=@id", c, t);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            SqlCommand cmd = new SqlCommand("DELETE FROM CHI_TIET_DICH_VU_PHIEU_BAN WHERE ID_PHIEU_BAN=@id", c, t);
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = id;
             cmd.ExecuteNonQuery();
         }
 
-        private void ThemDichVu(OleDbConnection c, OleDbTransaction t, string id, DichVuPhieuBan dichVu)
+        private void ThemDichVu(SqlConnection c, SqlTransaction t, string id, DichVuPhieuBan dichVu)
         {
-            OleDbCommand cmd = new OleDbCommand("INSERT INTO CHI_TIET_DICH_VU_PHIEU_BAN (ID_PHIEU_BAN, TEN_DICH_VU, SO_TIEN) VALUES (@phieu,@ten,@tien)", c, t);
-            cmd.Parameters.Add("phieu", OleDbType.VarChar, 50).Value = id;
-            cmd.Parameters.Add("ten", OleDbType.VarWChar, 100).Value = dichVu.TenDichVu;
-            cmd.Parameters.Add("tien", OleDbType.Currency).Value = dichVu.SoTien;
+            SqlCommand cmd = new SqlCommand("INSERT INTO CHI_TIET_DICH_VU_PHIEU_BAN (ID_PHIEU_BAN, TEN_DICH_VU, SO_TIEN) VALUES (@phieu,@ten,@tien)", c, t);
+            cmd.Parameters.Add("phieu", SqlDbType.VarChar, 50).Value = id;
+            cmd.Parameters.Add("ten", SqlDbType.NVarChar, 100).Value = dichVu.TenDichVu;
+            cmd.Parameters.Add("tien", SqlDbType.Decimal).Value = dichVu.SoTien;
             cmd.ExecuteNonQuery();
         }
 
-        private void XoaChiTiet(OleDbConnection c, OleDbTransaction t, string id)
+        private void XoaChiTiet(SqlConnection c, SqlTransaction t, string id)
         {
             ThucThi(c, t, "DELETE FROM CHI_TIET_PHIEU_BAN WHERE ID_PHIEU_BAN=@id", id);
         }
 
-        private void ThemChiTiet(OleDbConnection c, OleDbTransaction t, string id, PhanBoLoXuat dong)
+        private void ThemChiTiet(SqlConnection c, SqlTransaction t, string id, PhanBoLoXuat dong)
         {
-            OleDbCommand cmd = new OleDbCommand("INSERT INTO CHI_TIET_PHIEU_BAN (ID_PHIEU_BAN, ID_MA_SAN_PHAM, SO_LUONG, DON_GIA, THANH_TIEN, GIA_VON) VALUES (@phieu,@lo,@sl,@gia,@tien,@von)", c, t);
-            cmd.Parameters.Add("phieu", OleDbType.VarChar, 50).Value = id;
-            cmd.Parameters.Add("lo", OleDbType.VarChar, 50).Value = dong.MaLo;
-            cmd.Parameters.Add("sl", OleDbType.Integer).Value = dong.SoLuong;
-            cmd.Parameters.Add("gia", OleDbType.Currency).Value = dong.GiaBan;
-            cmd.Parameters.Add("tien", OleDbType.Currency).Value = dong.ThanhTien;
-            cmd.Parameters.Add("von", OleDbType.Currency).Value = dong.ThanhTienVon;
+            SqlCommand cmd = new SqlCommand("INSERT INTO CHI_TIET_PHIEU_BAN (ID_PHIEU_BAN, ID_MA_SAN_PHAM, SO_LUONG, DON_GIA, THANH_TIEN, GIA_VON) VALUES (@phieu,@lo,@sl,@gia,@tien,@von)", c, t);
+            cmd.Parameters.Add("phieu", SqlDbType.VarChar, 50).Value = id;
+            cmd.Parameters.Add("lo", SqlDbType.VarChar, 50).Value = dong.MaLo;
+            cmd.Parameters.Add("sl", SqlDbType.Int).Value = dong.SoLuong;
+            cmd.Parameters.Add("gia", SqlDbType.Decimal).Value = dong.GiaBan;
+            cmd.Parameters.Add("tien", SqlDbType.Decimal).Value = dong.ThanhTien;
+            cmd.Parameters.Add("von", SqlDbType.Decimal).Value = dong.ThanhTienVon;
             cmd.ExecuteNonQuery();
         }
 
-        private void ThucThi(OleDbConnection c, OleDbTransaction t, string sql, string id)
+        private void ThucThi(SqlConnection c, SqlTransaction t, string sql, string id)
         {
-            OleDbCommand cmd = new OleDbCommand(sql, c, t);
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            SqlCommand cmd = new SqlCommand(sql, c, t);
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = id;
             cmd.ExecuteNonQuery();
         }
     }

@@ -297,22 +297,25 @@ namespace CuahangNongduoc
             _danhSachHuongDan.Add(new HuongDanItem
             {
                 TieuDe = "8. Cơ sở dữ liệu & Sao lưu",
-                MoTa = "File cuahang.dll Jet OLEDB, sao lưu an toàn",
+                MoTa = "Microsoft SQL Server, cấu hình kết nối & sao lưu",
                 NoiDungHtml = @"
                     <h1>8. Quản lý Cơ sở dữ liệu & Sao lưu định kỳ</h1>
-                    <p>Hệ thống hỗ trợ cả Cơ sở dữ liệu tệp Access (Microsoft Jet OLEDB) và Microsoft SQL Server.</p>
+                    <p>Hệ thống hiện đang kết nối trực tiếp với <b>Microsoft SQL Server</b> (chuỗi kết nối đọc từ <code>App.config</code>).</p>
 
-                    <h2>Cấu trúc tệp CSDL</h2>
+                    <h2>Cấu hình kết nối SQL Server</h2>
                     <ul>
-                        <li><b>Tệp CSDL chính:</b> <code>cuahang.dll</code> (tệp định dạng Access MDB được đổi đuôi thành dll để bảo vệ).</li>
-                        <li><b>Vị trí tệp:</b> Nằm cùng thư mục chạy ứng dụng hoặc trong thư mục <code>Database\cuahang.dll</code>.</li>
+                        <li><b>Tên máy chủ (Server/Instance):</b> <code>.\SQLEXPRESS</code> (hoặc <code>(local)</code>, <code>localhost</code>).</li>
+                        <li><b>Tên CSDL (Database):</b> <code>CuahangNongduoc</code>.</li>
+                        <li><b>Cơ chế xác thực:</b> Windows Authentication (Integrated Security = True).</li>
+                        <li><b>Cấu hình chuỗi kết nối:</b> Chỉnh sửa trong file <code>App.config</code> tại thẻ <code>&lt;connectionStrings&gt;</code> mà không cần biên dịch lại mã nguồn.</li>
                     </ul>
 
-                    <h2>Hướng dẫn sao lưu (Backup) an toàn</h2>
+                    <h2>Hướng dẫn sao lưu (Backup CSDL) an toàn</h2>
                     <ol>
-                        <li>Thoát hoàn toàn phần mềm Quản lý Cửa hàng Nông Dược.</li>
-                        <li>Sao chép tệp <code>cuahang.dll</code> sang ổ đĩa khác (ổ D, USB hoặc đám mây Google Drive/OneDrive).</li>
-                        <li>Nên sao lưu định kỳ cuối mỗi ngày hoặc cuối mỗi tuần làm việc để đề phòng sự cố hỏng hóc máy tính.</li>
+                        <li>Mở công cụ <b>SQL Server Management Studio (SSMS)</b>.</li>
+                        <li>Nhấp chuột phải vào CSDL <code>CuahangNongduoc</code> &gt; <b>Tasks</b> &gt; <b>Back Up...</b>.</li>
+                        <li>Chọn đường dẫn lưu file <code>.bak</code> sang ổ đĩa an toàn (ổ D, USB hoặc đám mây).</li>
+                        <li>Nên sao lưu định kỳ cuối ngày làm việc để bảo toàn dữ liệu kinh doanh.</li>
                     </ol>"
             });
 

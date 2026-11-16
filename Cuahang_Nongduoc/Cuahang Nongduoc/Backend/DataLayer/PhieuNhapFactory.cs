@@ -1,8 +1,8 @@
-﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -12,13 +12,13 @@ namespace CuahangNongduoc.DataLayer
 
         public void LoadSchema()
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_NHAP WHERE ID='-1'");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_NHAP WHERE ID='-1'");
             m_Ds.Load(cmd);
         }
 
         public DataTable DanhsachPhieuNhap()
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_NHAP");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_NHAP");
             m_Ds.Load(cmd);
 
             return m_Ds;
@@ -26,10 +26,10 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable TimPhieuNhap(String maNCC, DateTime dt)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_NHAP WHERE NGAY_NHAP >= ? AND NGAY_NHAP < ? AND ID_NHA_CUNG_CAP = ?");
-            cmd.Parameters.Add("ngayBatDau", OleDbType.Date).Value = dt.Date;
-            cmd.Parameters.Add("ngaySau", OleDbType.Date).Value = dt.Date.AddDays(1);
-            cmd.Parameters.Add("idNCC", OleDbType.VarChar, 50).Value = maNCC;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_NHAP WHERE NGAY_NHAP >= @ngayBatDau AND NGAY_NHAP < @ngaySau AND ID_NHA_CUNG_CAP = @idNCC");
+            cmd.Parameters.Add("@ngayBatDau", SqlDbType.DateTime).Value = dt.Date;
+            cmd.Parameters.Add("@ngaySau", SqlDbType.DateTime).Value = dt.Date.AddDays(1);
+            cmd.Parameters.Add("@idNCC", SqlDbType.VarChar, 50).Value = maNCC;
             m_Ds.Load(cmd);
 
             return m_Ds;
@@ -49,8 +49,8 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable LayPhieuNhap(String id)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_NHAP WHERE ID = ?");
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_NHAP WHERE ID = @id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
             m_Ds.Load(cmd);
 
             return m_Ds;
@@ -59,8 +59,8 @@ namespace CuahangNongduoc.DataLayer
         public int XoaPhieuNhapVaCacLo(String id)
         {
             DataService ds = new DataService();
-            OleDbCommand laySanPham = new OleDbCommand("SELECT DISTINCT ID_SAN_PHAM FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP=?");
-            laySanPham.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+            SqlCommand laySanPham = new SqlCommand("SELECT DISTINCT ID_SAN_PHAM FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP=@id");
+            laySanPham.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
             ds.Load(laySanPham);
             List<string> idsSanPham = new List<string>();
             foreach (DataRow row in ds.Rows)
@@ -79,25 +79,25 @@ namespace CuahangNongduoc.DataLayer
             int soPhieuDaXoa = 0;
             DataService.ExecuteTransaction((conn, tr) =>
             {
-                using (OleDbCommand kiemTra = new OleDbCommand(
+                using (SqlCommand kiemTra = new SqlCommand(
                     "SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN CT INNER JOIN MA_SAN_PHAM MSP " +
-                    "ON CT.ID_MA_SAN_PHAM = MSP.ID WHERE MSP.ID_PHIEU_NHAP = ?", conn, tr))
+                    "ON CT.ID_MA_SAN_PHAM = MSP.ID WHERE MSP.ID_PHIEU_NHAP = @id", conn, tr))
                 {
-                    kiemTra.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+                    kiemTra.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
                     object daBan = kiemTra.ExecuteScalar();
                     if (daBan != null && daBan != DBNull.Value && Convert.ToInt64(daBan) > 0)
                         throw new InvalidOperationException("Phiếu " + id + " có lô đã được sử dụng trong hóa đơn bán, không thể xóa.");
                 }
 
                 // Xóa các lô trước, rồi mới xóa phiếu (tránh vi phạm ràng buộc quan hệ PHIEU_NHAP - MA_SAN_PHAM).
-                using (OleDbCommand xoaLo = new OleDbCommand("DELETE FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP = ?", conn, tr))
+                using (SqlCommand xoaLo = new SqlCommand("DELETE FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP = @id", conn, tr))
                 {
-                    xoaLo.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+                    xoaLo.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
                     xoaLo.ExecuteNonQuery();
                 }
-                using (OleDbCommand xoaPhieu = new OleDbCommand("DELETE FROM PHIEU_NHAP WHERE ID = ?", conn, tr))
+                using (SqlCommand xoaPhieu = new SqlCommand("DELETE FROM PHIEU_NHAP WHERE ID = @id", conn, tr))
                 {
-                    xoaPhieu.Parameters.Add("id", OleDbType.VarChar, 50).Value = id;
+                    xoaPhieu.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
                     soPhieuDaXoa = xoaPhieu.ExecuteNonQuery();
                 }
                 if (soPhieuDaXoa <= 0)
@@ -120,15 +120,15 @@ namespace CuahangNongduoc.DataLayer
 
         // Tính lại SAN_PHAM.SO_LUONG và giá nhập bình quân từ các lô còn lại.
         // Cùng quy tắc với phần tính lại tồn trong DataService (hàm đó là private nên không gọi lại được).
-        private static void TinhLaiTonSanPham(OleDbConnection conn, OleDbTransaction tr, string idSanPham)
+        private static void TinhLaiTonSanPham(SqlConnection conn, SqlTransaction tr, string idSanPham)
         {
             long tongSoLuong = 0;
             decimal tongGiaTri = 0M;
-            using (OleDbCommand layLo = new OleDbCommand(
-                "SELECT SO_LUONG, DON_GIA_NHAP FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = ?", conn, tr))
+            using (SqlCommand layLo = new SqlCommand(
+                "SELECT SO_LUONG, DON_GIA_NHAP FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = @id", conn, tr))
             {
-                layLo.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
-                using (OleDbDataReader rd = layLo.ExecuteReader())
+                layLo.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idSanPham;
+                using (SqlDataReader rd = layLo.ExecuteReader())
                 {
                     while (rd.Read())
                     {
@@ -147,23 +147,23 @@ namespace CuahangNongduoc.DataLayer
             int soDong;
             if (tongSoLuong > 0)
             {
-                using (OleDbCommand capNhat = new OleDbCommand(
-                    "UPDATE SAN_PHAM SET SO_LUONG = ?, DON_GIA_NHAP = ? WHERE ID = ?", conn, tr))
+                using (SqlCommand capNhat = new SqlCommand(
+                    "UPDATE SAN_PHAM SET SO_LUONG = ?, DON_GIA_NHAP = ? WHERE ID = @id", conn, tr))
                 {
-                    capNhat.Parameters.Add("soLuong", OleDbType.Integer).Value = Convert.ToInt32(tongSoLuong);
-                    capNhat.Parameters.Add("giaNhap", OleDbType.Currency).Value = Convert.ToDecimal((long)(tongGiaTri / tongSoLuong));
-                    capNhat.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
+                    capNhat.Parameters.Add("soLuong", SqlDbType.Int).Value = Convert.ToInt32(tongSoLuong);
+                    capNhat.Parameters.Add("giaNhap", SqlDbType.Decimal).Value = Convert.ToDecimal((long)(tongGiaTri / tongSoLuong));
+                    capNhat.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idSanPham;
                     soDong = capNhat.ExecuteNonQuery();
                 }
             }
             else
             {
                 // Hết hàng: giữ nguyên giá nhập gần nhất để còn thông tin tham khảo.
-                using (OleDbCommand capNhat = new OleDbCommand(
-                    "UPDATE SAN_PHAM SET SO_LUONG = ? WHERE ID = ?", conn, tr))
+                using (SqlCommand capNhat = new SqlCommand(
+                    "UPDATE SAN_PHAM SET SO_LUONG = ? WHERE ID = @id", conn, tr))
                 {
-                    capNhat.Parameters.Add("soLuong", OleDbType.Integer).Value = 0;
-                    capNhat.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
+                    capNhat.Parameters.Add("soLuong", SqlDbType.Int).Value = 0;
+                    capNhat.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idSanPham;
                     soDong = capNhat.ExecuteNonQuery();
                 }
             }

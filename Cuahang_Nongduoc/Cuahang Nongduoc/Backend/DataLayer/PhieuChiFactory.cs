@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -12,9 +12,9 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable TimPhieuChi(int lydo, DateTime ngay)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
-            cmd.Parameters.Add("lydo", OleDbType.Integer).Value = lydo;
-            cmd.Parameters.Add("ngay", OleDbType.Date).Value = ngay;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND NGAY_CHI = @ngay");
+            cmd.Parameters.Add("lydo", SqlDbType.Int).Value = lydo;
+            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = ngay;
 
             m_Ds.Load(cmd);
 
@@ -23,7 +23,7 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable DanhsachPhieuChi()
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI ");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_CHI ");
             m_Ds.Load(cmd);
 
             return m_Ds;
@@ -31,8 +31,8 @@ namespace CuahangNongduoc.DataLayer
       
         public DataTable LayPhieuChi(String id)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM PHIEU_CHI WHERE ID = @id");
-            cmd.Parameters.Add("id", OleDbType.VarChar,50).Value = id;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM PHIEU_CHI WHERE ID = @id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar,50).Value = id;
             m_Ds.Load(cmd);
             return m_Ds;
         }
@@ -41,10 +41,10 @@ namespace CuahangNongduoc.DataLayer
         public static long LayTongTien(String lydo, int thang, int nam)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
-            cmd.Parameters.Add("lydo", OleDbType.VarChar, 50).Value = lydo;
-            cmd.Parameters.Add("thang", OleDbType.Integer).Value = thang;
-            cmd.Parameters.Add("nam", OleDbType.Integer).Value = nam;
+            SqlCommand cmd = new SqlCommand("SELECT SUM(TONG_TIEN) FROM PHIEU_CHI WHERE ID_LY_DO_CHI = @lydo AND MONTH(NGAY_CHI)=@thang AND YEAR(NGAY_CHI)= @nam");
+            cmd.Parameters.Add("lydo", SqlDbType.VarChar, 50).Value = lydo;
+            cmd.Parameters.Add("thang", SqlDbType.Int).Value = thang;
+            cmd.Parameters.Add("nam", SqlDbType.Int).Value = nam;
 
             object obj = ds.ExecuteScalar(cmd);
             

@@ -1,24 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.Auth
 {
     /// <summary>
-    /// Data Access Layer cho bảng NGUOI_DUNG.
+    /// Data Access Layer cho bảng NGUOI_DUNG trên SQL Server.
     /// Tất cả truy vấn đều dùng tham số để tránh SQL Injection.
     /// </summary>
     public class NguoiDungData
     {
-        // Chuỗi kết nối lấy từ DataService (dùng chung một nguồn kết nối)
         private static string ConnectString
         {
             get { return DataService.m_ConnectString; }
         }
 
-        private OleDbConnection GetConnection()
+        private SqlConnection GetConnection()
         {
-            return new OleDbConnection(ConnectString);
+            return new SqlConnection(ConnectString);
         }
 
         /// <summary>
@@ -26,15 +26,15 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public NguoiDung LayTheoTenDangNhap(string tenDangNhap)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
+                using (SqlCommand cmd = new SqlCommand(
                     "SELECT ID, TEN_DANG_NHAP, MATKHAU, SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT " +
-                    "FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = ?", conn))
+                    "FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = @tenDangNhap", conn))
                 {
-                    cmd.Parameters.Add("tenDangNhap", OleDbType.VarChar, 255).Value = tenDangNhap;
-                    using (OleDbDataReader reader = cmd.ExecuteReader())
+                    cmd.Parameters.Add("@tenDangNhap", SqlDbType.NVarChar, 255).Value = tenDangNhap;
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                             return DocNguoiDung(reader);
@@ -49,15 +49,15 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public NguoiDung LayTheoId(int id)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
+                using (SqlCommand cmd = new SqlCommand(
                     "SELECT ID, TEN_DANG_NHAP, MATKHAU, SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT " +
-                    "FROM NGUOI_DUNG WHERE ID = ?", conn))
+                    "FROM NGUOI_DUNG WHERE ID = @id", conn))
                 {
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
-                    using (OleDbDataReader reader = cmd.ExecuteReader())
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                             return DocNguoiDung(reader);
@@ -68,59 +68,66 @@ namespace CuahangNongduoc.Auth
         }
 
         /// <summary>
-        /// Lấy toàn bộ danh sách tài khoản (không kèm mật khẩu).
+        /// Lấy toàn bộ danh sách người dùng.
         /// </summary>
-        public List<NguoiDung> LayTatCa()
+        public List<NguoiDung> LayDanhSach()
         {
-            var list = new List<NguoiDung>();
-            using (OleDbConnection conn = GetConnection())
+            var ds = new List<NguoiDung>();
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "SELECT ID, TEN_DANG_NHAP, '' AS MATKHAU, '' AS SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT " +
-                    "FROM NGUOI_DUNG ORDER BY TEN_DANG_NHAP", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT ID, TEN_DANG_NHAP, MATKHAU, SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT " +
+                    "FROM NGUOI_DUNG ORDER BY ID ASC", conn))
                 {
-                    using (OleDbDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
-                            list.Add(DocNguoiDung(reader));
+                        {
+                            ds.Add(DocNguoiDung(reader));
+                        }
                     }
                 }
             }
-            return list;
+            return ds;
+        }
+
+        public List<NguoiDung> LayTatCa()
+        {
+            return LayDanhSach();
         }
 
         /// <summary>
-        /// Thêm tài khoản mới.
+        /// Thêm người dùng mới vào hệ thống.
         /// </summary>
         public bool Them(NguoiDung nd)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
                 // Kiểm tra trùng tên đăng nhập
-                using (OleDbCommand check = new OleDbCommand(
-                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = ?", conn))
+                using (SqlCommand check = new SqlCommand(
+                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = @ten", conn))
                 {
-                    check.Parameters.Add("ten", OleDbType.VarChar, 255).Value = nd.TenDangNhap;
+                    check.Parameters.Add("@ten", SqlDbType.NVarChar, 255).Value = nd.TenDangNhap;
                     int count = Convert.ToInt32(check.ExecuteScalar());
                     if (count > 0)
                         throw new InvalidOperationException("Tên đăng nhập '" + nd.TenDangNhap + "' đã tồn tại.");
                 }
 
-                using (OleDbCommand cmd = new OleDbCommand(
+                using (SqlCommand cmd = new SqlCommand(
                     "INSERT INTO NGUOI_DUNG (TEN_DANG_NHAP, MATKHAU, SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", conn))
+                    "VALUES (@ten, @mk, @salt, @role, @hoten, @active, @must, @created, @updated)", conn))
                 {
-                    cmd.Parameters.Add("ten", OleDbType.VarChar, 255).Value = nd.TenDangNhap;
-                    cmd.Parameters.Add("mk", OleDbType.VarChar, 255).Value = nd.MatKhau ?? (object)DBNull.Value;
-                    cmd.Parameters.Add("salt", OleDbType.VarChar, 255).Value = nd.Salt ?? (object)DBNull.Value;
-                    cmd.Parameters.Add("role", OleDbType.VarChar, 255).Value = nd.Role ?? "sales";
-                    cmd.Parameters.Add("hoten", OleDbType.VarChar, 255).Value = nd.HoTen ?? (object)DBNull.Value;
-                    cmd.Parameters.Add("active", OleDbType.Boolean).Value = nd.IsActive;
-                    cmd.Parameters.Add("must", OleDbType.Boolean).Value = nd.MustChangePwd;
-                    cmd.Parameters.Add("created", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("updated", OleDbType.Date).Value = DateTime.Now;
+                    cmd.Parameters.Add("@ten", SqlDbType.NVarChar, 255).Value = nd.TenDangNhap;
+                    cmd.Parameters.Add("@mk", SqlDbType.NVarChar, 255).Value = nd.MatKhau ?? (object)DBNull.Value;
+                    cmd.Parameters.Add("@salt", SqlDbType.NVarChar, 255).Value = nd.Salt ?? (object)DBNull.Value;
+                    cmd.Parameters.Add("@role", SqlDbType.NVarChar, 50).Value = nd.Role ?? "sales";
+                    cmd.Parameters.Add("@hoten", SqlDbType.NVarChar, 255).Value = nd.HoTen ?? (object)DBNull.Value;
+                    cmd.Parameters.Add("@active", SqlDbType.Bit).Value = nd.IsActive;
+                    cmd.Parameters.Add("@must", SqlDbType.Bit).Value = nd.MustChangePwd;
+                    cmd.Parameters.Add("@created", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@updated", SqlDbType.DateTime).Value = DateTime.Now;
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
@@ -131,30 +138,29 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public bool CapNhatThongTin(NguoiDung nd)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                // Kiểm tra tên trùng với tài khoản khác
-                using (OleDbCommand check = new OleDbCommand(
-                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = ? AND ID <> ?", conn))
+                using (SqlCommand check = new SqlCommand(
+                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE TEN_DANG_NHAP = @ten AND ID <> @id", conn))
                 {
-                    check.Parameters.Add("ten", OleDbType.VarChar, 255).Value = nd.TenDangNhap;
-                    check.Parameters.Add("id", OleDbType.Integer).Value = nd.Id;
+                    check.Parameters.Add("@ten", SqlDbType.NVarChar, 255).Value = nd.TenDangNhap;
+                    check.Parameters.Add("@id", SqlDbType.Int).Value = nd.Id;
                     int count = Convert.ToInt32(check.ExecuteScalar());
                     if (count > 0)
                         throw new InvalidOperationException("Tên đăng nhập '" + nd.TenDangNhap + "' đã được sử dụng bởi tài khoản khác.");
                 }
 
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "UPDATE NGUOI_DUNG SET TEN_DANG_NHAP=?, ROLE=?, HOTEN=?, IS_ACTIVE=?, MUST_CHANGE_PWD=?, UPDATED_AT=? WHERE ID=?", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE NGUOI_DUNG SET TEN_DANG_NHAP=@ten, ROLE=@role, HOTEN=@hoten, IS_ACTIVE=@active, MUST_CHANGE_PWD=@must, UPDATED_AT=@updated WHERE ID=@id", conn))
                 {
-                    cmd.Parameters.Add("ten", OleDbType.VarChar, 255).Value = nd.TenDangNhap;
-                    cmd.Parameters.Add("role", OleDbType.VarChar, 255).Value = nd.Role;
-                    cmd.Parameters.Add("hoten", OleDbType.VarChar, 255).Value = nd.HoTen ?? (object)DBNull.Value;
-                    cmd.Parameters.Add("active", OleDbType.Boolean).Value = nd.IsActive;
-                    cmd.Parameters.Add("must", OleDbType.Boolean).Value = nd.MustChangePwd;
-                    cmd.Parameters.Add("updated", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = nd.Id;
+                    cmd.Parameters.Add("@ten", SqlDbType.NVarChar, 255).Value = nd.TenDangNhap;
+                    cmd.Parameters.Add("@role", SqlDbType.NVarChar, 50).Value = nd.Role;
+                    cmd.Parameters.Add("@hoten", SqlDbType.NVarChar, 255).Value = nd.HoTen ?? (object)DBNull.Value;
+                    cmd.Parameters.Add("@active", SqlDbType.Bit).Value = nd.IsActive;
+                    cmd.Parameters.Add("@must", SqlDbType.Bit).Value = nd.MustChangePwd;
+                    cmd.Parameters.Add("@updated", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = nd.Id;
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
@@ -165,16 +171,16 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public bool CapNhatMatKhau(int id, string hashMoi, string saltMoi)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "UPDATE NGUOI_DUNG SET MATKHAU=?, SALT=?, MUST_CHANGE_PWD=FALSE, UPDATED_AT=? WHERE ID=?", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE NGUOI_DUNG SET MATKHAU=@mk, SALT=@salt, MUST_CHANGE_PWD=0, UPDATED_AT=@updated WHERE ID=@id", conn))
                 {
-                    cmd.Parameters.Add("mk", OleDbType.VarChar, 255).Value = hashMoi;
-                    cmd.Parameters.Add("salt", OleDbType.VarChar, 255).Value = saltMoi;
-                    cmd.Parameters.Add("updated", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                    cmd.Parameters.Add("@mk", SqlDbType.NVarChar, 255).Value = hashMoi;
+                    cmd.Parameters.Add("@salt", SqlDbType.NVarChar, 255).Value = saltMoi;
+                    cmd.Parameters.Add("@updated", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
@@ -185,16 +191,16 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public bool DatLaiMatKhau(int id, string hashMoi, string saltMoi)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "UPDATE NGUOI_DUNG SET MATKHAU=?, SALT=?, MUST_CHANGE_PWD=TRUE, UPDATED_AT=? WHERE ID=?", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE NGUOI_DUNG SET MATKHAU=@mk, SALT=@salt, MUST_CHANGE_PWD=1, UPDATED_AT=@updated WHERE ID=@id", conn))
                 {
-                    cmd.Parameters.Add("mk", OleDbType.VarChar, 255).Value = hashMoi;
-                    cmd.Parameters.Add("salt", OleDbType.VarChar, 255).Value = saltMoi;
-                    cmd.Parameters.Add("updated", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                    cmd.Parameters.Add("@mk", SqlDbType.NVarChar, 255).Value = hashMoi;
+                    cmd.Parameters.Add("@salt", SqlDbType.NVarChar, 255).Value = saltMoi;
+                    cmd.Parameters.Add("@updated", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
@@ -205,15 +211,15 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public bool DatTrangThai(int id, bool isActive)
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "UPDATE NGUOI_DUNG SET IS_ACTIVE=?, UPDATED_AT=? WHERE ID=?", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "UPDATE NGUOI_DUNG SET IS_ACTIVE=@active, UPDATED_AT=@updated WHERE ID=@id", conn))
                 {
-                    cmd.Parameters.Add("active", OleDbType.Boolean).Value = isActive;
-                    cmd.Parameters.Add("updated", OleDbType.Date).Value = DateTime.Now;
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                    cmd.Parameters.Add("@active", SqlDbType.Bit).Value = isActive;
+                    cmd.Parameters.Add("@updated", SqlDbType.DateTime).Value = DateTime.Now;
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
@@ -224,26 +230,24 @@ namespace CuahangNongduoc.Auth
         /// </summary>
         public int DemAdminDangHoatDong()
         {
-            using (OleDbConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE ROLE='admin' AND IS_ACTIVE=TRUE", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT COUNT(*) FROM NGUOI_DUNG WHERE ROLE='admin' AND IS_ACTIVE=1", conn))
                 {
                     return Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
         }
 
-        // Đọc một dòng từ reader thành đối tượng NguoiDung
-        private NguoiDung DocNguoiDung(OleDbDataReader reader)
+        private NguoiDung DocNguoiDung(SqlDataReader reader)
         {
             var nd = new NguoiDung();
             nd.Id = reader.IsDBNull(reader.GetOrdinal("ID")) ? 0 : Convert.ToInt32(reader["ID"]);
             nd.TenDangNhap = reader.IsDBNull(reader.GetOrdinal("TEN_DANG_NHAP")) ? "" : reader["TEN_DANG_NHAP"].ToString();
             nd.MatKhau = reader.IsDBNull(reader.GetOrdinal("MATKHAU")) ? "" : reader["MATKHAU"].ToString();
             
-            // Cột SALT có thể không tồn tại ở database cũ - xử lý an toàn
             try { nd.Salt = reader.IsDBNull(reader.GetOrdinal("SALT")) ? null : reader["SALT"].ToString(); }
             catch { nd.Salt = null; }
 
@@ -265,13 +269,14 @@ namespace CuahangNongduoc.Auth
             return nd;
         }
 
-        public NguoiDung XoaNguoiDung (int id)
+        public NguoiDung XoaNguoiDung(int id)
         {
-            using (OleDbConnection conn = GetConnection()) {
+            using (SqlConnection conn = GetConnection())
+            {
                 conn.Open();
-                using (OleDbCommand cmd = new OleDbCommand(
-                    "DELETE FROM NGUOI_DUNG WHERE ID=?", conn)) {
-                    cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                using (SqlCommand cmd = new SqlCommand("DELETE FROM NGUOI_DUNG WHERE ID=@id", conn))
+                {
+                    cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                     int rowsAffected = cmd.ExecuteNonQuery();
                     return rowsAffected > 0 ? new NguoiDung { Id = id } : null;
                 }
@@ -279,4 +284,3 @@ namespace CuahangNongduoc.Auth
         }
     }
 }
-

@@ -1,8 +1,8 @@
-using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -21,19 +21,19 @@ namespace CuahangNongduoc.DataLayer
 
         public bool DangDuocSuDung(int id)
         {
-            using (OleDbConnection connection = new OleDbConnection(DataService.m_ConnectString))
+            using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
             {
                 connection.Open();
                 return DangDuocSuDung(id, connection, null);
             }
         }
 
-        private bool DangDuocSuDung(int id, OleDbConnection connection, OleDbTransaction transaction)
+        private bool DangDuocSuDung(int id, SqlConnection connection, SqlTransaction transaction)
         {
-            using (OleDbCommand cmd = new OleDbCommand(
-                "SELECT COUNT(*) FROM SAN_PHAM WHERE ID_DON_VI_TINH = ?", connection, transaction))
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT COUNT(*) FROM SAN_PHAM WHERE ID_DON_VI_TINH = @id", connection, transaction))
             {
-                cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                 return Convert.ToInt64(cmd.ExecuteScalar()) > 0;
             }
         }
@@ -67,19 +67,19 @@ namespace CuahangNongduoc.DataLayer
             int id;
             if (LayIdDaLuu(row, out id))
             {
-                using (OleDbConnection connection = new OleDbConnection(DataService.m_ConnectString))
+                using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
                 {
                     connection.Open();
-                    using (OleDbTransaction transaction = connection.BeginTransaction())
+                    using (SqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
                             if (DangDuocSuDung(id, connection, transaction))
                                 throw new InvalidOperationException(DonViDangDuocSuDung);
-                            using (OleDbCommand cmd = new OleDbCommand(
-                                "DELETE FROM DON_VI_TINH WHERE ID = ?", connection, transaction))
+                            using (SqlCommand cmd = new SqlCommand(
+                                "DELETE FROM DON_VI_TINH WHERE ID = @id", connection, transaction))
                             {
-                                cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+                                cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
                                 if (cmd.ExecuteNonQuery() != 1)
                                     throw new DBConcurrencyException("Đơn vị tính đã thay đổi hoặc không còn tồn tại. Hãy mở lại form sau khi lưu các thay đổi khác.");
                             }
@@ -106,7 +106,7 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable DanhsachDVT()
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DON_VI_TINH");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DON_VI_TINH");
             m_Ds.Load(cmd);
 
             // Access sinh ID AutoNumber; dùng ID tạm âm cho dòng mới trong bộ nhớ.
@@ -120,8 +120,8 @@ namespace CuahangNongduoc.DataLayer
 
         public DataTable LayDVT(int id)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DON_VI_TINH WHERE ID = @id");
-            cmd.Parameters.Add("id", OleDbType.Integer).Value = id;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DON_VI_TINH WHERE ID = @id");
+            cmd.Parameters.Add("@id", SqlDbType.Int).Value = id;
             m_Ds.Load(cmd);
             return m_Ds;
         }
@@ -135,10 +135,10 @@ namespace CuahangNongduoc.DataLayer
             foreach (DataRow row in changes) pending.ImportRow(row);
             try
             {
-                using (OleDbConnection connection = new OleDbConnection(DataService.m_ConnectString))
+                using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
                 {
                     connection.Open();
-                    using (OleDbTransaction transaction = connection.BeginTransaction())
+                    using (SqlTransaction transaction = connection.BeginTransaction())
                     {
                         try
                         {
@@ -165,8 +165,8 @@ namespace CuahangNongduoc.DataLayer
                                         throw new InvalidOperationException("Không được thay đổi ID đơn vị tính.");
                                 }
                             }
-                            using (OleDbDataAdapter adapter = new OleDbDataAdapter("SELECT * FROM DON_VI_TINH", connection))
-                            using (OleDbCommandBuilder builder = new OleDbCommandBuilder(adapter))
+                            using (SqlDataAdapter adapter = new SqlDataAdapter("SELECT * FROM DON_VI_TINH", connection))
+                            using (SqlCommandBuilder builder = new SqlCommandBuilder(adapter))
                             {
                                 adapter.SelectCommand.Transaction = transaction;
                                 builder.QuotePrefix = "[";
@@ -178,10 +178,10 @@ namespace CuahangNongduoc.DataLayer
                                 adapter.UpdateCommand.Transaction = transaction;
                                 adapter.DeleteCommand.Transaction = transaction;
                                 adapter.AcceptChangesDuringUpdate = false;
-                                adapter.RowUpdated += delegate(object sender, OleDbRowUpdatedEventArgs e)
+                                adapter.RowUpdated += delegate(object sender, SqlRowUpdatedEventArgs e)
                                 {
                                     if (e.StatementType != StatementType.Insert || e.Status != UpdateStatus.Continue) return;
-                                    using (OleDbCommand identity = new OleDbCommand("SELECT @@IDENTITY", connection, transaction))
+                                    using (SqlCommand identity = new SqlCommand("SELECT @@IDENTITY", connection, transaction))
                                         e.Row["ID"] = Convert.ToInt32(identity.ExecuteScalar());
                                 };
                                 adapter.Update(pending);

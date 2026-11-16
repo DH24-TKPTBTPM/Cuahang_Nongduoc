@@ -1,6 +1,7 @@
-using System;
+﻿﻿using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
+using System.Data;
+using System.Data.SqlClient;
 using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc.DataLayer
@@ -13,7 +14,7 @@ namespace CuahangNongduoc.DataLayer
         {
             KiemTraNgay(tuNgay, denNgay);
             var result = new List<ChiTietBaoCaoGiamGia>();
-            var cmd = new OleDbCommand("SELECT PB.ID, PB.NGAY_BAN, PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN, PB.LOAI_GIAM_GIA, PB.TY_LE_GIAM_GIA, PB.TIEN_HANG, PB.TIEN_GIAM_GIA, PB.TONG_TIEN" + FromJoin + "WHERE PB.NGAY_BAN >= ? AND PB.NGAY_BAN < ? AND PB.TIEN_GIAM_GIA > 0 ORDER BY ND.HOTEN, PB.NGAY_BAN, PB.ID");
+            var cmd = new SqlCommand("SELECT PB.ID, PB.NGAY_BAN, PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN, PB.LOAI_GIAM_GIA, PB.TY_LE_GIAM_GIA, PB.TIEN_HANG, PB.TIEN_GIAM_GIA, PB.TONG_TIEN" + FromJoin + "WHERE PB.NGAY_BAN >= @tuNgay AND PB.NGAY_BAN < @denNgay AND PB.TIEN_GIAM_GIA > 0 ORDER BY ND.HOTEN, PB.NGAY_BAN, PB.ID");
             GanNgay(cmd, tuNgay, denNgay);
             var ds = new DataService(); LoadBaoCao(ds, cmd);
             foreach (System.Data.DataRow row in ds.Rows)
@@ -39,7 +40,7 @@ namespace CuahangNongduoc.DataLayer
         {
             KiemTraNgay(tuNgay, denNgay);
             var result = new List<BaoCaoGiamGiaNhanVien>();
-            var cmd = new OleDbCommand("SELECT PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN, COUNT(*) AS SO_HOA_DON, SUM(PB.TIEN_HANG) AS TONG_TIEN_HANG, SUM(PB.TIEN_GIAM_GIA) AS TONG_TIEN_GIAM, SUM(PB.TONG_TIEN) AS TONG_THANH_TOAN" + FromJoin + "WHERE PB.NGAY_BAN >= ? AND PB.NGAY_BAN < ? AND PB.TIEN_GIAM_GIA > 0 GROUP BY PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN ORDER BY ND.HOTEN");
+            var cmd = new SqlCommand("SELECT PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN, COUNT(*) AS SO_HOA_DON, SUM(PB.TIEN_HANG) AS TONG_TIEN_HANG, SUM(PB.TIEN_GIAM_GIA) AS TONG_TIEN_GIAM, SUM(PB.TONG_TIEN) AS TONG_THANH_TOAN" + FromJoin + "WHERE PB.NGAY_BAN >= @tuNgay AND PB.NGAY_BAN < @denNgay AND PB.TIEN_GIAM_GIA > 0 GROUP BY PB.ID_NGUOI_DUNG, ND.TEN_DANG_NHAP, ND.HOTEN ORDER BY ND.HOTEN");
             GanNgay(cmd, tuNgay, denNgay);
             var ds = new DataService(); LoadBaoCao(ds, cmd);
             foreach (System.Data.DataRow row in ds.Rows)
@@ -56,17 +57,17 @@ namespace CuahangNongduoc.DataLayer
             return result;
         }
 
-        private static void GanNgay(OleDbCommand cmd, DateTime tuNgay, DateTime denNgay)
+        private static void GanNgay(SqlCommand cmd, DateTime tuNgay, DateTime denNgay)
         {
             // OleDb binds positional placeholders; append parameters in SQL order.
-            cmd.Parameters.Add("?", OleDbType.Date).Value = tuNgay.Date;
-            cmd.Parameters.Add("?", OleDbType.Date).Value = denNgay.Date.AddDays(1);
+            cmd.Parameters.Add("@tuNgay", SqlDbType.DateTime).Value = tuNgay.Date;
+            cmd.Parameters.Add("@denNgay", SqlDbType.DateTime).Value = denNgay.Date.AddDays(1);
         }
         private static long ToLong(object value) { return value == DBNull.Value ? 0L : Convert.ToInt64(value); }
-        private static void LoadBaoCao(DataService ds, OleDbCommand cmd)
+        private static void LoadBaoCao(DataService ds, SqlCommand cmd)
         {
             try { ds.Load(cmd); }
-            catch (OleDbException ex)
+            catch (SqlException ex)
             {
                 if (ex.Message.IndexOf("parameter", StringComparison.OrdinalIgnoreCase) >= 0 ||
                     ex.Message.IndexOf("tham số", StringComparison.OrdinalIgnoreCase) >= 0)

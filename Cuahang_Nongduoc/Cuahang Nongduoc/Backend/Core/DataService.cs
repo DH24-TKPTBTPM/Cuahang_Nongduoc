@@ -1,83 +1,141 @@
 using System;
-using System.Data;
-using System.Data.OleDb;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
 namespace CuahangNongduoc
 {
-    public delegate void DataServiceTransactionAction(OleDbConnection connection, OleDbTransaction transaction);
+    public delegate void DataServiceTransactionAction(SqlConnection connection, SqlTransaction transaction);
 
     public class DataService : DataTable
     {
-        // The connection to a database of this data service.
-        private static OleDbConnection m_Connection;
+        private static SqlConnection m_Connection;
+        private static string _connectString = null;
 
-        //
-        public static String m_ConnectString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=cuahang.dll;";
-        // The command to execute query or non-query command on a database of this data service.
-        private OleDbCommand m_Command;
+        public static string m_ConnectString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_connectString))
+                {
+                    try
+                    {
+                        ConnectionStringSettings cs = ConfigurationManager.ConnectionStrings["CuahangSqlServer"];
+                        if (cs != null && !string.IsNullOrEmpty(cs.ConnectionString))
+                        {
+                            _connectString = cs.ConnectionString;
+                        }
+                    }
+                    catch { }
 
-        // The data adapter to execute query on a database of this data service.
-        private OleDbDataAdapter m_DataAdapter;
+                    if (string.IsNullOrEmpty(_connectString))
+                    {
+                        _connectString = @"Data Source=.\SQLEXPRESS;Initial Catalog=CuahangNongduoc;Integrated Security=True;TrustServerCertificate=True";
+                    }
+                }
+                return _connectString;
+            }
+            set
+            {
+                _connectString = value;
+                if (m_Connection != null)
+                {
+                    try { m_Connection.Close(); } catch { }
+                    m_Connection = null;
+                }
+            }
+        }
+
+        private SqlCommand m_Command;
+        private SqlDataAdapter m_DataAdapter;
 
         public DataService() { }
 
+        /// <summary>
+        /// Bảng kết quả (hỗ trợ các DAO gọi m_Ds.ResultTable).
+        /// Do DataService kế thừa DataTable nên trả về chính nó.
+        /// </summary>
+        public DataTable ResultTable
+        {
+            get { return this; }
+        }
 
-        public OleDbCommand Command
+        public SqlCommand Command
         {
             get { return m_Command; }
             set { m_Command = value; }
         }
 
-        public void Load(OleDbCommand command)
+        private static Exception m_LastError;
+        public static Exception LastError
         {
-            if (!OpenConnection())
-                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu.");
-            m_Command = command;
-            m_Command.Connection = m_Connection;
-            m_DataAdapter = new OleDbDataAdapter();
-            m_DataAdapter.SelectCommand = m_Command;
-            this.Clear();
-            m_DataAdapter.Fill(this);
+            get { return m_LastError; }
         }
-
 
         public static bool OpenConnection()
         {
             try
             {
                 if (m_Connection == null)
-                    //m_Connection = new OleDbConnection("Data Source=LAPTOP07\\OleDbEXPRESS;Initial Catalog=VCB;Integrated Security=True;");
-                    //m_Connection = new OleDbConnection("Data Source=localhost;Initial Catalog=phongkham;User ID=sa; Password=tvteo;");
-                    m_Connection = new OleDbConnection(m_ConnectString);
+                {
+                    m_Connection = new SqlConnection(m_ConnectString);
+                }
 
-
-                if (m_Connection.State == ConnectionState.Closed)
+                if (m_Connection.State == ConnectionState.Closed || m_Connection.State == ConnectionState.Broken)
+                {
                     m_Connection.Open();
+                }
+                m_LastError = null;
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                if (m_Connection != null) m_Connection.Close();
+                m_LastError = ex;
+                if (m_Connection != null)
+                {
+                    try { m_Connection.Close(); } catch { }
+                }
                 return false;
             }
-
         }
-        /// <summary>
-        /// Closes the connection of this data service.
-        /// </summary>
+
         public void CloseConnection()
         {
-            m_Connection.Close();
+            if (m_Connection != null && m_Connection.State == ConnectionState.Open)
+            {
+                try { m_Connection.Close(); } catch { }
+            }
+        }
+
+        public void Load(SqlCommand command)
+        {
+            if (!OpenConnection())
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server: " + (m_LastError != null ? m_LastError.Message : "Lỗi không xác định"));
+
+            m_Command = command;
+            m_Command.Connection = m_Connection;
+            m_DataAdapter = new SqlDataAdapter();
+            m_DataAdapter.SelectCommand = m_Command;
+            this.Clear();
+            m_DataAdapter.Fill(this);
         }
 
         /// <summary>
-        /// Update DataTable
+        /// Lưu thay đổi của DataTable xuống CSDL SQL Server bằng SqlDataAdapter và SqlCommandBuilder.
         /// </summary>
-        /// <returns></returns>
         public int ExecuteNoneQuery()
         {
+            return UpdateDataTable();
+        }
+
+        public int UpdateDataTable()
+        {
+            if (!OpenConnection())
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
+
             int result = 0;
-            OleDbTransaction tr = null;
+            SqlTransaction tr = null;
             try
             {
                 tr = m_Connection.BeginTransaction();
@@ -85,73 +143,74 @@ namespace CuahangNongduoc
                 m_Command.Connection = m_Connection;
                 m_Command.Transaction = tr;
 
-                m_DataAdapter = new OleDbDataAdapter();
+                m_DataAdapter = new SqlDataAdapter();
                 m_DataAdapter.SelectCommand = m_Command;
 
-                OleDbCommandBuilder builder = new OleDbCommandBuilder(m_DataAdapter);
+                SqlCommandBuilder builder = new SqlCommandBuilder(m_DataAdapter);
+                builder.QuotePrefix = "[";
+                builder.QuoteSuffix = "]";
+
+                m_DataAdapter.InsertCommand = builder.GetInsertCommand();
+                m_DataAdapter.UpdateCommand = builder.GetUpdateCommand();
+                m_DataAdapter.DeleteCommand = builder.GetDeleteCommand();
+
+                m_DataAdapter.InsertCommand.Transaction = tr;
+                m_DataAdapter.UpdateCommand.Transaction = tr;
+                m_DataAdapter.DeleteCommand.Transaction = tr;
 
                 result = m_DataAdapter.Update(this);
 
-
                 tr.Commit();
-
             }
             catch
             {
                 if (tr != null)
                 {
-                    try { tr.Rollback(); }
-                    catch { }
+                    try { tr.Rollback(); } catch { }
                 }
                 throw;
             }
             return result;
         }
+
         /// <summary>
-        /// Thuc thi mot command
+        /// Thực thi lệnh INSERT/UPDATE/DELETE không trả về dữ liệu.
         /// </summary>
-        /// <param name="command">OleDb hay Store Procedure</param>
-        /// <returns></returns>
-        public int ExecuteNoneQuery(OleDbCommand cmd)
+        public int ExecuteNoneQuery(SqlCommand cmd)
         {
+            if (!OpenConnection())
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
 
             int result = 0;
-            OleDbTransaction tr = null;
-
+            SqlTransaction tr = null;
             try
             {
                 tr = m_Connection.BeginTransaction();
-
                 cmd.Connection = m_Connection;
-
                 cmd.Transaction = tr;
 
                 result = cmd.ExecuteNonQuery();
 
                 this.AcceptChanges();
-
                 tr.Commit();
-
             }
             catch
             {
                 if (tr != null)
                 {
-                    try { tr.Rollback(); }
-                    catch { }
+                    try { tr.Rollback(); } catch { }
                 }
                 throw;
             }
             return result;
-
         }
 
         public static void ExecuteTransaction(DataServiceTransactionAction action)
         {
             if (!OpenConnection())
-                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu.");
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
 
-            OleDbTransaction transaction = m_Connection.BeginTransaction();
+            SqlTransaction transaction = m_Connection.BeginTransaction();
             try
             {
                 action(m_Connection, transaction);
@@ -159,48 +218,27 @@ namespace CuahangNongduoc
             }
             catch
             {
-                try { transaction.Rollback(); }
-                catch { }
+                try { transaction.Rollback(); } catch { }
                 throw;
             }
         }
 
-        public static void EnsureColumn(string tableName, string columnName, string columnType)
+        public object ExecuteScalar(SqlCommand cmd)
         {
-            if (!OpenConnection()) throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu Access.");
-            using (OleDbCommand check = m_Connection.CreateCommand())
-            {
-                check.CommandText = "SELECT * FROM [" + tableName + "] WHERE 1=0";
-                using (OleDbDataReader reader = check.ExecuteReader())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                        if (String.Equals(reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase)) return;
-                }
-            }
-            using (OleDbCommand alter = m_Connection.CreateCommand())
-            {
-                alter.CommandText = "ALTER TABLE [" + tableName + "] ADD COLUMN [" + columnName + "] " + columnType;
-                alter.ExecuteNonQuery();
-            }
-        }
+            if (!OpenConnection())
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
 
-        public object ExecuteScalar(OleDbCommand cmd)
-        {
             object result = null;
-            OleDbTransaction tr = null;
-
+            SqlTransaction tr = null;
             try
             {
                 tr = m_Connection.BeginTransaction();
-
                 cmd.Connection = m_Connection;
-
                 cmd.Transaction = tr;
 
                 result = cmd.ExecuteScalar();
 
                 this.AcceptChanges();
-
                 tr.Commit();
 
                 if (result == DBNull.Value)
@@ -212,25 +250,43 @@ namespace CuahangNongduoc
             {
                 if (tr != null)
                 {
-                    try { tr.Rollback(); }
-                    catch { }
+                    try { tr.Rollback(); } catch { }
                 }
                 throw;
             }
             return result;
         }
 
+        public static void EnsureColumn(string tableName, string columnName, string columnType)
+        {
+            if (!OpenConnection()) throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
+            using (SqlCommand check = m_Connection.CreateCommand())
+            {
+                check.CommandText = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=@tbl AND COLUMN_NAME=@col";
+                check.Parameters.AddWithValue("@tbl", tableName);
+                check.Parameters.AddWithValue("@col", columnName);
+                int count = Convert.ToInt32(check.ExecuteScalar());
+                if (count > 0) return;
+            }
+            using (SqlCommand alter = m_Connection.CreateCommand())
+            {
+                string sqlType = columnType;
+                if (columnType.Equals("LONG", StringComparison.OrdinalIgnoreCase)) sqlType = "INT";
+                else if (columnType.Equals("CURRENCY", StringComparison.OrdinalIgnoreCase)) sqlType = "DECIMAL(18,2)";
+                alter.CommandText = "ALTER TABLE [" + tableName + "] ADD [" + columnName + "] " + sqlType;
+                alter.ExecuteNonQuery();
+            }
+        }
 
         /// <summary>
         /// Lưu nhiều DataTable và tính lại tồn kho/giá nhập bình quân trong cùng transaction.
-        /// Dữ liệu trong bộ nhớ chỉ AcceptChanges sau khi database Commit thành công.
         /// </summary>
         public static int ExecuteDataTableTransaction(IList<string> affectedProductIds, params DataService[] dataTables)
         {
             if (!OpenConnection())
-                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu Access.");
+                throw new InvalidOperationException("Không thể kết nối cơ sở dữ liệu SQL Server.");
 
-            OleDbTransaction transaction = null;
+            SqlTransaction transaction = null;
             List<DataService> changedTables = new List<DataService>();
             int result = 0;
             try
@@ -246,13 +302,13 @@ namespace CuahangNongduoc
                             throw new InvalidOperationException("Không có câu lệnh SELECT để lưu một bảng dữ liệu.");
 
                         KiemTraLoDaBanTrongTransaction(dataTable, transaction);
-                        using (OleDbDataAdapter adapter = new OleDbDataAdapter())
+                        using (SqlDataAdapter adapter = new SqlDataAdapter())
                         {
                             dataTable.m_Command.Connection = m_Connection;
                             dataTable.m_Command.Transaction = transaction;
                             adapter.SelectCommand = dataTable.m_Command;
                             adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                            using (OleDbCommandBuilder builder = new OleDbCommandBuilder(adapter))
+                            using (SqlCommandBuilder builder = new SqlCommandBuilder(adapter))
                             {
                                 builder.QuotePrefix = "[";
                                 builder.QuoteSuffix = "]";
@@ -287,37 +343,26 @@ namespace CuahangNongduoc
             }
         }
 
-        // Dispose transaction an toàn, không ném ngoại lệ.
-        private static void DisposeSafe(OleDbTransaction transaction)
+        private static void DisposeSafe(SqlTransaction transaction)
         {
-            if (transaction == null)
-                return;
-            // Không để lỗi dọn dẹp transaction che mất ngoại lệ gốc của thao tác lưu.
-            try { transaction.Dispose(); }
-            catch { }
+            if (transaction == null) return;
+            try { transaction.Dispose(); } catch { }
         }
 
-
-        // Dispose transaction an toàn, không ném ngoại lệ.
-        private static void RollbackSafe(OleDbTransaction transaction)
+        private static void RollbackSafe(SqlTransaction transaction)
         {
-            if (transaction == null)
-                return;
-            try { transaction.Rollback(); }
-            catch { }
+            if (transaction == null) return;
+            try { transaction.Rollback(); } catch { }
         }
 
-        // Rollback transaction an toàn, không ném ngoại lệ.
-        private static void GanTransaction(OleDbCommand command, OleDbTransaction transaction)
+        private static void GanTransaction(SqlCommand command, SqlTransaction transaction)
         {
-            if (command == null)
-                return;
+            if (command == null) return;
             command.Connection = m_Connection;
             command.Transaction = transaction;
         }
 
-        //Kiểm tra lô đã bán trong transaction, nếu có thì ném ngoại lệ.
-        private static void KiemTraLoDaBanTrongTransaction(DataService dataTable, OleDbTransaction transaction)
+        private static void KiemTraLoDaBanTrongTransaction(DataService dataTable, SqlTransaction transaction)
         {
             if (dataTable == null || dataTable.m_Command == null ||
                 dataTable.m_Command.CommandText.IndexOf("MA_SAN_PHAM", StringComparison.OrdinalIgnoreCase) < 0 ||
@@ -328,12 +373,11 @@ namespace CuahangNongduoc
             foreach (DataRow deletedRow in rowsDeleted)
             {
                 string idLo = Convert.ToString(deletedRow["ID", DataRowVersion.Original]);
-                if (String.IsNullOrEmpty(idLo))
-                    continue;
-                using (OleDbCommand checkLot = new OleDbCommand(
-                    "SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN WHERE ID_MA_SAN_PHAM=?", m_Connection, transaction))
+                if (String.IsNullOrEmpty(idLo)) continue;
+                using (SqlCommand checkLot = new SqlCommand(
+                    "SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN WHERE ID_MA_SAN_PHAM = @idLo", m_Connection, transaction))
                 {
-                    checkLot.Parameters.Add("idLo", OleDbType.VarChar, 50).Value = idLo;
+                    checkLot.Parameters.Add("@idLo", SqlDbType.VarChar, 50).Value = idLo;
                     object value = checkLot.ExecuteScalar();
                     if (value != null && value != DBNull.Value && Convert.ToInt64(value) > 0)
                         throw new InvalidOperationException("Không thể xóa lô " + idLo + " vì lô đã được sử dụng trong hóa đơn bán.");
@@ -341,16 +385,9 @@ namespace CuahangNongduoc
             }
         }
 
-        /// <summary>
-        /// Gán transaction cho command, nếu command không null.
-        /// </summary>
-        /// <param name="affectedProductIds"></param>
-        /// <param name="transaction"></param>
-        /// <exception cref="InvalidOperationException"></exception>
-        private static void TinhLaiTonKhoTrongTransaction(IList<string> affectedProductIds, OleDbTransaction transaction)
+        private static void TinhLaiTonKhoTrongTransaction(IList<string> affectedProductIds, SqlTransaction transaction)
         {
-            if (affectedProductIds == null)
-                return;
+            if (affectedProductIds == null) return;
 
             List<string> processed = new List<string>();
             foreach (string idSanPham in affectedProductIds)
@@ -361,20 +398,17 @@ namespace CuahangNongduoc
 
                 long tongSoLuong = 0;
                 decimal tongGiaTri = 0M;
-                using (OleDbCommand selectLots = new OleDbCommand(
-                    "SELECT SO_LUONG, DON_GIA_NHAP FROM MA_SAN_PHAM WHERE ID_SAN_PHAM=?", m_Connection, transaction))
+                using (SqlCommand selectLots = new SqlCommand(
+                    "SELECT SO_LUONG, DON_GIA_NHAP FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = @id", m_Connection, transaction))
                 {
-                    selectLots.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
-                    using (OleDbDataReader reader = selectLots.ExecuteReader())
+                    selectLots.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idSanPham;
+                    using (SqlDataReader reader = selectLots.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             long soLuong = reader.IsDBNull(0) ? 0 : Convert.ToInt64(reader.GetValue(0));
                             long donGia = reader.IsDBNull(1) ? 0 : Convert.ToInt64(reader.GetValue(1));
-                            // Lô bị bán vượt tồn (số lượng âm - dữ liệu cũ) không được làm hỏng việc tính lại tồn kho của cả sản phẩm:
-                            // coi như 0 khi cộng tồn thay vì chặn mọi thao tác nhập/xóa của sản phẩm đó.
-                            if (soLuong < 0)
-                                soLuong = 0;
+                            if (soLuong < 0) soLuong = 0;
                             if (donGia < 0)
                                 throw new InvalidOperationException("Đơn giá nhập của lô không được âm (sản phẩm " + idSanPham + ").");
                             tongSoLuong += soLuong;
@@ -388,24 +422,21 @@ namespace CuahangNongduoc
                 int rowsUpdated;
                 if (tongSoLuong > 0)
                 {
-                    using (OleDbCommand updateProduct = new OleDbCommand(
-                        "UPDATE SAN_PHAM SET SO_LUONG=?, DON_GIA_NHAP=? WHERE ID=?", m_Connection, transaction))
+                    using (SqlCommand updateProduct = new SqlCommand(
+                        "UPDATE SAN_PHAM SET SO_LUONG = @soLuong, DON_GIA_NHAP = @giaNhap WHERE ID = @id", m_Connection, transaction))
                     {
-                        updateProduct.Parameters.Add("soLuong", OleDbType.Integer).Value = Convert.ToInt32(tongSoLuong);
-                        // Giá nhập bình quân lưu theo đơn vị tiền nguyên như các lớp nghiệp vụ hiện có.
-                        updateProduct.Parameters.Add("giaNhap", OleDbType.Currency).Value = Convert.ToDecimal((long)(tongGiaTri / tongSoLuong));
-                        updateProduct.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
+                        updateProduct.Parameters.Add("@soLuong", SqlDbType.Int).Value = Convert.ToInt32(tongSoLuong);
+                        updateProduct.Parameters.Add("@giaNhap", SqlDbType.Decimal).Value = (decimal)((long)(tongGiaTri / tongSoLuong));
+                        updateProduct.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idSanPham;
                         rowsUpdated = updateProduct.ExecuteNonQuery();
                     }
                 }
                 else
                 {
-                    // Khi tồn kho bằng 0, giữ nguyên giá nhập gần nhất để không xóa thông tin tham khảo.
-                    using (OleDbCommand updateProduct = new OleDbCommand(
-                        "UPDATE SAN_PHAM SET SO_LUONG=? WHERE ID=?", m_Connection, transaction))
+                    using (SqlCommand updateProduct = new SqlCommand(
+                        "UPDATE SAN_PHAM SET SO_LUONG = 0 WHERE ID = @id", m_Connection, transaction))
                     {
-                        updateProduct.Parameters.Add("soLuong", OleDbType.Integer).Value = 0;
-                        updateProduct.Parameters.Add("id", OleDbType.VarChar, 50).Value = idSanPham;
+                        updateProduct.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idSanPham;
                         rowsUpdated = updateProduct.ExecuteNonQuery();
                     }
                 }

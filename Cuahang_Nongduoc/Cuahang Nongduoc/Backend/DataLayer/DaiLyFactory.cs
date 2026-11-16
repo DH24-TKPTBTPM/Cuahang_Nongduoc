@@ -1,8 +1,8 @@
-using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
@@ -15,7 +15,7 @@ namespace CuahangNongduoc.DataLayer
         /// </summary>
         public DataTable DanhsachDaiLy()
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY");
             m_Ds.Load(cmd);
             return m_Ds;
         }
@@ -25,10 +25,10 @@ namespace CuahangNongduoc.DataLayer
         public DataTable DanhsachDaiLyBanSi()
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand(
+            SqlCommand cmd = new SqlCommand(
                 "SELECT ID, DAI_LY, DIA_CHI, DIEN_THOAI FROM DAI_LY " +
                 "UNION ALL " +
-                "SELECT ID, HO_TEN AS DAI_LY, DIA_CHI, DIEN_THOAI FROM KHACH_HANG WHERE LOAI_KH=FALSE");
+                "SELECT ID, HO_TEN AS DAI_LY, DIA_CHI, DIEN_THOAI FROM KHACH_HANG WHERE LOAI_KH=0");
             ds.Load(cmd);
             return ds;
         }
@@ -38,8 +38,8 @@ namespace CuahangNongduoc.DataLayer
         /// </summary>
         public DataTable TimHoTen(String hoten)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY WHERE DAI_LY LIKE '%' + @hoten + '%'");
-            cmd.Parameters.Add("hoten", OleDbType.VarWChar).Value = hoten;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY WHERE DAI_LY LIKE '%' + @hoten + '%'");
+            cmd.Parameters.Add("hoten", SqlDbType.NVarChar).Value = hoten;
             m_Ds.Load(cmd);
             return m_Ds;
         }
@@ -49,8 +49,8 @@ namespace CuahangNongduoc.DataLayer
         /// </summary>
         public DataTable TimDiaChi(String diachi)
         {
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY WHERE DIA_CHI LIKE '%' + @diachi + '%'");
-            cmd.Parameters.Add("diachi", OleDbType.VarWChar).Value = diachi;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY WHERE DIA_CHI LIKE '%' + @diachi + '%'");
+            cmd.Parameters.Add("diachi", SqlDbType.NVarChar).Value = diachi;
             m_Ds.Load(cmd);
             return m_Ds;
         }
@@ -61,8 +61,8 @@ namespace CuahangNongduoc.DataLayer
         public DataTable TimHoTenMoi(String hoten)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY WHERE DAI_LY LIKE '%' + @hoten + '%'");
-            cmd.Parameters.Add("hoten", OleDbType.VarWChar).Value = hoten;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY WHERE DAI_LY LIKE '%' + @hoten + '%'");
+            cmd.Parameters.Add("hoten", SqlDbType.NVarChar).Value = hoten;
             ds.Load(cmd);
             return ds;
         }
@@ -73,8 +73,8 @@ namespace CuahangNongduoc.DataLayer
         public DataTable TimDiaChiMoi(String diachi)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY WHERE DIA_CHI LIKE '%' + @diachi + '%'");
-            cmd.Parameters.Add("diachi", OleDbType.VarWChar).Value = diachi;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY WHERE DIA_CHI LIKE '%' + @diachi + '%'");
+            cmd.Parameters.Add("diachi", SqlDbType.NVarChar).Value = diachi;
             ds.Load(cmd);
             return ds;
         }
@@ -85,8 +85,8 @@ namespace CuahangNongduoc.DataLayer
         public DataTable LayDaiLy(String id)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT * FROM DAI_LY WHERE ID = @id");
-            cmd.Parameters.Add("id", OleDbType.VarWChar, 50).Value = id;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM DAI_LY WHERE ID = @id");
+            cmd.Parameters.Add("id", SqlDbType.NVarChar, 50).Value = id;
             ds.Load(cmd);
             return ds;
         }
@@ -98,14 +98,14 @@ namespace CuahangNongduoc.DataLayer
         public bool KiemTraRangBuocXoa(String idDaiLy)
         {
             DataService ds = new DataService();
-            OleDbCommand cmd = new OleDbCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @id");
-            cmd.Parameters.Add("id", OleDbType.VarChar, 50).Value = idDaiLy;
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idDaiLy;
             ds.Load(cmd);
             if (ds.Rows.Count > 0 && Convert.ToInt32(ds.Rows[0][0]) > 0) return false;
 
             DataService ds2 = new DataService();
-            OleDbCommand cmdNo = new OleDbCommand("SELECT COUNT(*) FROM DU_NO_KH WHERE ID_KHACH_HANG = @id");
-            cmdNo.Parameters.Add("id", OleDbType.VarChar, 50).Value = idDaiLy;
+            SqlCommand cmdNo = new SqlCommand("SELECT COUNT(*) FROM DU_NO_KH WHERE ID_KHACH_HANG = @id");
+            cmdNo.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idDaiLy;
             ds2.Load(cmdNo);
             if (ds2.Rows.Count > 0 && Convert.ToInt32(ds2.Rows[0][0]) > 0) return false;
 
@@ -142,7 +142,7 @@ namespace CuahangNongduoc.DataLayer
         public bool Save()
         {
             DataService.OpenConnection();
-            m_Ds.Command = new OleDbCommand("SELECT * FROM DAI_LY");
+            m_Ds.Command = new SqlCommand("SELECT * FROM DAI_LY");
             return m_Ds.ExecuteNoneQuery() > 0;
         }
     }
