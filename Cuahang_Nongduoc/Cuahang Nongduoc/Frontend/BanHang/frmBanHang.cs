@@ -52,6 +52,12 @@ namespace CuahangNongduoc
         // Biến lưu trữ Strategy
         private IBanHangStrategy _strategy;
 
+        // Xác định loại phiếu động dựa theo Strategy đang dùng (Bán sỉ cho đại lý hay Bán lẻ)
+        private LoaiPhieu LayLoaiPhieuHienTai()
+        {
+            return (_strategy != null && _strategy.IsDaiLy) ? LoaiPhieu.BanSi : LoaiPhieu.BanLe;
+        }
+
         // 1. Constructor không tham số (Bắt buộc cho Visual Studio Designer)
         public frmBanHang()
         {
@@ -120,7 +126,7 @@ namespace CuahangNongduoc
             // ==============================================================================
             if (_currentState is StateThem)
             {
-                txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe).Id;
+                txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai()).Id;
             }
         }
 
@@ -281,8 +287,7 @@ namespace CuahangNongduoc
         {
             string maKhachHang = cmbKhachHang.SelectedValue != null ? cmbKhachHang.SelectedValue.ToString() : "";
 
-            PhieuBan phieu = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe);
-            phieu.Id = txtMaPhieu.Text.Trim();
+            PhieuBan phieu = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai());            phieu.Id = txtMaPhieu.Text.Trim();
             phieu.KhachHang = new KhachHang(maKhachHang);
             phieu.NgayBan = dtNgayLapPhieu.Value;
             phieu.TongTien = Convert.ToInt64(numTongTien.Value);
@@ -365,7 +370,7 @@ namespace CuahangNongduoc
             }
 
             // [FE-02 - Hide Delegate]: Gọi Facade lưu phiếu bán và chi tiết phiếu
-            PhieuBan phieuBanNew = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe);
+            PhieuBan phieuBanNew = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai());
             phieuBanNew.Id = txtMaPhieu.Text;
             phieuBanNew.NgayBan = dtNgayLapPhieu.Value.Date;
             phieuBanNew.TongTien = Convert.ToInt64(numTongTien.Value);
@@ -395,7 +400,7 @@ namespace CuahangNongduoc
             // [R18 - Fix Bug]: Làm sạch danh sách deleted khi bắt đầu tạo phiếu mới
             deleted.Clear();
 
-            txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LoaiPhieu.BanLe).Id;
+            txtMaPhieu.Text = PhieuFactory.TaoPhieuBan(LayLoaiPhieuHienTai()).Id;
             numTongTien.Value = 0;
             ctrlChiTiet.HienThiChiTiet(dgvDanhsachSP, txtMaPhieu.Text);
             this.Allow(true);
