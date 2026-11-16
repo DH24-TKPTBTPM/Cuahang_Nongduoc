@@ -225,10 +225,13 @@ namespace CuahangNongduoc.Controller
         // Kiểm tra         : QA1
         // Ngày chỉnh sửa   : 12/11/2026
         // ==============================================================
+        // [D04] Lấy đối tượng qua IRepository thay vì tự đọc DataTable; giữ nguyên kết quả cũ
+        // (không có thì trả SanPham rỗng). Tác giả: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: — | Kiểm tra: QA2 – <Họ tên> | 15/11/2026
+        private readonly IRepository<SanPham> m_Repo = new SanPhamRepository();
+
         public SanPham LaySanPham(String id)
         {
-            DataTable tbl = factory.LaySanPham(id);
-            return tbl.Rows.Count > 0 ? EntityMapper.ToSanPham(tbl.Rows[0]) : new SanPham();
+            return m_Repo.LayTheoMa(id) ?? new SanPham();
         }
 
         // ==================== [D05] REFACTORING ====================
