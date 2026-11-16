@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -61,14 +61,12 @@ namespace CuahangNongduoc.Controller
         public NhaCungCap LayNCC(String id)
         {
             DataTable tbl = factory.LayNCC(id);
-            NhaCungCap ncc = null;
-            if (tbl.Rows.Count > 0)
-            {
-                ncc.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                ncc.HoTen = Convert.ToString(tbl.Rows[0]["HO_TEN"]);
-                ncc.DienThoai = Convert.ToString(tbl.Rows[0]["DIEN_THOAI"]);
-                ncc.DiaChi = Convert.ToString(tbl.Rows[0]["DIA_CHI"]);
-            }
+            if (tbl.Rows.Count == 0) return null;
+            NhaCungCap ncc = new NhaCungCap();
+            ncc.Id = Convert.ToString(tbl.Rows[0]["ID"]);
+            ncc.HoTen = Convert.ToString(tbl.Rows[0]["HO_TEN"]);
+            ncc.DienThoai = Convert.ToString(tbl.Rows[0]["DIEN_THOAI"]);
+            ncc.DiaChi = Convert.ToString(tbl.Rows[0]["DIA_CHI"]);
             return ncc;
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -127,15 +127,13 @@ namespace CuahangNongduoc.Controller
         public KhachHang LayKhachHang(String id)
         {
             DataTable tbl = factory.LayKhachHang(id);
-            KhachHang kh = null;
-            if (tbl.Rows.Count > 0)
-            {
-                kh.Id = Convert.ToString(tbl.Rows[0]["ID"]);
-                kh.HoTen = Convert.ToString(tbl.Rows[0]["HO_TEN"]);
-                kh.DienThoai = Convert.ToString(tbl.Rows[0]["DIEN_THOAI"]);
-                kh.DiaChi = Convert.ToString(tbl.Rows[0]["DIA_CHI"]);
-                kh.LoaiKH = Convert.ToBoolean(tbl.Rows[0]["LOAI_KH"]);
-            }
+            if (tbl.Rows.Count == 0) return null;
+            KhachHang kh = new KhachHang();
+            kh.Id = Convert.ToString(tbl.Rows[0]["ID"]);
+            kh.HoTen = Convert.ToString(tbl.Rows[0]["HO_TEN"]);
+            kh.DienThoai = Convert.ToString(tbl.Rows[0]["DIEN_THOAI"]);
+            kh.DiaChi = Convert.ToString(tbl.Rows[0]["DIA_CHI"]);
+            kh.LoaiKH = Convert.ToBoolean(tbl.Rows[0]["LOAI_KH"]);
             return kh;
         }
 
