@@ -27,7 +27,6 @@ namespace CuahangNongduoc
             // =============================================================
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
 
-            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
         }
 
         private void frmSoLuongBan_Load(object sender, EventArgs e)

@@ -21,7 +21,6 @@ namespace CuahangNongduoc
             // Ngày chỉnh sửa   : 12/11/2026
             // =============================================================
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
-            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
         }
 
         private void frmSoLuongTon_Load(object sender, EventArgs e)

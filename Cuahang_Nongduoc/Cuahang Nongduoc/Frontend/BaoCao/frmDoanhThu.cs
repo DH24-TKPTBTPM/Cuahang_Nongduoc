@@ -22,7 +22,6 @@ namespace CuahangNongduoc
             InitializeComponent();
             // FE3-[FE-BC] Đồng bộ Font hiển thị và cấu hình ReportViewer, DataSource, sự kiện nút Xem
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);
-            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);
 
             m_BindingSource.DataSource = typeof(ChiTietPhieuBan);
             ReportDataSource reportDataSource = new ReportDataSource("CuahangNongduoc_BusinessObject_ChiTietPhieuBan", m_BindingSource);

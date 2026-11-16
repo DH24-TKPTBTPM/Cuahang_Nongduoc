@@ -15,7 +15,6 @@ namespace CuahangNongduoc
             InitializeComponent();
             // FE3-[FE-BC] Đồng bộ Font hiển thị và cấu hình AppDomain cho ReportViewer
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular);//fe3
-            reportViewer.LocalReport.ExecuteReportInCurrentAppDomain(System.Reflection.Assembly.GetExecutingAssembly().Evidence);//fe3
         }
 
         private void btnXem_Click(object sender, EventArgs e)
