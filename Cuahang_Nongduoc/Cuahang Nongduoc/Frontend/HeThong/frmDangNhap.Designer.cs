@@ -18,7 +18,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDangNhap));
             this.pnlBackground = new System.Windows.Forms.Panel();
             this.cardContainer = new Siticone.Desktop.UI.WinForms.SiticoneShadowPanel();
             this.pnlRight = new System.Windows.Forms.Panel();
@@ -157,7 +156,7 @@
             this.lblLoginDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
             this.lblLoginDesc.Location = new System.Drawing.Point(38, 68);
             this.lblLoginDesc.Name = "lblLoginDesc";
-            this.lblLoginDesc.Size = new System.Drawing.Size(288, 15);
+            this.lblLoginDesc.Size = new System.Drawing.Size(298, 15);
             this.lblLoginDesc.TabIndex = 1;
             this.lblLoginDesc.Text = "Vui lòng nhập thông tin tài khoản để truy cập hệ thống";
             // 
@@ -168,7 +167,7 @@
             this.lblTenDangNhap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.lblTenDangNhap.Location = new System.Drawing.Point(38, 104);
             this.lblTenDangNhap.Name = "lblTenDangNhap";
-            this.lblTenDangNhap.Size = new System.Drawing.Size(100, 13);
+            this.lblTenDangNhap.Size = new System.Drawing.Size(99, 13);
             this.lblTenDangNhap.TabIndex = 2;
             this.lblTenDangNhap.Text = "TÊN ĐĂNG NHẬP";
             // 
@@ -184,6 +183,7 @@
             this.txtTenDangNhap.Location = new System.Drawing.Point(38, 122);
             this.txtTenDangNhap.Margin = new System.Windows.Forms.Padding(4);
             this.txtTenDangNhap.Name = "txtTenDangNhap";
+            this.txtTenDangNhap.PasswordChar = '\0';
             this.txtTenDangNhap.PlaceholderText = "Tên đăng nhập...";
             this.txtTenDangNhap.SelectedText = "";
             this.txtTenDangNhap.Size = new System.Drawing.Size(420, 38);
@@ -196,7 +196,7 @@
             this.lblMatKhau.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             this.lblMatKhau.Location = new System.Drawing.Point(38, 172);
             this.lblMatKhau.Name = "lblMatKhau";
-            this.lblMatKhau.Size = new System.Drawing.Size(65, 13);
+            this.lblMatKhau.Size = new System.Drawing.Size(66, 13);
             this.lblMatKhau.TabIndex = 4;
             this.lblMatKhau.Text = "MẬT KHẨU";
             // 
@@ -252,6 +252,7 @@
             // 
             // btnDangNhap
             // 
+            this.btnDangNhap.BackColor = System.Drawing.Color.Transparent;
             this.btnDangNhap.BorderRadius = 8;
             this.btnDangNhap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDangNhap.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
@@ -294,9 +295,9 @@
             this.lblHint.Name = "lblHint";
             this.lblHint.Size = new System.Drawing.Size(420, 48);
             this.lblHint.TabIndex = 10;
-            this.lblHint.Text = "Tài khoản quản trị mặc định: vodichbatphuong  |  Mật khẩu: vodichbatphuong123\nNh" +
-    "ấn phím Enter để đăng nhập nhanh";
+            this.lblHint.Text = "Nhấn phím Enter để đăng nhập nhanh";
             this.lblHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblHint.Click += new System.EventHandler(this.lblHint_Click);
             // 
             // pnlLeftGradient
             // 
@@ -336,7 +337,7 @@
             this.lblBrandTitle.ForeColor = System.Drawing.Color.White;
             this.lblBrandTitle.Location = new System.Drawing.Point(24, 102);
             this.lblBrandTitle.Name = "lblBrandTitle";
-            this.lblBrandTitle.Size = new System.Drawing.Size(262, 28);
+            this.lblBrandTitle.Size = new System.Drawing.Size(251, 28);
             this.lblBrandTitle.TabIndex = 1;
             this.lblBrandTitle.Text = "CỬA HÀNG NÔNG DƯỢC";
             // 
@@ -347,7 +348,7 @@
             this.lblBrandSub.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(197)))), ((int)(((byte)(253)))));
             this.lblBrandSub.Location = new System.Drawing.Point(26, 134);
             this.lblBrandSub.Name = "lblBrandSub";
-            this.lblBrandSub.Size = new System.Drawing.Size(199, 13);
+            this.lblBrandSub.Size = new System.Drawing.Size(202, 13);
             this.lblBrandSub.TabIndex = 2;
             this.lblBrandSub.Text = "HỆ THỐNG QUẢN LÝ DOANH NGHIỆP";
             // 
@@ -358,7 +359,7 @@
             this.lblFeature1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(242)))), ((int)(((byte)(254)))));
             this.lblFeature1.Location = new System.Drawing.Point(26, 185);
             this.lblFeature1.Name = "lblFeature1";
-            this.lblFeature1.Size = new System.Drawing.Size(217, 17);
+            this.lblFeature1.Size = new System.Drawing.Size(210, 17);
             this.lblFeature1.TabIndex = 3;
             this.lblFeature1.Text = "✔  Quản lý xuất - nhập kho vật tư";
             // 
@@ -369,9 +370,9 @@
             this.lblFeature2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(242)))), ((int)(((byte)(254)))));
             this.lblFeature2.Location = new System.Drawing.Point(26, 222);
             this.lblFeature2.Name = "lblFeature2";
-            this.lblFeature2.Size = new System.Drawing.Size(225, 17);
+            this.lblFeature2.Size = new System.Drawing.Size(228, 17);
             this.lblFeature2.TabIndex = 4;
-            this.lblFeature2.Text = "✔  Theo dõi lô & hạn sử dụng (FEFO)";
+            this.lblFeature2.Text = "✔  Theo dõi lô - hạn sử dụng (FEFO)";
             // 
             // lblFeature3
             // 
@@ -380,9 +381,9 @@
             this.lblFeature3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(242)))), ((int)(((byte)(254)))));
             this.lblFeature3.Location = new System.Drawing.Point(26, 259);
             this.lblFeature3.Name = "lblFeature3";
-            this.lblFeature3.Size = new System.Drawing.Size(209, 17);
+            this.lblFeature3.Size = new System.Drawing.Size(227, 17);
             this.lblFeature3.TabIndex = 5;
-            this.lblFeature3.Text = "✔  Bán sỉ, bán lẻ & sổ nợ khách hàng";
+            this.lblFeature3.Text = "✔  Bán sỉ, bán lẻ - sổ nợ khách hàng";
             // 
             // lblFeature4
             // 
@@ -391,9 +392,9 @@
             this.lblFeature4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(242)))), ((int)(((byte)(254)))));
             this.lblFeature4.Location = new System.Drawing.Point(26, 296);
             this.lblFeature4.Name = "lblFeature4";
-            this.lblFeature4.Size = new System.Drawing.Size(224, 17);
+            this.lblFeature4.Size = new System.Drawing.Size(225, 17);
             this.lblFeature4.TabIndex = 6;
-            this.lblFeature4.Text = "✔  Báo cáo doanh thu & phân quyền";
+            this.lblFeature4.Text = "✔  Báo cáo doanh thu - phân quyền";
             // 
             // lblVersion
             // 
@@ -403,13 +404,15 @@
             this.lblVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(147)))), ((int)(((byte)(197)))), ((int)(((byte)(253)))));
             this.lblVersion.Location = new System.Drawing.Point(26, 448);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(161, 13);
+            this.lblVersion.Size = new System.Drawing.Size(168, 13);
             this.lblVersion.TabIndex = 7;
             this.lblVersion.Text = "Phiên bản 2.0 • Siticone Blue UI";
             // 
             // siticoneDragControl1
             // 
+            this.siticoneDragControl1.DockIndicatorTransparencyValue = 0.6D;
             this.siticoneDragControl1.TargetControl = this.pnlLeftGradient;
+            this.siticoneDragControl1.UseTransparentDrag = true;
             // 
             // frmDangNhap
             // 
@@ -420,10 +423,6 @@
             this.ClientSize = new System.Drawing.Size(880, 530);
             this.Controls.Add(this.pnlBackground);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = true;
-            this.MinimizeBox = true;
             this.MinimumSize = new System.Drawing.Size(880, 530);
             this.Name = "frmDangNhap";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

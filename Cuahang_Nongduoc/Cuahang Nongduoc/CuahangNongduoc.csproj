@@ -326,6 +326,12 @@
     <Compile Include="Frontend\HeThong\frmHuongDanSuDung.Designer.cs">
       <DependentUpon>frmHuongDanSuDung.cs</DependentUpon>
     </Compile>
+    <Compile Include="Frontend\HeThong\frmLoading.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Frontend\HeThong\frmLoading.Designer.cs">
+      <DependentUpon>frmLoading.cs</DependentUpon>
+    </Compile>
     <Compile Include="Frontend\BanHang\frmTimPhieuBanLe.cs">
       <SubType>Form</SubType>
     </Compile>
