@@ -33,6 +33,14 @@ namespace CuahangNongduoc
             ctrlKH.HienthiKhachHangVaDaiLyDataGridviewComboBox(colKhachHang);
             ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
+
+            FormToolbarHelper.ThietLapTrangThai(this, dataGridView, toolAdd, toolSave, btnReload, toolDelete);
+            dataGridView.ClearSelection();
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            frmThanhToan_Load(sender, e);
         }
 
         void BindingSource_AddingNew(object sender, AddingNewEventArgs e)
@@ -51,6 +59,8 @@ namespace CuahangNongduoc
             row["TONG_TIEN"] = numTongTien.Value;
             ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
+
+            FormToolbarHelper.CapNhatTrangThaiNut(true, toolAdd, toolSave, btnReload, toolDelete);
         }
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -67,6 +77,8 @@ namespace CuahangNongduoc
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
                 ctrl.Save();
+                FormToolbarHelper.CapNhatTrangThaiNut(false, toolAdd, toolSave, btnReload, toolDelete);
+                dataGridView.ClearSelection();
             }
         }
 
@@ -75,6 +87,8 @@ namespace CuahangNongduoc
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
             ctrl.Save();
+            FormToolbarHelper.CapNhatTrangThaiNut(false, toolAdd, toolSave, btnReload, toolDelete);
+            dataGridView.ClearSelection();
         }
 
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)

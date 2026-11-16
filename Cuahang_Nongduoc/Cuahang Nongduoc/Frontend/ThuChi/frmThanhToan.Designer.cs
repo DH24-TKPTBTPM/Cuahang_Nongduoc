@@ -1,4 +1,4 @@
-﻿namespace CuahangNongduoc
+namespace CuahangNongduoc
 {
     partial class frmThanhToan
     {
@@ -66,6 +66,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolIn = new System.Windows.Forms.ToolStripButton();
             this.toolTimKiem = new System.Windows.Forms.ToolStripButton();
+            this.btnReload = new System.Windows.Forms.ToolStripButton();
             this.panel1.SuspendLayout();
             this.grpThongtin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numTongTien)).BeginInit();
@@ -317,7 +318,8 @@
             this.toolSave,
             this.toolStripSeparator1,
             this.toolIn,
-            this.toolTimKiem});
+            this.toolTimKiem,
+            this.btnReload});
             this.bindingNavigator.Location = new System.Drawing.Point(4, 19);
             this.bindingNavigator.MoveFirstItem = this.bindingNavigatorMoveFirstItem;
             this.bindingNavigator.MoveLastItem = this.bindingNavigatorMoveLastItem;
@@ -404,7 +406,7 @@
             this.toolAdd.Name = "toolAdd";
             this.toolAdd.RightToLeftAutoMirrorImage = true;
             this.toolAdd.Size = new System.Drawing.Size(50, 48);
-            this.toolAdd.Text = "Thêm";
+            this.toolAdd.Text = "Thêm mới";
             this.toolAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolAdd.Click += new System.EventHandler(this.toolAdd_Click);
             // 
@@ -415,7 +417,7 @@
             this.toolDelete.Name = "toolDelete";
             this.toolDelete.RightToLeftAutoMirrorImage = true;
             this.toolDelete.Size = new System.Drawing.Size(55, 48);
-            this.toolDelete.Text = "  Xóa  ";
+            this.toolDelete.Text = "Xóa";
             this.toolDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolDelete.Click += new System.EventHandler(this.toolDelete_Click);
             // 
@@ -425,8 +427,8 @@
             this.toolSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolSave.Name = "toolSave";
-            this.toolSave.Size = new System.Drawing.Size(53, 48);
-            this.toolSave.Text = "  Lưu  ";
+            this.toolSave.Size = new System.Drawing.Size(65, 48);
+            this.toolSave.Text = "Chỉnh sửa";
             this.toolSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolSave.Click += new System.EventHandler(this.toolSave_Click);
             // 
@@ -456,6 +458,17 @@
             this.toolTimKiem.Text = "Tìm kiếm";
             this.toolTimKiem.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolTimKiem.Click += new System.EventHandler(this.toolTimKiem_Click);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Image = global::CuahangNongduoc.Properties.Resources.reload;
+            this.btnReload.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(61, 48);
+            this.btnReload.Text = "Xem lại";
+            this.btnReload.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
             // frmThanhToan
             // 
@@ -521,5 +534,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn colNgayThanhToan;
         private System.Windows.Forms.DataGridViewTextBoxColumn colGhiChu;
         private System.Windows.Forms.ToolStripButton toolTimKiem;
+        private System.Windows.Forms.ToolStripButton btnReload;
     }
 }

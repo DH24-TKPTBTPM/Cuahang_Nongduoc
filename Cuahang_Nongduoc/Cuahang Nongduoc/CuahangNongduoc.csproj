@@ -199,6 +199,7 @@
     <Compile Include="Backend\Core\DataService.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Frontend\FormToolbarHelper.cs" />
     <Compile Include="Frontend\NhapHang\frmDanhsachPhieuNhap.cs">
       <SubType>Form</SubType>
     </Compile>
