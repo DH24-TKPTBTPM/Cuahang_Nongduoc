@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,8 +6,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.DataLayer; // FE3-[FE-TC] Dùng PhieuThanhToanFactory cho Form tự binding
-using CuahangNongduoc.Frontend.Common1;
 
 namespace CuahangNongduoc
 {
@@ -15,113 +13,49 @@ namespace CuahangNongduoc
     {
         KhachHangController ctrlKH = new KhachHangController();
         PhieuThanhToanController ctrl = new PhieuThanhToanController();
-        PhieuThanhToanFactory factory = new PhieuThanhToanFactory(); // FE3-[FE-TC] Khởi tạo Factory
+        frmTimPhieuThu m_Tim = null;
+        bool m_DangDong = false;
+
         public frmThanhToan()
         {
             InitializeComponent();
         }
 
-        // ==================== [FE-TC] REFACTORING ====================
-        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (BindingNavigator, DataGridView, TextBox...) để binding
-        // Kỹ thuật         : Move Method (Chuyển logic binding dữ liệu từ Controller về Form giao diện)
-        // Trước            : ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
-        // Sau              : HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan());
-        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-        // Hỗ trợ           : BE2 (Task R26)
-        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-        // Ngày chỉnh sửa   : 08/11/2026
-        // =============================================================
-        private void HienthiPhieuThanhToan(DataTable dt)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            BindingSource bs = new BindingSource();
-            bs.DataSource = dt;
-            bindingNavigator.BindingSource = bs;
-            dataGridView.DataSource = bs;
-
-            txtMaPhieu.DataBindings.Clear();
-            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
-
-            cmbKhachHang.DataBindings.Clear();
-            cmbKhachHang.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
-
-            dtNgayThanhToan.DataBindings.Clear();
-            dtNgayThanhToan.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
-
-            numTongTien.DataBindings.Clear();
-            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
-
-            txtGhiChu.DataBindings.Clear();
-            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
+            m_DangDong = true;
+            base.OnFormClosing(e);
         }
+
         private void frmThanhToan_Load(object sender, EventArgs e)
         {
-            cmbKhachHang.DataSource = ctrlKH.HienthiChungAutoComboBox();
-            cmbKhachHang.DisplayMember = "HO_TEN";
-            cmbKhachHang.ValueMember = "ID";
-            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
-            colKhachHang.DisplayMember = "HO_TEN";
-            colKhachHang.ValueMember = "ID";
-            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
-            colKhachHang.HeaderText = "Khách hàng";
-            //ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
-            HienthiPhieuThanhToan(factory.DanhsachPhieuThanhToan()); // FE3-[FE-TC] Form tự binding dữ liệu
+            ctrlKH.HienthiKhachHangVaDaiLyAutoComboBox(cmbKhachHang);
+            ctrlKH.HienthiKhachHangVaDaiLyDataGridviewComboBox(colKhachHang);
+            ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu, dtNgayThanhToan, numTongTien, txtGhiChu);
             bindingNavigator.BindingSource.AddingNew += new AddingNewEventHandler(BindingSource_AddingNew);
-        }
-
-        // ==================== [R26] REFACTORING ====================
-        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
-        // Kỹ thuật         : Introduce Parameter Object
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        private void HienThiPhieuThanhToan(DataTable data)
-        {
-            BindingSource bs = new BindingSource();
-            bs.DataSource = data;
-            bindingNavigator.BindingSource = bs;
-            dataGridView.DataSource = bs;
-
-            txtMaPhieu.DataBindings.Clear();
-            txtMaPhieu.DataBindings.Add("Text", bs, "ID");
-
-            cmbKhachHang.DataBindings.Clear();
-            cmbKhachHang.DataBindings.Add("SelectedValue", bs, "ID_KHACH_HANG");
-
-            dtNgayThanhToan.DataBindings.Clear();
-            dtNgayThanhToan.DataBindings.Add("Value", bs, "NGAY_THANH_TOAN");
-
-            numTongTien.DataBindings.Clear();
-            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
-
-            txtGhiChu.DataBindings.Clear();
-            txtGhiChu.DataBindings.Add("Text", bs, "GHI_CHU");
         }
 
         void BindingSource_AddingNew(object sender, AddingNewEventArgs e)
         {
-            
+
         }
 
         private void toolAdd_Click(object sender, EventArgs e)
         {
-            long maphieu = ThamSo.LayMaPhieuThanhToan();;
-            ThamSo.GanMaPhieuThanhToan(maphieu+1);
+            long maphieu = ThamSo.LayMaPhieuThanhToan();
+            ThamSo.GanMaPhieuThanhToan(maphieu + 1);
 
-            //DataRow row = ctrl.NewRow();
-            DataRow row = factory.NewRow(); // FE3-[FE-TC] Thay cho ctrl.NewRow()
+            DataRow row = ctrl.NewRow();
             row["ID"] = maphieu;
             row["NGAY_THANH_TOAN"] = DateTime.Now.Date;
             row["TONG_TIEN"] = numTongTien.Value;
-            //ctrl.Add(row);
-            factory.Add(row); // FE3-[FE-TC] Thay cho ctrl.Add(row)
+            ctrl.Add(row);
             bindingNavigator.BindingSource.MoveLast();
         }
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (MessageBox.Show("Bạn chắc chắn xóa phiếu thanh toán này không?", "Phieu Thanh Toan",   MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+            if (MessageBox.Show("Bạn chắc chắn xóa phiếu thanh toán này không?", "Phieu Thanh Toan", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
             }
@@ -132,8 +66,7 @@ namespace CuahangNongduoc
             if (MessageBox.Show("Bạn chắc chắn xóa phiếu thanh toán này không?", "Phieu Thanh Toan", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 bindingNavigator.BindingSource.RemoveCurrent();
-                // ctrl.Save();
-                factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
+                ctrl.Save();
             }
         }
 
@@ -141,60 +74,116 @@ namespace CuahangNongduoc
         {
             txtMaPhieu.Focus();
             bindingNavigator.BindingSource.MoveNext();
-            // ctrl.Save();
-            factory.Save(); // FE3-[FE-TC] Thay cho ctrl.Save()
+            ctrl.Save();
         }
 
-        // ==================== [FE-09] REFACTORING ====================
-        // Lỗi (Code smell) : Duplicate Code – Xử lý DataError thủ công chỉ dùng e.Cancel
-        // Kỹ thuật         : Extract Method (Gọi hàm dùng chung từ GridErrorHelper)
-        // Trước            : e.Cancel = true;
-        // Sau              : GridErrorHelper.HandleDataError(sender, e);
-        // Tác giả          : FE2 – Nguyễn Huỳnh Ngọc Anh
-        // Hỗ trợ           : Không
-        // Kiểm tra         : QA – <Điền họ tên> (QA điền khi test đạt)
-        // Ngày chỉnh sửa   : 10/11/2026
-        // =============================================================
         private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            GridErrorHelper.HandleDataError(sender, e);
+            e.Cancel = true;
         }
 
         private void toolIn_Click(object sender, EventArgs e)
         {
-            DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
-            if (row != null)
+            // Lưu trước để phiếu mới có trong database
+            try
             {
-                PhieuThanhToanController ctrlTT = new PhieuThanhToanController();
-                String ma_phieu = row["ID"].ToString();
-                CuahangNongduoc.BusinessObject.PhieuThanhToan ph = ctrlTT.LayPhieuThanhToan(ma_phieu);
-                frmInPhieuThanhToan PhieuThanhToan = new frmInPhieuThanhToan(ph);
-                PhieuThanhToan.Show();
+                bindingNavigator.BindingSource.EndEdit();
+                ctrl.Save();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Không lưu được phiếu thanh toán");
+                return;
+            }
+
+            if (bindingNavigator.BindingSource.Current == null)
+            {
+                MessageBox.Show("Vui lòng chọn phiếu thanh toán cần in!");
+                return;
+            }
+
+            DataRowView row = bindingNavigator.BindingSource.Current as DataRowView;
+            if (row == null)
+            {
+                MessageBox.Show("Không lấy được dữ liệu phiếu thanh toán!");
+                return;
+            }
+
+            string ma_phieu = row["ID"].ToString();
+
+            PhieuThanhToanController ctrlTT = new PhieuThanhToanController();
+            CuahangNongduoc.BusinessObject.PhieuThanhToan ph = ctrlTT.LayPhieuThanhToan(ma_phieu);
+
+            if (ph == null)
+            {
+                MessageBox.Show("Không tìm thấy phiếu thanh toán!");
+                return;
+            }
+
+            frmInPhieuThanhToan formIn = new frmInPhieuThanhToan(ph);
+            formIn.ShowDialog();
         }
 
+        // Bấm nút Tìm kiếm trên thanh công cụ: mở form tìm (không modal)
         private void toolTimKiem_Click(object sender, EventArgs e)
         {
-            frmTimPhieuThu Tim = new frmTimPhieuThu();
+            // Đang mở rồi thì chỉ đưa lên trước, không mở thêm cái mới
+            if (m_Tim != null && !m_Tim.IsDisposed)
+            {
+                m_Tim.Activate();
+                return;
+            }
+
+            m_Tim = new frmTimPhieuThu();
+
             Point p = PointToScreen(toolTimKiem.Bounds.Location);
             p.X += toolTimKiem.Width;
             p.Y += toolTimKiem.Height;
-            Tim.Location = p;
-            Tim.ShowDialog();
-            if (Tim.DialogResult == DialogResult.OK)
-            {
-                // Gộp nhánh R26 (Truyền Object) và FE-TC (Gọi qua Factory)
-                // [Sửa build 15/11/2026] SearchParam (R26) là của Controller; Form lưu qua 'factory' (FE-TC)
-                // nên tìm cũng qua 'factory' để lưới và Save() dùng chung 1 bảng.
-                // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – <Họ tên>
-                PhieuThanhToanSearchParam tim = new PhieuThanhToanSearchParam
-                {
-                    IdKhachHang = Tim.cmbKhachHang.SelectedValue.ToString(),
-                    Ngay = Tim.dtNgayThu.Value.Date
-                };
-                HienthiPhieuThanhToan(factory.TimPhieuThanhToan(tim.IdKhachHang, tim.Ngay));
-            }
+            m_Tim.StartPosition = FormStartPosition.Manual;
+            m_Tim.Location = p;
+
+            m_Tim.TimKiem += Tim_TimKiem;
+            m_Tim.FormClosed += Tim_FormClosed;
+
+            m_Tim.Show(this);
         }
 
+        // Bấm Đồng ý trong form tìm: lọc dữ liệu, form tìm vẫn mở
+        private void Tim_TimKiem(object sender, EventArgs e)
+        {
+            frmTimPhieuThu tim = (frmTimPhieuThu)sender;
+
+            if (tim.cmbKhachHang.SelectedValue == null)
+            {
+                MessageBox.Show("Vui lòng chọn khách hàng cần tìm!");
+                return;
+            }
+
+            ctrl.TimPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu,
+                dtNgayThanhToan, numTongTien, txtGhiChu,
+                tim.cmbKhachHang.SelectedValue.ToString(), tim.dtNgayThu.Value.Date);
+        }
+
+        // Tắt form tìm kiếm: trở lại bảng bình thường
+        private void Tim_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_Tim = null;
+
+            // Form thanh toán đang đóng thì không nạp lại nữa
+            if (m_DangDong) return;
+
+            try
+            {
+                bindingNavigator.BindingSource.EndEdit();
+                ctrl.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Lỗi lưu phiếu thanh toán");
+            }
+
+            ctrl.HienthiPhieuThanhToan(bindingNavigator, dataGridView, cmbKhachHang, txtMaPhieu,
+                dtNgayThanhToan, numTongTien, txtGhiChu);
+        }
     }
 }

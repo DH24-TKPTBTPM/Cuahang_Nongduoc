@@ -1,0 +1,10 @@
+-- Access SQL migration. Make a backup before running.
+-- Run once. If GIA_VON already exists, skip ALTER TABLE.
+ALTER TABLE CHI_TIET_PHIEU_BAN ADD COLUMN GIA_VON CURRENCY;
+
+-- Estimate historical cost from the purchase price of the referenced lot.
+UPDATE CHI_TIET_PHIEU_BAN
+INNER JOIN MA_SAN_PHAM ON CHI_TIET_PHIEU_BAN.ID_MA_SAN_PHAM = MA_SAN_PHAM.ID
+SET CHI_TIET_PHIEU_BAN.GIA_VON = CHI_TIET_PHIEU_BAN.SO_LUONG * MA_SAN_PHAM.DON_GIA_NHAP
+WHERE CHI_TIET_PHIEU_BAN.GIA_VON IS NULL;
+

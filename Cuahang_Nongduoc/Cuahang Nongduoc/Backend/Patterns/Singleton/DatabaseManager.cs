@@ -54,7 +54,7 @@ namespace CuahangNongduoc.Patterns.Singleton
             {
                 ConnectionStringSettings cs = ConfigurationManager.ConnectionStrings[SQLSERVER_KEY];
                 if (cs == null || String.IsNullOrEmpty(cs.ConnectionString))
-                    throw new DataAccessException("Thiếu chuỗi kết nối '" + SQLSERVER_KEY + "' trong App.config.", null);
+                    return DataService.m_ConnectString;
                 return cs.ConnectionString;
             }
         }

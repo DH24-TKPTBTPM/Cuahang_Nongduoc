@@ -17,10 +17,16 @@ namespace CuahangNongduoc
         }
         public frmTimPhieuBanLe(bool loai):this()
         {
-            KhachHangController ctrlKH = new KhachHangController();
-            cmbNCC.DataSource = ctrlKH.HienthiAutoComboBox(loai);
-            cmbNCC.DisplayMember = "HO_TEN";
-            cmbNCC.ValueMember = "ID";
+            if (loai)
+            {
+                DaiLyController ctrlDaiLy = new DaiLyController();
+                ctrlDaiLy.HienthiAutoComboBoxBanSi(cmbNCC);
+            }
+            else
+            {
+                KhachHangController ctrlKH = new KhachHangController();
+                ctrlKH.HienthiAutoComboBox(cmbNCC, false);
+            }
         }
 
     }

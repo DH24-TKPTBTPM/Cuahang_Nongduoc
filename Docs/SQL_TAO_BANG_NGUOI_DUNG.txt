@@ -1,0 +1,25 @@
+-- Thực hiện riêng từng câu lệnh trong Microsoft Access (SQL View).
+-- Sao lưu cuahang.dll trước khi thực hiện. Tệp này thực chất là cơ sở dữ liệu Access.
+-- Nếu NGUOI_DUNG đã tồn tại đúng cấu trúc thì KHÔNG tạo lại bảng.
+
+CREATE TABLE NGUOI_DUNG (
+ ID COUNTER CONSTRAINT PK_NGUOI_DUNG PRIMARY KEY,
+ TEN_DANG_NHAP TEXT(100) NOT NULL,
+ MATKHAU TEXT(255) NOT NULL,
+ SALT TEXT(255),
+ ROLE TEXT(20) NOT NULL,
+ HOTEN TEXT(150),
+ IS_ACTIVE YESNO,
+ MUST_CHANGE_PWD YESNO,
+ CREATED_AT DATETIME,
+ UPDATED_AT DATETIME
+);
+
+CREATE UNIQUE INDEX UX_NGUOI_DUNG_TEN_DANG_NHAP ON NGUOI_DUNG (TEN_DANG_NHAP);
+
+-- Khởi tạo duy nhất 1 admin demo, ĐỔI ngay mật khẩu tạm sau khi đăng nhập.
+-- Chỉ chạy INSERT nếu chưa có tài khoản admin.
+-- Khi đăng nhập, chương trình sẽ tự chuyển mật khẩu tạm sang PBKDF2.
+INSERT INTO NGUOI_DUNG
+ (TEN_DANG_NHAP, MATKHAU, SALT, ROLE, HOTEN, IS_ACTIVE, MUST_CHANGE_PWD, CREATED_AT, UPDATED_AT)
+ VALUES ('admin', 'ChangeMeNow!2026', NULL, 'admin', 'Quản trị viên', TRUE, TRUE, Now(), Now());

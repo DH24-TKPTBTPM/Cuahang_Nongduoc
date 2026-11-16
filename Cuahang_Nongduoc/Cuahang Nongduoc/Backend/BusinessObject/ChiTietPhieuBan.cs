@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-//thang cuong xe co
+
 namespace CuahangNongduoc.BusinessObject
 {
     public class ChiTietPhieuBan
@@ -34,17 +34,40 @@ namespace CuahangNongduoc.BusinessObject
             get { return m_DonGia; }
             set { m_DonGia = value; }
         }
-// ==================== [R34] REFACTORING ====================
-// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
-// Kỹ thuật         : Encapsulate Field + Rename Field
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 11/11/2026
-// ==============================================================
+        private long m_ThanhTien;
+
         public long ThanhTien
         {
-            get { return m_SoLuong * m_DonGia; }
+            get { return m_ThanhTien; }
+            set { m_ThanhTien = value; }
         }
 
+        private long m_GiaVon;
+
+        public long GiaVon
+        {
+            get { return m_GiaVon; }
+            set { m_GiaVon = value; }
+        }
+
+        public string TenSanPham
+        {
+            get
+            {
+                if (m_MaSP != null && m_MaSP.SanPham != null)
+                    return m_MaSP.SanPham.TenSanPham;
+                return "";
+            }
+        }
+
+        public string MaLo
+        {
+            get { return m_MaSP != null ? m_MaSP.Id : ""; }
+        }
+
+        public DateTime NgayHetHan
+        {
+            get { return m_MaSP != null ? m_MaSP.NgayHetHan : DateTime.MinValue; }
+        }
     }
 }

@@ -2,99 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
-using CuahangNongduoc.DataLayer.Mappers;
 using CuahangNongduoc.BusinessObject;
 using System.Windows.Forms;
 using System.Data;
 
 namespace CuahangNongduoc.Controller
 {
-    public enum SaveStatus
-    {
-        Success,
-        TrialLimitExceeded,
-        Failed
-    }
-
-    /// <summary>
-    /// [R14] Kết quả thực thi việc lưu dữ liệu, tách biệt tầng Controller khỏi MessageBox của UI.
-    /// Kỹ thuật: Extract Class (Separate Domain from Presentation).
-    /// thêm mới SaveStatus và SaveResult
-    /// </summary>
-    public class SaveResult
-    {
-        private bool m_IsSuccess;
-        private SaveStatus m_Status;
-        private int m_SoPhieuConLai;
-        private string m_Message;
-
-        public bool IsSuccess
-        {
-            get { return m_IsSuccess; }
-            set { m_IsSuccess = value; }
-        }
-
-        public SaveStatus Status
-        {
-            get { return m_Status; }
-            set { m_Status = value; }
-        }
-
-        public int SoPhieuConLai
-        {
-            get { return m_SoPhieuConLai; }
-            set { m_SoPhieuConLai = value; }
-        }
-
-        public string Message
-        {
-            get { return m_Message; }
-            set { m_Message = value; }
-        }
-
-        public SaveResult() { }
-
-        public SaveResult(bool isSuccess, SaveStatus status, int soPhieuConLai, string message)
-        {
-            this.m_IsSuccess = isSuccess;
-            this.m_Status = status;
-            this.m_SoPhieuConLai = soPhieuConLai;
-            this.m_Message = message;
-        }
-
-        public static SaveResult Success(int soPhieuConLai)
-        {
-            string msg = soPhieuConLai > 0
-                ? "Đây là bản dùng thử! Chỉ lưu được thêm " + soPhieuConLai.ToString() + " phiếu bán!"
-                : "Lưu phiếu bán thành công!";
-            return new SaveResult(true, SaveStatus.Success, soPhieuConLai, msg);
-        }
-
-        public static SaveResult TrialLimitExceeded()
-        {
-            return new SaveResult(false, SaveStatus.TrialLimitExceeded, 0,
-                "Đây là bản dùng thử! Chỉ lưu được 50 phiếu bán!");
-        }
-
-        public static SaveResult Failed(string message)
-        {
-            return new SaveResult(false, SaveStatus.Failed, 0, message);
-        }
-        
-        // ==================== [R33] REFACTORING ====================
-        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
-        // Kỹ thuật         : Standardize API Contract
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : BE2 - Trần Tuấn Anh
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        
-        public static implicit operator bool(SaveResult result)
-        {
-            return result != null && result.IsSuccess;
-        }
-    }
     
     public class PhieuBanController
     {
@@ -102,6 +15,7 @@ namespace CuahangNongduoc.Controller
 
         BindingSource bs = new BindingSource();
 
+        private readonly PhieuBanFactory _factory = new PhieuBanFactory();
 
         public PhieuBanController()
         {
@@ -120,35 +34,20 @@ namespace CuahangNongduoc.Controller
             bs.MoveNext();
             factory.Save();
         }
-        // ==================== [R14] REFACTORING ====================
-        // Lỗi (Code smell) : Tight Coupling với Presentation Layer – Controller gọi trực tiếp MessageBox.Show, vi phạm phân tầng kiến trúc và cản trở Unit Test
-        // Kỹ thuật         : Extract Class (Separate Domain from Presentation)
-        // Trước            : public void Save() – gọi trực tiếp MessageBox.Show để cảnh báo giới hạn 50 phiếu dùng thử
-        // Sau              : Tách lớp SaveResult đại diện cho kết quả lưu; public SaveResult Save() trả về đối tượng SaveResult để tầng giao diện (Form) tự hiển thị thông báo
-        // Tác giả          : BE2
-        // Hỗ trợ           : BE1
-        // Kiểm tra         : QA1
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        public SaveResult Save()
+        public void Save()
         {
             int n = PhieuBanFactory.LaySoPhieu();
             if (n >= 50)
             {
-                return SaveResult.TrialLimitExceeded();
+                MessageBox.Show("Đây là bản dùng thử! Chỉ lưu được 50 phiếu bán!", "Phieu Ban", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
             else
             {
-                bool success = factory.Save();
-                if (success)
-                {
-                    return SaveResult.Success(50 - n);
-                }
-                else
-                {
-                    return SaveResult.Failed("Không thể lưu dữ liệu phiếu bán vào cơ sở dữ liệu!");
-                }
+                MessageBox.Show("Đây là bản dùng thử! Chỉ lưu được thêm " + Convert.ToString(50-n) + " phiếu bán!", "Phieu Ban", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                factory.Save();
             }
+            
         }
         public void HienthiPhieuBanLe(BindingNavigator bn, DataGridView dg)
         {
@@ -168,7 +67,19 @@ namespace CuahangNongduoc.Controller
 
         public void HienthiPhieuBan(BindingNavigator bn,ComboBox cmb, TextBox txt, DateTimePicker dt, NumericUpDown numTongTien, NumericUpDown numDatra, NumericUpDown numConNo)
         {
+            HienthiPhieuBan(bn, cmb, txt, dt, numTongTien, numDatra, numConNo, false);
+        }
 
+        public void HienthiPhieuBanLe(BindingNavigator bn, ComboBox cmb, TextBox txt, DateTimePicker dt,
+            NumericUpDown numTongTien, NumericUpDown numDatra, NumericUpDown numConNo)
+        {
+            HienthiPhieuBan(bn, cmb, txt, dt, numTongTien, numDatra, numConNo, true);
+        }
+
+        private void HienthiPhieuBan(BindingNavigator bn, ComboBox cmb, TextBox txt, DateTimePicker dt,
+            NumericUpDown numTongTien, NumericUpDown numDatra, NumericUpDown numConNo, bool banLe)
+        {
+            bs.DataSource = banLe ? factory.DanhsachPhieuBanLe() : factory.DanhsachPhieuBanSi();
             bn.BindingSource = bs;
 
             txt.DataBindings.Clear();
@@ -192,20 +103,68 @@ namespace CuahangNongduoc.Controller
 
         }
 
-        // ==================== [D05] REFACTORING ====================
-        // Lỗi (Code smell) : Code đọc dữ liệu từ DataRow sang đối tượng PhieuBan viết lẫn ngay trong Controller
-        // Kỹ thuật         : Mapper Pattern (PoEAA)
-        // Trước            : Hàm LayPhieuBan() tự đọc từng cột (NGAY_BAN, TONG_TIEN, DA_TRA, CON_NO...) rồi mới gán vào PhieuBan
-        // Sau              : Chuyển giao toàn bộ việc chuyển đổi cho EntityMapper.ToPhieuBan(tbl.Rows[0])
-        // Tác giả          : BE2
-        // Hỗ trợ           : -
-        // Kiểm tra         : QA1
-        // Ngày chỉnh sửa   : 12/11/2026
-        // ==============================================================
         public PhieuBan LayPhieuBan(String id)
         {
             DataTable tbl = factory.LayPhieuBan(id);
-            return tbl.Rows.Count > 0 ? EntityMapper.ToPhieuBan(tbl.Rows[0]) : null;
+            PhieuBan ph = null;
+            if (tbl.Rows.Count > 0)
+            {
+
+                ph = new PhieuBan();
+                ph.Id = Convert.ToString(tbl.Rows[0]["ID"]);
+                
+                ph.NgayBan = Convert.ToDateTime(tbl.Rows[0]["NGAY_BAN"]);
+                ph.TongTien = LayLong(tbl.Rows[0], "TONG_TIEN", 0);
+                ph.DaTra = LayLong(tbl.Rows[0], "DA_TRA", 0);
+                ph.ConNo = LayLong(tbl.Rows[0], "CON_NO", ph.TongTien - ph.DaTra);
+                BanLeRepository repository = new BanLeRepository();
+                ThongTinChiPhiPhieuBan chiPhi = repository.LayChiPhiPhieu(ph.Id);
+                ph.TienHang = chiPhi.TienHang;
+                ph.TongDichVu = chiPhi.TongDichVu;
+                ph.GiaoHang = chiPhi.GiaoHang;
+                ph.KhoangCachKm = chiPhi.KhoangCachKm;
+                ph.PhiVanChuyen = chiPhi.PhiVanChuyen;
+                ph.LoaiGiamGia = chiPhi.LoaiGiamGia;
+                ph.TyLeGiamGia = chiPhi.TyLeGiamGia;
+                ph.TienGiamGia = chiPhi.TienGiamGia;
+                ph.DichVu = chiPhi.DichVu;
+                KhachHangController ctrlKH = new KhachHangController();
+                ph.KhachHang = ctrlKH.LayKhachHang(Convert.ToString(tbl.Rows[0]["ID_KHACH_HANG"]));
+                if (ph.KhachHang == null)
+                {
+                    ph.KhachHang = new KhachHang();
+                    ph.KhachHang.HoTen = "Khách bán lẻ";
+                    ph.KhachHang.DiaChi = "";
+                    ph.KhachHang.DienThoai = "";
+                }
+                ChiTietPhieuBanController ctrl = new ChiTietPhieuBanController();
+                ph.ChiTiet = ctrl.ChiTietPhieuBan(ph.Id);
+            }
+            return ph;
+        }
+
+        private long LayLong(DataRow row, string column, long defaultValue)
+        {
+            return row.Table.Columns.Contains(column) && row[column] != DBNull.Value
+                ? Convert.ToInt64(row[column]) : defaultValue;
+        }
+
+        private decimal LayDecimal(DataRow row, string column, decimal defaultValue)
+        {
+            return row.Table.Columns.Contains(column) && row[column] != DBNull.Value
+                ? Convert.ToDecimal(row[column]) : defaultValue;
+        }
+
+        private bool LayBool(DataRow row, string column, bool defaultValue)
+        {
+            return row.Table.Columns.Contains(column) && row[column] != DBNull.Value
+                ? Convert.ToBoolean(row[column]) : defaultValue;
+        }
+
+        private string LayString(DataRow row, string column, string defaultValue)
+        {
+            return row.Table.Columns.Contains(column) && row[column] != DBNull.Value
+                ? Convert.ToString(row[column]) : defaultValue;
         }
 
         public void TimPhieuBan(String maKH, DateTime dt)
@@ -213,6 +172,54 @@ namespace CuahangNongduoc.Controller
             factory.TimPhieuBan(maKH, dt);
 
         }
+        public ThongKeChiPhiTonKho LayThongKeChiPhiTonKho(DateTime tuNgay, DateTime denNgay)
+        {
+            DateTime tu = tuNgay.Date;
+            DateTime den = denNgay.Date.AddDays(1).AddSeconds(-1);
 
+            // Lấy dữ liệu tổng hợp chi phí bán hàng
+            DataTable dtTongHop = _factory.ThongKeTongHopChiPhiBanHang(tu, den);
+
+            // Lấy dữ liệu chi tiết dịch vụ phụ
+            DataTable dtDichVu = _factory.ThongKeChiTietDichVuPhu(tu, den);
+
+            // Lấy danh sách tồn kho hiện tại
+            IList<SoLuongTon> danhSachTonKho = SanPhamController.LaySoLuongTon();
+
+            // Khởi tạo đối tượng kết quả
+            var thongKe = new ThongKeChiPhiTonKho
+            {
+                TuNgay = tuNgay,
+                DenNgay = denNgay,
+                ChiTietDichVu = new List<DichVuThongKeItem>(),
+                DanhSachTonKho = danhSachTonKho,
+            };
+
+            // Nạp dữ liệu tổng hợp (nếu có)
+            if (dtTongHop.Rows.Count > 0)
+            {
+                DataRow row = dtTongHop.Rows[0];
+                thongKe.SoHoaDon = row["SO_HOA_DON"] != DBNull.Value ? Convert.ToInt32(row["SO_HOA_DON"]) : 0;
+                thongKe.TongTienHang = row["TONG_TIEN_HANG"] != DBNull.Value ? Convert.ToInt64(row["TONG_TIEN_HANG"]) : 0;
+                thongKe.TongPhiVanChuyen = row["TONG_PHI_VAN_CHUYEN"] != DBNull.Value ? Convert.ToInt64(row["TONG_PHI_VAN_CHUYEN"]) : 0;
+                thongKe.TongPhiDichVu = row["TONG_DICH_VU"] != DBNull.Value ? Convert.ToInt64(row["TONG_DICH_VU"]) : 0;
+                thongKe.TongTienGiamGia = row["TONG_TIEN_GIAM"] != DBNull.Value ? Convert.ToInt64(row["TONG_TIEN_GIAM"]) : 0;
+                thongKe.TongDoanhThu = row["TONG_DOANH_THU"] != DBNull.Value ? Convert.ToInt64(row["TONG_DOANH_THU"]) : 0;
+            }
+
+            // Nạp chi tiết dịch vụ phụ
+            foreach (DataRow row in dtDichVu.Rows)
+            {
+                var item = new DichVuThongKeItem
+                {
+                    TenDichVu = row["TEN_DICH_VU"].ToString(),
+                    SoLan = row["SO_LAN"] != DBNull.Value ? Convert.ToInt32(row["SO_LAN"]) : 0,
+                    TongTien = row["TONG_TIEN"] != DBNull.Value ? Convert.ToInt64(row["TONG_TIEN"]) : 0
+                };
+                thongKe.ChiTietDichVu.Add(item);
+            }
+
+            return thongKe;
+        }
     }
 }

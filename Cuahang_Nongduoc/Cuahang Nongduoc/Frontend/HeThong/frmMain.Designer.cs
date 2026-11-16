@@ -1,4 +1,5 @@
-﻿namespace CuahangNongduoc
+﻿
+namespace CuahangNongduoc
 {
     partial class frmMain
     {
@@ -31,6 +32,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.mnuHeThong = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTaiKhoan = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDangNhap = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDoiMK = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuDangXua = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuThoat = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHienThi = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuThanhCongCu = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +60,8 @@
             this.mnuBaocao = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuBaocaoSoluongton = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuSoLuongBan = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuBaocaoDoanhThu = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuBaoCaoGiamGia = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuSanphamHethan = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTuychinh = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,27 +69,29 @@
             this.mnuTrogiup = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTrogiupHuongdan = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTrogiupLienhe = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolSanPham = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolNguoiDung = new System.Windows.Forms.ToolStripButton();
+            this.toolNhaCungCap = new System.Windows.Forms.ToolStripButton();
             this.toolKhachHang = new System.Windows.Forms.ToolStripButton();
             this.toolDaiLy = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolNhapHang = new System.Windows.Forms.ToolStripButton();
             this.toolBanSi = new System.Windows.Forms.ToolStripButton();
             this.toolBanLe = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolTonKho = new System.Windows.Forms.ToolStripButton();
-            this.toolStrip = new System.Windows.Forms.ToolStrip();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolNhaCungCap = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.toolPhieuChi = new System.Windows.Forms.ToolStripButton();
             this.toolThanhtoan = new System.Windows.Forms.ToolStripButton();
+            this.toolTonKho = new System.Windows.Forms.ToolStripButton();
             this.taskPane = new XPExplorerBar.TaskPane();
             this.expando1 = new XPExplorerBar.Expando();
             this.itemDaiLy = new XPExplorerBar.TaskItem();
             this.itemKhachHang = new XPExplorerBar.TaskItem();
             this.itemSanPham = new XPExplorerBar.TaskItem();
             this.itemNhaCungCap = new XPExplorerBar.TaskItem();
+            this.itemNguoiDung = new XPExplorerBar.TaskItem();
             this.expando2 = new XPExplorerBar.Expando();
             this.itemNhapHang = new XPExplorerBar.TaskItem();
             this.itemBanSi = new XPExplorerBar.TaskItem();
@@ -93,6 +102,12 @@
             this.itemTonghopDoanhthu = new XPExplorerBar.TaskItem();
             this.itemTonKho = new XPExplorerBar.TaskItem();
             this.taskItem1 = new XPExplorerBar.TaskItem();
+            this.expando4 = new XPExplorerBar.Expando();
+            this.itemDoiMatKhau = new XPExplorerBar.TaskItem();
+            this.itemDangXuat = new XPExplorerBar.TaskItem();
+            this.itemHuongDan = new XPExplorerBar.TaskItem();
+            this.toolStripSeparatorHuongDan = new System.Windows.Forms.ToolStripSeparator();
+            this.toolHuongDan = new System.Windows.Forms.ToolStripButton();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskPane)).BeginInit();
@@ -103,6 +118,8 @@
             this.expando2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.expando3)).BeginInit();
             this.expando3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.expando4)).BeginInit();
+            this.expando4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -118,6 +135,7 @@
             this.mnuTrogiup});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
             this.menuStrip.Size = new System.Drawing.Size(1061, 30);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
@@ -125,16 +143,48 @@
             // mnuHeThong
             // 
             this.mnuHeThong.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuTaiKhoan,
+            this.mnuDangNhap,
+            this.mnuDoiMK,
+            this.mnuDangXua,
             this.mnuThoat});
             this.mnuHeThong.Name = "mnuHeThong";
             this.mnuHeThong.Size = new System.Drawing.Size(85, 26);
             this.mnuHeThong.Text = "Hệ thống";
             // 
+            // mnuTaiKhoan
+            // 
+            this.mnuTaiKhoan.Name = "mnuTaiKhoan";
+            this.mnuTaiKhoan.Size = new System.Drawing.Size(207, 26);
+            this.mnuTaiKhoan.Text = "Quản lý tài khoản";
+            this.mnuTaiKhoan.Click += new System.EventHandler(this.mnuTaiKhoan_Click);
+            // 
+            // mnuDangNhap
+            // 
+            this.mnuDangNhap.Name = "mnuDangNhap";
+            this.mnuDangNhap.Size = new System.Drawing.Size(207, 26);
+            this.mnuDangNhap.Text = "Đăng nhập";
+            this.mnuDangNhap.Click += new System.EventHandler(this.mnuDangNhap_Click);
+            // 
+            // mnuDoiMK
+            // 
+            this.mnuDoiMK.Name = "mnuDoiMK";
+            this.mnuDoiMK.Size = new System.Drawing.Size(207, 26);
+            this.mnuDoiMK.Text = "Đổi mật khẩu";
+            this.mnuDoiMK.Click += new System.EventHandler(this.mnuDoiMK_Click);
+            // 
+            // mnuDangXua
+            // 
+            this.mnuDangXua.Name = "mnuDangXua";
+            this.mnuDangXua.Size = new System.Drawing.Size(207, 26);
+            this.mnuDangXua.Text = "Đăng Xuất";
+            this.mnuDangXua.Click += new System.EventHandler(this.mnuDangXua_Click);
+            // 
             // mnuThoat
             // 
             this.mnuThoat.Image = global::CuahangNongduoc.Properties.Resources.Thoat;
             this.mnuThoat.Name = "mnuThoat";
-            this.mnuThoat.Size = new System.Drawing.Size(130, 26);
+            this.mnuThoat.Size = new System.Drawing.Size(207, 26);
             this.mnuThoat.Text = "Thoát";
             this.mnuThoat.Click += new System.EventHandler(this.mnuThoat_Click);
             // 
@@ -158,6 +208,8 @@
             // 
             // mnuThanhChucNang
             // 
+            this.mnuThanhChucNang.Checked = true;
+            this.mnuThanhChucNang.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuThanhChucNang.Name = "mnuThanhChucNang";
             this.mnuThanhChucNang.Size = new System.Drawing.Size(204, 26);
             this.mnuThanhChucNang.Text = "Thanh chức năng";
@@ -265,7 +317,7 @@
             this.mnuBanHangKH.Image = global::CuahangNongduoc.Properties.Resources.Banle;
             this.mnuBanHangKH.Name = "mnuBanHangKH";
             this.mnuBanHangKH.Size = new System.Drawing.Size(242, 26);
-            this.mnuBanHangKH.Text = "Bán lẽ cho Khách hàng";
+            this.mnuBanHangKH.Text = "Bán lẻ cho Khách hàng";
             this.mnuBanHangKH.Click += new System.EventHandler(this.mnuBanHangKH_Click);
             // 
             // mnuBanHangDL
@@ -310,6 +362,8 @@
             this.mnuBaocao.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuBaocaoSoluongton,
             this.mnuSoLuongBan,
+            this.mnuBaocaoDoanhThu,
+            this.mnuBaoCaoGiamGia,
             this.toolStripSeparator5,
             this.mnuSanphamHethan});
             this.mnuBaocao.Name = "mnuBaocao";
@@ -320,7 +374,7 @@
             // 
             this.mnuBaocaoSoluongton.Image = global::CuahangNongduoc.Properties.Resources.TonKho;
             this.mnuBaocaoSoluongton.Name = "mnuBaocaoSoluongton";
-            this.mnuBaocaoSoluongton.Size = new System.Drawing.Size(211, 26);
+            this.mnuBaocaoSoluongton.Size = new System.Drawing.Size(274, 26);
             this.mnuBaocaoSoluongton.Text = "Số lượng tồn";
             this.mnuBaocaoSoluongton.Click += new System.EventHandler(this.mnuBaocaoSoluongton_Click);
             // 
@@ -328,20 +382,36 @@
             // 
             this.mnuSoLuongBan.Image = global::CuahangNongduoc.Properties.Resources.Soluongban;
             this.mnuSoLuongBan.Name = "mnuSoLuongBan";
-            this.mnuSoLuongBan.Size = new System.Drawing.Size(211, 26);
+            this.mnuSoLuongBan.Size = new System.Drawing.Size(274, 26);
             this.mnuSoLuongBan.Text = "Số lượng bán";
             this.mnuSoLuongBan.Click += new System.EventHandler(this.mnuSoLuongBan_Click);
+            // 
+            // mnuBaocaoDoanhThu
+            // 
+            this.mnuBaocaoDoanhThu.Image = global::CuahangNongduoc.Properties.Resources.DoanhThu;
+            this.mnuBaocaoDoanhThu.Name = "mnuBaocaoDoanhThu";
+            this.mnuBaocaoDoanhThu.Size = new System.Drawing.Size(274, 26);
+            this.mnuBaocaoDoanhThu.Text = "Thống kê chi phí và tồn kho";
+            this.mnuBaocaoDoanhThu.Click += new System.EventHandler(this.mnuBaocaoDoanhThu_Click);
+            // 
+            // mnuBaoCaoGiamGia
+            // 
+            this.mnuBaoCaoGiamGia.Image = global::CuahangNongduoc.Properties.Resources.DoanhThu;
+            this.mnuBaoCaoGiamGia.Name = "mnuBaoCaoGiamGia";
+            this.mnuBaoCaoGiamGia.Size = new System.Drawing.Size(274, 26);
+            this.mnuBaoCaoGiamGia.Text = "Báo cáo giảm giá";
+            this.mnuBaoCaoGiamGia.Click += new System.EventHandler(this.mnuBaoCaoGiamGia_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(208, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(271, 6);
             // 
             // mnuSanphamHethan
             // 
             this.mnuSanphamHethan.Image = global::CuahangNongduoc.Properties.Resources.SanPhamHethan;
             this.mnuSanphamHethan.Name = "mnuSanphamHethan";
-            this.mnuSanphamHethan.Size = new System.Drawing.Size(211, 26);
+            this.mnuSanphamHethan.Size = new System.Drawing.Size(274, 26);
             this.mnuSanphamHethan.Text = "Sản phẩm hết hạn";
             this.mnuSanphamHethan.Click += new System.EventHandler(this.mnuSanphamHethan_Click);
             // 
@@ -387,6 +457,43 @@
             this.mnuTrogiupLienhe.Text = "Thông tin liên hệ";
             this.mnuTrogiupLienhe.Click += new System.EventHandler(this.mnuTrogiupLienhe_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 51);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 51);
+            // 
+            // toolStrip
+            // 
+            this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolSanPham,
+            this.toolStripSeparator6,
+            this.toolNguoiDung,
+            this.toolNhaCungCap,
+            this.toolKhachHang,
+            this.toolDaiLy,
+            this.toolStripSeparator3,
+            this.toolNhapHang,
+            this.toolBanSi,
+            this.toolBanLe,
+            this.toolStripSeparator7,
+            this.toolPhieuChi,
+            this.toolThanhtoan,
+            this.toolStripSeparator4,
+            this.toolTonKho,
+            this.toolStripSeparatorHuongDan,
+            this.toolHuongDan});
+            this.toolStrip.Location = new System.Drawing.Point(0, 30);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(1061, 51);
+            this.toolStrip.TabIndex = 2;
+            this.toolStrip.Text = "toolStrip1";
+            // 
             // toolSanPham
             // 
             this.toolSanPham.Image = global::CuahangNongduoc.Properties.Resources.SanPham;
@@ -397,6 +504,32 @@
             this.toolSanPham.Text = "Sản phẩm";
             this.toolSanPham.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolSanPham.Click += new System.EventHandler(this.mnuSanPham_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 51);
+            // 
+            // toolNguoiDung
+            // 
+            this.toolNguoiDung.Image = global::CuahangNongduoc.Properties.Resources.user;
+            this.toolNguoiDung.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolNguoiDung.Name = "toolNguoiDung";
+            this.toolNguoiDung.Size = new System.Drawing.Size(93, 48);
+            this.toolNguoiDung.Text = "Người dùng";
+            this.toolNguoiDung.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolNguoiDung.Click += new System.EventHandler(this.toolNguoiDung_Click);
+            // 
+            // toolNhaCungCap
+            // 
+            this.toolNhaCungCap.Image = global::CuahangNongduoc.Properties.Resources.NhaCungCap;
+            this.toolNhaCungCap.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolNhaCungCap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolNhaCungCap.Name = "toolNhaCungCap";
+            this.toolNhaCungCap.Size = new System.Drawing.Size(104, 48);
+            this.toolNhaCungCap.Text = "Nhà cung cấp";
+            this.toolNhaCungCap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolNhaCungCap.Click += new System.EventHandler(this.mnuNhaCungCap_Click);
             // 
             // toolKhachHang
             // 
@@ -420,11 +553,6 @@
             this.toolDaiLy.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolDaiLy.Click += new System.EventHandler(this.mnuDaiLy_Click);
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 51);
-            // 
             // toolNhapHang
             // 
             this.toolNhapHang.Image = global::CuahangNongduoc.Properties.Resources.Phieunhap;
@@ -443,7 +571,7 @@
             this.toolBanSi.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolBanSi.Name = "toolBanSi";
             this.toolBanSi.Size = new System.Drawing.Size(52, 48);
-            this.toolBanSi.Text = "Bán sĩ";
+            this.toolBanSi.Text = "Bán sỉ";
             this.toolBanSi.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolBanSi.Click += new System.EventHandler(this.mnuBanHangDL_Click);
             // 
@@ -454,65 +582,9 @@
             this.toolBanLe.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolBanLe.Name = "toolBanLe";
             this.toolBanLe.Size = new System.Drawing.Size(54, 48);
-            this.toolBanLe.Text = "Bán lẽ";
+            this.toolBanLe.Text = "Bán lẻ";
             this.toolBanLe.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolBanLe.Click += new System.EventHandler(this.mnuBanHangKH_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 51);
-            // 
-            // toolTonKho
-            // 
-            this.toolTonKho.Image = global::CuahangNongduoc.Properties.Resources.TonKho;
-            this.toolTonKho.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolTonKho.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolTonKho.Name = "toolTonKho";
-            this.toolTonKho.Size = new System.Drawing.Size(66, 48);
-            this.toolTonKho.Text = "Tồn kho";
-            this.toolTonKho.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolTonKho.Click += new System.EventHandler(this.mnuBaocaoSoluongton_Click);
-            // 
-            // toolStrip
-            // 
-            this.toolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolSanPham,
-            this.toolStripSeparator6,
-            this.toolNhaCungCap,
-            this.toolKhachHang,
-            this.toolDaiLy,
-            this.toolStripSeparator3,
-            this.toolNhapHang,
-            this.toolBanSi,
-            this.toolBanLe,
-            this.toolStripSeparator7,
-            this.toolPhieuChi,
-            this.toolThanhtoan,
-            this.toolStripSeparator4,
-            this.toolTonKho});
-            this.toolStrip.Location = new System.Drawing.Point(0, 30);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1061, 51);
-            this.toolStrip.TabIndex = 2;
-            this.toolStrip.Text = "toolStrip1";
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 51);
-            // 
-            // toolNhaCungCap
-            // 
-            this.toolNhaCungCap.Image = global::CuahangNongduoc.Properties.Resources.NhaCungCap;
-            this.toolNhaCungCap.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.toolNhaCungCap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolNhaCungCap.Name = "toolNhaCungCap";
-            this.toolNhaCungCap.Size = new System.Drawing.Size(104, 48);
-            this.toolNhaCungCap.Text = "Nhà cung cấp";
-            this.toolNhaCungCap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.toolNhaCungCap.Click += new System.EventHandler(this.mnuNhaCungCap_Click);
             // 
             // toolStripSeparator7
             // 
@@ -541,42 +613,72 @@
             this.toolThanhtoan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolThanhtoan.Click += new System.EventHandler(this.mnuThanhtoan_Click);
             // 
+            // toolTonKho
+            // 
+            this.toolTonKho.Image = global::CuahangNongduoc.Properties.Resources.TonKho;
+            this.toolTonKho.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolTonKho.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolTonKho.Name = "toolTonKho";
+            this.toolTonKho.Size = new System.Drawing.Size(66, 48);
+            this.toolTonKho.Text = "Tồn kho";
+            this.toolTonKho.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolTonKho.Click += new System.EventHandler(this.mnuBaocaoSoluongton_Click);
+            // 
+            // toolStripSeparatorHuongDan
+            // 
+            this.toolStripSeparatorHuongDan.Name = "toolStripSeparatorHuongDan";
+            this.toolStripSeparatorHuongDan.Size = new System.Drawing.Size(6, 48);
+            // 
+            // toolHuongDan
+            // 
+            this.toolHuongDan.Image = global::CuahangNongduoc.Properties.Resources.help;
+            this.toolHuongDan.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.toolHuongDan.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolHuongDan.Name = "toolHuongDan";
+            this.toolHuongDan.Size = new System.Drawing.Size(76, 48);
+            this.toolHuongDan.Text = "Hướng dẫn";
+            this.toolHuongDan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.toolHuongDan.Click += new System.EventHandler(this.mnuTrogiupHuongdan_Click);
+            // 
             // taskPane
             // 
-            this.taskPane.AutoScrollMargin = new System.Drawing.Size(12, 12);
-            this.taskPane.CustomSettings.GradientEndColor = System.Drawing.Color.MediumSeaGreen;
-            this.taskPane.CustomSettings.GradientStartColor = System.Drawing.Color.SteelBlue;
+            this.taskPane.AutoScroll = true;
+            this.taskPane.AutoScrollMargin = new System.Drawing.Size(12, 24);
+            this.taskPane.CustomSettings.GradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(234)))), ((int)(((byte)(246)))));
+            this.taskPane.CustomSettings.GradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(248)))));
             this.taskPane.Dock = System.Windows.Forms.DockStyle.Left;
             this.taskPane.Expandos.AddRange(new XPExplorerBar.Expando[] {
             this.expando1,
             this.expando2,
-            this.expando3});
+            this.expando3,
+            this.expando4});
             this.taskPane.Location = new System.Drawing.Point(0, 81);
             this.taskPane.Margin = new System.Windows.Forms.Padding(4);
             this.taskPane.Name = "taskPane";
-            this.taskPane.Size = new System.Drawing.Size(257, 628);
+            this.taskPane.Size = new System.Drawing.Size(257, 952);
             this.taskPane.TabIndex = 11;
             this.taskPane.Text = "taskPane1";
-            this.taskPane.Visible = false;
+            this.taskPane.Visible = true;
             // 
             // expando1
             // 
             this.expando1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando1.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.SteelBlue;
-            this.expando1.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.MediumSeaGreen;
+            this.expando1.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando1.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando1.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando1.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.PaleGreen;
+            this.expando1.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando1.CustomHeaderSettings.TitleGradient = true;
             this.expando1.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando1.CustomSettings.NormalBorderColor = System.Drawing.Color.Teal;
+            this.expando1.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando1.ExpandedHeight = 170;
             this.expando1.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando1.Items.AddRange(new System.Windows.Forms.Control[] {
             this.itemDaiLy,
             this.itemKhachHang,
             this.itemSanPham,
-            this.itemNhaCungCap});
+            this.itemNhaCungCap,
+            this.itemNguoiDung});
             this.expando1.Location = new System.Drawing.Point(12, 12);
             this.expando1.Margin = new System.Windows.Forms.Padding(4);
             this.expando1.Name = "expando1";
@@ -589,13 +691,13 @@
             this.itemDaiLy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemDaiLy.BackColor = System.Drawing.Color.Transparent;
-            this.itemDaiLy.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemDaiLy.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemDaiLy.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemDaiLy.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemDaiLy.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemDaiLy.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemDaiLy.Image = ((System.Drawing.Image)(resources.GetObject("itemDaiLy.Image")));
             this.itemDaiLy.Location = new System.Drawing.Point(5, 98);
             this.itemDaiLy.Name = "itemDaiLy";
-            this.itemDaiLy.Size = new System.Drawing.Size(123, 20);
+            this.itemDaiLy.Size = new System.Drawing.Size(101, 20);
             this.itemDaiLy.TabIndex = 12;
             this.itemDaiLy.Text = "Đại lý";
             this.itemDaiLy.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -607,13 +709,13 @@
             this.itemKhachHang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemKhachHang.BackColor = System.Drawing.Color.Transparent;
-            this.itemKhachHang.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemKhachHang.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemKhachHang.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemKhachHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemKhachHang.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemKhachHang.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemKhachHang.Image = ((System.Drawing.Image)(resources.GetObject("itemKhachHang.Image")));
             this.itemKhachHang.Location = new System.Drawing.Point(5, 65);
             this.itemKhachHang.Name = "itemKhachHang";
-            this.itemKhachHang.Size = new System.Drawing.Size(123, 20);
+            this.itemKhachHang.Size = new System.Drawing.Size(101, 20);
             this.itemKhachHang.TabIndex = 9;
             this.itemKhachHang.Text = "Khách hàng";
             this.itemKhachHang.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -625,14 +727,14 @@
             this.itemSanPham.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemSanPham.BackColor = System.Drawing.Color.Transparent;
-            this.itemSanPham.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemSanPham.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemSanPham.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemSanPham.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemSanPham.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemSanPham.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemSanPham.Image = ((System.Drawing.Image)(resources.GetObject("itemSanPham.Image")));
             this.itemSanPham.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.itemSanPham.Location = new System.Drawing.Point(5, 32);
             this.itemSanPham.Name = "itemSanPham";
-            this.itemSanPham.Size = new System.Drawing.Size(123, 20);
+            this.itemSanPham.Size = new System.Drawing.Size(101, 20);
             this.itemSanPham.TabIndex = 8;
             this.itemSanPham.Text = "Sản phẩm";
             this.itemSanPham.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -644,30 +746,48 @@
             this.itemNhaCungCap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemNhaCungCap.BackColor = System.Drawing.Color.Transparent;
-            this.itemNhaCungCap.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemNhaCungCap.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemNhaCungCap.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemNhaCungCap.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemNhaCungCap.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemNhaCungCap.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemNhaCungCap.Image = ((System.Drawing.Image)(resources.GetObject("itemNhaCungCap.Image")));
             this.itemNhaCungCap.Location = new System.Drawing.Point(5, 132);
             this.itemNhaCungCap.Name = "itemNhaCungCap";
-            this.itemNhaCungCap.Size = new System.Drawing.Size(123, 20);
+            this.itemNhaCungCap.Size = new System.Drawing.Size(101, 20);
             this.itemNhaCungCap.TabIndex = 13;
             this.itemNhaCungCap.Text = "Nhà cung cấp";
             this.itemNhaCungCap.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.itemNhaCungCap.UseVisualStyleBackColor = false;
             this.itemNhaCungCap.Click += new System.EventHandler(this.mnuNhaCungCap_Click);
             // 
+            // itemNguoiDung
+            // 
+            this.itemNguoiDung.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemNguoiDung.BackColor = System.Drawing.Color.Transparent;
+            this.itemNguoiDung.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemNguoiDung.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemNguoiDung.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.itemNguoiDung.Image = ((System.Drawing.Image)(resources.GetObject("itemNguoiDung.Image")));
+            this.itemNguoiDung.Location = new System.Drawing.Point(5, 159);
+            this.itemNguoiDung.Name = "itemNguoiDung";
+            this.itemNguoiDung.Size = new System.Drawing.Size(101, 20);
+            this.itemNguoiDung.TabIndex = 14;
+            this.itemNguoiDung.Text = "Người dùng";
+            this.itemNguoiDung.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.itemNguoiDung.UseVisualStyleBackColor = false;
+            this.itemNguoiDung.Click += new System.EventHandler(this.itemNguoiDung_Click);
+            // 
             // expando2
             // 
             this.expando2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando2.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.SteelBlue;
-            this.expando2.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.MediumSeaGreen;
+            this.expando2.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando2.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando2.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando2.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.PaleGreen;
+            this.expando2.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando2.CustomHeaderSettings.TitleGradient = true;
             this.expando2.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando2.CustomSettings.NormalBorderColor = System.Drawing.Color.Teal;
+            this.expando2.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando2.ExpandedHeight = 190;
             this.expando2.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando2.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -688,13 +808,13 @@
             this.itemNhapHang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemNhapHang.BackColor = System.Drawing.Color.Transparent;
-            this.itemNhapHang.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemNhapHang.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemNhapHang.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemNhapHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemNhapHang.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemNhapHang.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemNhapHang.Image = ((System.Drawing.Image)(resources.GetObject("itemNhapHang.Image")));
             this.itemNhapHang.Location = new System.Drawing.Point(9, 32);
             this.itemNhapHang.Name = "itemNhapHang";
-            this.itemNhapHang.Size = new System.Drawing.Size(138, 20);
+            this.itemNhapHang.Size = new System.Drawing.Size(117, 20);
             this.itemNhapHang.TabIndex = 5;
             this.itemNhapHang.Text = "Nhập hàng";
             this.itemNhapHang.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -706,13 +826,13 @@
             this.itemBanSi.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemBanSi.BackColor = System.Drawing.Color.Transparent;
-            this.itemBanSi.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemBanSi.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemBanSi.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemBanSi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemBanSi.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemBanSi.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemBanSi.Image = ((System.Drawing.Image)(resources.GetObject("itemBanSi.Image")));
             this.itemBanSi.Location = new System.Drawing.Point(8, 65);
             this.itemBanSi.Name = "itemBanSi";
-            this.itemBanSi.Size = new System.Drawing.Size(138, 20);
+            this.itemBanSi.Size = new System.Drawing.Size(117, 20);
             this.itemBanSi.TabIndex = 6;
             this.itemBanSi.Text = "Bán sỉ";
             this.itemBanSi.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -724,15 +844,15 @@
             this.itemBanLe.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemBanLe.BackColor = System.Drawing.Color.Transparent;
-            this.itemBanLe.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemBanLe.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemBanLe.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemBanLe.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemBanLe.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemBanLe.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemBanLe.Image = ((System.Drawing.Image)(resources.GetObject("itemBanLe.Image")));
             this.itemBanLe.Location = new System.Drawing.Point(8, 100);
             this.itemBanLe.Name = "itemBanLe";
-            this.itemBanLe.Size = new System.Drawing.Size(138, 20);
+            this.itemBanLe.Size = new System.Drawing.Size(117, 20);
             this.itemBanLe.TabIndex = 7;
-            this.itemBanLe.Text = "Bán lẽ";
+            this.itemBanLe.Text = "Bán lẻ";
             this.itemBanLe.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.itemBanLe.UseVisualStyleBackColor = false;
             this.itemBanLe.Click += new System.EventHandler(this.mnuBanHangKH_Click);
@@ -742,13 +862,13 @@
             this.itemThanhToan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemThanhToan.BackColor = System.Drawing.Color.Transparent;
-            this.itemThanhToan.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemThanhToan.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemThanhToan.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemThanhToan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemThanhToan.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemThanhToan.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemThanhToan.Image = ((System.Drawing.Image)(resources.GetObject("itemThanhToan.Image")));
             this.itemThanhToan.Location = new System.Drawing.Point(8, 133);
             this.itemThanhToan.Name = "itemThanhToan";
-            this.itemThanhToan.Size = new System.Drawing.Size(138, 20);
+            this.itemThanhToan.Size = new System.Drawing.Size(117, 20);
             this.itemThanhToan.TabIndex = 8;
             this.itemThanhToan.Text = "Phiếu thu";
             this.itemThanhToan.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -760,13 +880,13 @@
             this.itemPhieuChi.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemPhieuChi.BackColor = System.Drawing.Color.Transparent;
-            this.itemPhieuChi.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemPhieuChi.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemPhieuChi.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemPhieuChi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemPhieuChi.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemPhieuChi.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemPhieuChi.Image = ((System.Drawing.Image)(resources.GetObject("itemPhieuChi.Image")));
             this.itemPhieuChi.Location = new System.Drawing.Point(8, 166);
             this.itemPhieuChi.Name = "itemPhieuChi";
-            this.itemPhieuChi.Size = new System.Drawing.Size(138, 20);
+            this.itemPhieuChi.Size = new System.Drawing.Size(117, 20);
             this.itemPhieuChi.TabIndex = 9;
             this.itemPhieuChi.Text = "Phiếu chi";
             this.itemPhieuChi.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -777,13 +897,13 @@
             // 
             this.expando3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando3.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.SteelBlue;
-            this.expando3.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.MediumSeaGreen;
+            this.expando3.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando3.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando3.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando3.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.PaleGreen;
+            this.expando3.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando3.CustomHeaderSettings.TitleGradient = true;
             this.expando3.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando3.CustomSettings.NormalBorderColor = System.Drawing.Color.Teal;
+            this.expando3.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando3.ExpandedHeight = 170;
             this.expando3.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando3.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -802,13 +922,13 @@
             this.itemTonghopDoanhthu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemTonghopDoanhthu.BackColor = System.Drawing.Color.Transparent;
-            this.itemTonghopDoanhthu.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemTonghopDoanhthu.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemTonghopDoanhthu.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemTonghopDoanhthu.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemTonghopDoanhthu.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemTonghopDoanhthu.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemTonghopDoanhthu.Image = ((System.Drawing.Image)(resources.GetObject("itemTonghopDoanhthu.Image")));
             this.itemTonghopDoanhthu.Location = new System.Drawing.Point(9, 32);
             this.itemTonghopDoanhthu.Name = "itemTonghopDoanhthu";
-            this.itemTonghopDoanhthu.Size = new System.Drawing.Size(138, 20);
+            this.itemTonghopDoanhthu.Size = new System.Drawing.Size(117, 20);
             this.itemTonghopDoanhthu.TabIndex = 7;
             this.itemTonghopDoanhthu.Text = "Số lượng bán";
             this.itemTonghopDoanhthu.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -820,13 +940,13 @@
             this.itemTonKho.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemTonKho.BackColor = System.Drawing.Color.Transparent;
-            this.itemTonKho.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.itemTonKho.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.itemTonKho.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.itemTonKho.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemTonKho.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemTonKho.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemTonKho.Image = ((System.Drawing.Image)(resources.GetObject("itemTonKho.Image")));
             this.itemTonKho.Location = new System.Drawing.Point(9, 65);
             this.itemTonKho.Name = "itemTonKho";
-            this.itemTonKho.Size = new System.Drawing.Size(138, 20);
+            this.itemTonKho.Size = new System.Drawing.Size(117, 20);
             this.itemTonKho.TabIndex = 8;
             this.itemTonKho.Text = "Số lượng tồn";
             this.itemTonKho.TextAlign = System.Drawing.ContentAlignment.TopLeft;
@@ -837,24 +957,102 @@
             this.taskItem1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.taskItem1.BackColor = System.Drawing.Color.Transparent;
-            this.taskItem1.CustomSettings.HotLinkColor = System.Drawing.Color.PaleGreen;
-            this.taskItem1.CustomSettings.LinkColor = System.Drawing.Color.Maroon;
-            this.taskItem1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.taskItem1.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.taskItem1.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.taskItem1.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.taskItem1.Image = ((System.Drawing.Image)(resources.GetObject("taskItem1.Image")));
             this.taskItem1.Location = new System.Drawing.Point(8, 98);
             this.taskItem1.Name = "taskItem1";
-            this.taskItem1.Size = new System.Drawing.Size(138, 20);
+            this.taskItem1.Size = new System.Drawing.Size(117, 20);
             this.taskItem1.TabIndex = 9;
             this.taskItem1.Text = "Sản phẩm hết hạn";
             this.taskItem1.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.taskItem1.UseVisualStyleBackColor = false;
             this.taskItem1.Click += new System.EventHandler(this.mnuSanphamHethan_Click);
             // 
+            // expando4
+            // 
+            this.expando4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.expando4.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando4.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
+            this.expando4.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
+            this.expando4.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
+            this.expando4.CustomHeaderSettings.TitleGradient = true;
+            this.expando4.CustomSettings.NormalBackColor = System.Drawing.Color.White;
+            this.expando4.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
+            this.expando4.ExpandedHeight = 170;
+            this.expando4.Font = new System.Drawing.Font("Tahoma", 8.25F);
+            this.expando4.Items.AddRange(new System.Windows.Forms.Control[] {
+            this.itemDoiMatKhau,
+            this.itemDangXuat,
+            this.itemHuongDan});
+            this.expando4.Location = new System.Drawing.Point(12, 578);
+            this.expando4.Margin = new System.Windows.Forms.Padding(4);
+            this.expando4.Name = "expando4";
+            this.expando4.Size = new System.Drawing.Size(233, 170);
+            this.expando4.TabIndex = 10;
+            this.expando4.Text = "Hệ thống";
+            // 
+            // itemDoiMatKhau
+            // 
+            this.itemDoiMatKhau.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemDoiMatKhau.BackColor = System.Drawing.Color.Transparent;
+            this.itemDoiMatKhau.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemDoiMatKhau.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemDoiMatKhau.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.itemDoiMatKhau.Image = null;
+            this.itemDoiMatKhau.Location = new System.Drawing.Point(9, 32);
+            this.itemDoiMatKhau.Name = "itemDoiMatKhau";
+            this.itemDoiMatKhau.Size = new System.Drawing.Size(117, 20);
+            this.itemDoiMatKhau.TabIndex = 7;
+            this.itemDoiMatKhau.Text = "Đổi mật khẩu";
+            this.itemDoiMatKhau.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.itemDoiMatKhau.UseVisualStyleBackColor = false;
+            this.itemDoiMatKhau.Click += new System.EventHandler(this.itemDoiMatKhau_Click);
+            // 
+            // itemDangXuat
+            // 
+            this.itemDangXuat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemDangXuat.BackColor = System.Drawing.Color.Transparent;
+            this.itemDangXuat.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemDangXuat.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemDangXuat.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.itemDangXuat.Image = null;
+            this.itemDangXuat.Location = new System.Drawing.Point(9, 65);
+            this.itemDangXuat.Name = "itemDangXuat";
+            this.itemDangXuat.Size = new System.Drawing.Size(117, 20);
+            this.itemDangXuat.TabIndex = 8;
+            this.itemDangXuat.Text = "Đăng xuất";
+            this.itemDangXuat.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.itemDangXuat.UseVisualStyleBackColor = false;
+            this.itemDangXuat.Click += new System.EventHandler(this.itemDangXuat_Click);
+            // 
+            // itemHuongDan
+            // 
+            this.itemHuongDan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemHuongDan.BackColor = System.Drawing.Color.Transparent;
+            this.itemHuongDan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.itemHuongDan.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.itemHuongDan.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.itemHuongDan.Image = global::CuahangNongduoc.Properties.Resources.help;
+            this.itemHuongDan.Location = new System.Drawing.Point(9, 98);
+            this.itemHuongDan.Name = "itemHuongDan";
+            this.itemHuongDan.Size = new System.Drawing.Size(117, 20);
+            this.itemHuongDan.TabIndex = 9;
+            this.itemHuongDan.Text = "Hướng dẫn";
+            this.itemHuongDan.TextAlign = System.Drawing.ContentAlignment.TopLeft;
+            this.itemHuongDan.UseVisualStyleBackColor = false;
+            this.itemHuongDan.Click += new System.EventHandler(this.mnuTrogiupHuongdan_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1061, 709);
+            this.ClientSize = new System.Drawing.Size(1061, 1033);
             this.Controls.Add(this.taskPane);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
@@ -879,6 +1077,8 @@
             this.expando2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.expando3)).EndInit();
             this.expando3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.expando4)).EndInit();
+            this.expando4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -888,6 +1088,7 @@
 
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem mnuHeThong;
+        private System.Windows.Forms.ToolStripMenuItem mnuTaiKhoan;
         private System.Windows.Forms.ToolStripMenuItem mnuThoat;
         private System.Windows.Forms.ToolStripMenuItem mnuQuanLy;
         private System.Windows.Forms.ToolStripMenuItem mnuSanPham;
@@ -938,6 +1139,7 @@
         private System.Windows.Forms.ToolStripButton toolThanhtoan;
         private XPExplorerBar.TaskItem itemThanhToan;
         private System.Windows.Forms.ToolStripMenuItem mnuSoLuongBan;
+        private System.Windows.Forms.ToolStripMenuItem mnuBaocaoDoanhThu;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem mnuSanphamHethan;
         private System.Windows.Forms.ToolStripButton toolNhaCungCap;
@@ -950,5 +1152,17 @@
         private System.Windows.Forms.ToolStripButton toolPhieuChi;
         private XPExplorerBar.TaskItem itemPhieuChi;
         private XPExplorerBar.TaskItem taskItem1;
+        private System.Windows.Forms.ToolStripMenuItem mnuDangNhap;
+        private System.Windows.Forms.ToolStripMenuItem mnuDangXua;
+        private System.Windows.Forms.ToolStripMenuItem mnuDoiMK;
+        private XPExplorerBar.Expando expando4;
+        private XPExplorerBar.TaskItem itemDoiMatKhau;
+        private XPExplorerBar.TaskItem itemDangXuat;
+        private XPExplorerBar.TaskItem itemHuongDan;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorHuongDan;
+        private System.Windows.Forms.ToolStripButton toolHuongDan;
+        private XPExplorerBar.TaskItem itemNguoiDung;
+        private System.Windows.Forms.ToolStripButton toolNguoiDung;
+        private System.Windows.Forms.ToolStripMenuItem mnuBaoCaoGiamGia;
     }
 }

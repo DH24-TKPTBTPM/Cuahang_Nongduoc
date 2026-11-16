@@ -1,13 +1,13 @@
-﻿using System;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using CuahangNongduoc.Patterns.Strategy;// [FE-03] Dùng cho BanLeStrategy, BanSiStrategy
 using Microsoft.Win32;
-
+using CuahangNongduoc.Auth;
 
 namespace CuahangNongduoc
 {
@@ -17,16 +17,71 @@ namespace CuahangNongduoc
         {
             InitializeComponent();
         }
+        private void mnuTaiKhoan_Click(object sender, EventArgs e)
+        {
+            /* Proxy Pattern: chặn thao tác mở form nếu tài khoản không có quyền. */
+            var authorizationProxy = new AuthorizationProxy();
+            if (!authorizationProxy.Require(
+                AuthorizationService.Permission.QuanLyTaiKhoan,
+                "Quản lý tài khoản"))
+                return;
+
+            using (var formQuanLyTaiKhoan = new frmQuanLyTaiKhoan())
+            {
+                formQuanLyTaiKhoan.ShowDialog(this);
+            }
+        }
+
+        private void ApDungPhanQuyen()
+        {
+            var p = AuthorizationService.Permission.QuanLyTaiKhoan;
+            mnuTaiKhoan.Visible = AuthorizationService.CoQuyen(p);
+            itemNguoiDung.Visible = AuthorizationService.CoQuyen(p);
+            toolNguoiDung.Visible = AuthorizationService.CoQuyen(p);
+            mnuDoiMK.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.DoiMatKhau);
+            mnuDangNhap.Visible = !UserSession.IsLoggedIn;
+            mnuDangXua.Visible = UserSession.IsLoggedIn;
+            mnuDonViTinh.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemDonViTinh);
+            mnuSanPham.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemSanPham);
+            mnuKhachHang.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemKhachHang);
+            mnuDaiLy.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemDaiLy);
+            mnuNhapHang.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.NhapHang);
+            mnuBanHangKH.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BanHangLe);
+            mnuBanHangDL.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BanHangSi);
+            mnuThanhtoan.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.PhieuThu);
+            mnuTonghopDuno.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.CongNo);
+            mnuBaocaoSoluongton.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BaoCaoTonKho);
+            mnuSoLuongBan.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BaoCaoSoLuongBan);
+            mnuBaoCaoGiamGia.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BaoCaoDoanhThu);
+            mnuSanphamHethan.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BaoCaoHetHan);
+            mnuTuychinhThongtin.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.CauHinhHeThong);
+            mnuNhaCungCap.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemNhaCungCap);
+            mnuLyDoChi.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemLyDoChi);
+            mnuPhieuChi.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.PhieuChi);
+            toolSanPham.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemSanPham);
+            toolKhachHang.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemKhachHang);
+            toolDaiLy.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemDaiLy);
+            toolNhapHang.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.NhapHang);
+            toolBanSi.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BanHangSi);
+            toolBanLe.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BanHangLe);
+            toolTonKho.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.BaoCaoTonKho);
+            toolNhaCungCap.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.XemNhaCungCap);
+            toolPhieuChi.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.PhieuChi);
+            toolThanhtoan.Visible = AuthorizationService.CoQuyen(AuthorizationService.Permission.PhieuThu);
+            mnuBanHang.Visible = mnuBanHangKH.Visible || mnuBanHangDL.Visible;
+        }
+
         frmDonViTinh DonViTinh = null;
 
         private void mnuDonViTinh_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemDonViTinh)) return;
             if (DonViTinh == null || DonViTinh.IsDisposed)
             {
                 DonViTinh = new frmDonViTinh();
                 DonViTinh.MdiParent = this;
                 DonViTinh.Show();
-                
+
             }
             else
                 DonViTinh.Activate();
@@ -34,17 +89,6 @@ namespace CuahangNongduoc
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            // ==================== [FE-03] REFACTORING ====================
-            // Lỗi (Code smell) : Form giao diện gọi trực tiếp DataService.OpenConnection()
-            // Kỹ thuật         : Move Method (chuyển việc quản lý kết nối về tầng cơ sở dữ liệu)
-            // Trước            : DataService.OpenConnection();
-            // Sau              : // Đã loại bỏ việc gọi trực tiếp OpenConnection() tại tầng giao diện frmMain
-            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-            // Hỗ trợ           : Không
-            // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-            // Ngày chỉnh sửa   : 06/11/2026
-            // ===========================================================
-
             //RegistryKey regKey = Registry.CurrentUser.OpenSubKey("Software\\CoolSoft\\CuahangNongduoc");
 
             //if (regKey == null)
@@ -72,18 +116,20 @@ namespace CuahangNongduoc
             //    this.Close();
             //}
 
-            // [R01] Trước: DataService.OpenConnection(); (bỏ qua kết quả, lỗi kết nối bị lờ đi)
-            // Sau  : kiểm tra kết quả, báo lỗi rõ ràng. Tác giả: tuananh (TL, thay BE1) | Hỗ trợ: Claude (AI) | Kiểm tra: QA2 – Dư Thị Trúc Hòa | Ngày chỉnh sửa: 02/11/2026 | Ngày kiểm thử: 03/11/2026
+            if (!UserSession.IsLoggedIn) { Close(); return; }
             if (!DataService.OpenConnection())
             {
-                string loi = DataService.LastError != null ? DataService.LastError.Message : "";
-                MessageBox.Show("Không thể kết nối cơ sở dữ liệu!\n" + loi, "Cửa hàng Nông dược", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Không thể kết nối cơ sở dữ liệu.", "Lỗi kết nối", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close(); return;
             }
-            
+            Text += " — " + UserSession.HoTen + " (" + UserSession.RoleDisplayName + ")";
+            ApDungPhanQuyen();
+
         }
         frmSanPham SanPham = null;
         private void mnuSanPham_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemSanPham)) return;
             if (SanPham == null || SanPham.IsDisposed)
             {
                 SanPham = new frmSanPham();
@@ -93,36 +139,37 @@ namespace CuahangNongduoc
             else
                 SanPham.Activate();
         }
-        frmKhachHangDaiLy KhachHang = null;
+        frmKhachHang KhachHang = null;
         private void mnuKhachHang_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemKhachHang)) return;
             if (KhachHang == null || KhachHang.IsDisposed)
             {
-                // Truyền false để mở chế độ Khách Hàng
-                KhachHang = new frmKhachHangDaiLy(false);
+                KhachHang = new frmKhachHang();
                 KhachHang.MdiParent = this;
                 KhachHang.Show();
             }
             else
                 KhachHang.Activate();
         }
-
-        frmKhachHangDaiLy DaiLy = null; // Đổi kiểu dữ liệu từ frmDaiLy sang frmKhachHangDaiLy
+        frmDaiLy DaiLy = null;
         private void mnuDaiLy_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemDaiLy)) return;
             if (DaiLy == null || DaiLy.IsDisposed)
             {
-                // Truyền true để mở chế độ Đại Lý
-                DaiLy = new frmKhachHangDaiLy(true);
+                DaiLy = new frmDaiLy();
                 DaiLy.MdiParent = this;
                 DaiLy.Show();
             }
             else
                 DaiLy.Activate();
+
         }
         frmDanhsachPhieuNhap NhapHang = null;
         private void mnuNhapHang_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.NhapHang)) return;
             if (NhapHang == null || NhapHang.IsDisposed)
             {
                 NhapHang = new frmDanhsachPhieuNhap();
@@ -132,73 +179,26 @@ namespace CuahangNongduoc
             else
                 NhapHang.Activate();
         }
-
-        // ==================== [R17] REFACTORING ====================
-        // Lỗi (Code smell) : Duplicate Form - frmBanLe và frmBanSi lặp giao diện & logic
-        // Kỹ thuật : Extract Superclass + Strategy Pattern
-        // Trước : Gọi new frmBanLe() và new frmBanSi()
-        // Sau : Gọi chung new frmBanHang() và tiêm BanLeStrategy / BanSiStrategy
-        // Tác giả : FE1 – Dương Thị Kim Anh
-        // Hỗ trợ : FE2 – Nguyễn Huỳnh Ngọc Anh
-        // Kiểm tra : QA2 – <Họ tên QA>
-        // Ngày chỉnh sửa : 07/11/2026
-        // ===========================================================
-        
-
-        // ==================== [FE-03] REFACTORING ====================
-        // Lỗi (Code smell) : Khai báo và khởi tạo form bán lẻ trực tiếp, chưa áp dụng Strategy Pattern
-        // Kỹ thuật         : Introduce Strategy Pattern
-        // Trước            : frmDanhsachPhieuBanLe BanLe = null;
-        //                    BanLe = new frmDanhsachPhieuBanLe();
-        // Sau              : frmBanHang BanLe = null;
-        //                    BanLe = new frmBanHang(new BanLeStrategy());
-        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-        // Hỗ trợ           : FE1 – Dương Thị Kim Anh
-        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-        // Ngày chỉnh sửa   : 07/11/2026
-        // =============================================================
-        frmBanHang BanLe = null;
-        //frmDanhsachPhieuBanLe BanLe = null;
-
+        frmDanhsachPhieuBanLe BanLe = null;
         private void mnuBanHangKH_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BanHangLe)) return;
             if (BanLe == null || BanLe.IsDisposed)
             {
-
-                BanLe = new frmBanHang(new BanLeStrategy());//BanLe = new frmDanhsachPhieuBanLe();
-
+                BanLe = new frmDanhsachPhieuBanLe();
                 BanLe.MdiParent = this;
                 BanLe.Show();
             }
             else
                 BanLe.Activate();
         }
-
-
-       
-
-        // ==================== [FE-03] REFACTORING ====================
-        // Lỗi (Code smell) : Khai báo và khởi tạo form bán sỉ trực tiếp, chưa áp dụng Strategy Pattern
-        // Kỹ thuật         : Introduce Strategy Pattern
-        // Trước            : frmDanhsachPhieuBanSi BanSi = null;
-        //                    BanSi = new frmDanhsachPhieuBanSi();
-        // Sau              : frmBanHang BanSi = null;
-        //                    BanSi = new frmBanHang(new BanSiStrategy());
-        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-        // Hỗ trợ           : FE1 – Dương Thị Kim Anh
-        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-        // Ngày chỉnh sửa   : 07/11/2026
-        // =============================================================
-        frmBanHang BanSi = null;
-        //frmDanhsachPhieuBanSi BanSi = null;
-
+        frmDanhsachPhieuBanSi BanSi = null;
         private void mnuBanHangDL_Click(object sender, EventArgs e)
-        {       
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BanHangSi)) return;
             if (BanSi == null || BanSi.IsDisposed)
             {
-
-                BanSi = new frmBanHang(new BanSiStrategy());//BanSi = new frmDanhsachPhieuBanSi();
-
+                BanSi = new frmDanhsachPhieuBanSi();
                 BanSi.MdiParent = this;
                 BanSi.Show();
             }
@@ -220,6 +220,7 @@ namespace CuahangNongduoc
         frmThanhToan ThanhToan = null;
         private void mnuThanhtoan_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.PhieuThu)) return;
             if (ThanhToan == null || ThanhToan.IsDisposed)
             {
                 ThanhToan = new frmThanhToan();
@@ -232,6 +233,7 @@ namespace CuahangNongduoc
         frmDunoKhachhang DunoKhachhang = null;
         private void mnuTonghopDuno_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.CongNo)) return;
             if (DunoKhachhang == null || DunoKhachhang.IsDisposed)
             {
                 DunoKhachhang = new frmDunoKhachhang();
@@ -242,8 +244,19 @@ namespace CuahangNongduoc
                 DunoKhachhang.Activate();
         }
         frmDoanhThu DoanhThu = null;
+        private frmBaoCaoGiamGia BaoCaoGiamGia = null;
+        private void mnuBaoCaoGiamGia_Click(object sender, EventArgs e)
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BaoCaoDoanhThu)) return;
+            if (BaoCaoGiamGia == null || BaoCaoGiamGia.IsDisposed)
+            {
+                BaoCaoGiamGia = new frmBaoCaoGiamGia(); BaoCaoGiamGia.MdiParent = this; BaoCaoGiamGia.Show();
+            }
+            else BaoCaoGiamGia.Activate();
+        }
         private void mnuBaocaoDoanhThu_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BaoCaoDoanhThu)) return;
             if (DoanhThu == null || DoanhThu.IsDisposed)
             {
                 DoanhThu = new frmDoanhThu();
@@ -258,6 +271,7 @@ namespace CuahangNongduoc
         frmSoLuongTon SoLuongTon = null;
         private void mnuBaocaoSoluongton_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BaoCaoTonKho)) return;
 
             if (SoLuongTon == null || SoLuongTon.IsDisposed)
             {
@@ -272,6 +286,7 @@ namespace CuahangNongduoc
         frmSoLuongBan SoLuongBan = null;
         private void mnuSoLuongBan_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BaoCaoSoLuongBan)) return;
             if (SoLuongBan == null || SoLuongBan.IsDisposed)
             {
                 SoLuongBan = new frmSoLuongBan();
@@ -284,6 +299,7 @@ namespace CuahangNongduoc
         frmSanphamHethan SanphamHethan = null;
         private void mnuSanphamHethan_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.BaoCaoHetHan)) return;
             if (SanphamHethan == null || SanphamHethan.IsDisposed)
             {
                 SanphamHethan = new frmSanphamHethan();
@@ -301,6 +317,7 @@ namespace CuahangNongduoc
         frmThongtinCuahang ThongtinCuahang = null;
         private void mnuTuychinhThongtin_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.CauHinhHeThong)) return;
 
             if (ThongtinCuahang == null || ThongtinCuahang.IsDisposed)
             {
@@ -327,6 +344,7 @@ namespace CuahangNongduoc
         frmNhaCungCap NhaCungCap = null;
         private void mnuNhaCungCap_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemNhaCungCap)) return;
             if (NhaCungCap == null || NhaCungCap.IsDisposed)
             {
                 NhaCungCap = new frmNhaCungCap();
@@ -339,6 +357,7 @@ namespace CuahangNongduoc
         frmLyDoChi LyDoChi = null;
         private void mnuLyDoChi_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.XemLyDoChi)) return;
             if (LyDoChi == null || LyDoChi.IsDisposed)
             {
                 LyDoChi = new frmLyDoChi();
@@ -350,8 +369,61 @@ namespace CuahangNongduoc
         }
 
         frmPhieuChi PhieuChi = null;
+
+        private void mnuDangXua_Click(object sender, EventArgs e)
+        {
+            DialogResult ketQua = MessageBox.Show(
+                "Bạn có chắc muốn đăng xuất không?",
+                "Xác nhận đăng xuất",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (ketQua != DialogResult.Yes)
+                return;
+
+            new AuthenticationService().DangXuat();
+            Close();
+        }
+
+        private void mnuDoiMK_Click(object sender, EventArgs e)
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(
+                AuthorizationService.Permission.DoiMatKhau,
+                "Đổi mật khẩu"))
+                return;
+
+            using (var formDoiMatKhau = new frmDoiMatKhau())
+            {
+                formDoiMatKhau.ShowDialog(this);
+            }
+        }
+
+        private void mnuDangNhap_Click(object sender, EventArgs e)
+        {
+            if (UserSession.IsLoggedIn)
+            {
+                MessageBox.Show(
+                    "Bạn đang đăng nhập với tài khoản: " + UserSession.TenDangNhap,
+                    "Thông tin đăng nhập",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var formDangNhap = new frmDangNhap())
+            {
+                if (formDangNhap.ShowDialog(this) == DialogResult.OK && UserSession.IsLoggedIn)
+                {
+                    Text = "Cửa hàng nông dược — " + UserSession.HoTen +
+                        " (" + UserSession.RoleDisplayName + ")";
+                    ApDungPhanQuyen();
+                }
+            }
+        }
+
         private void mnuPhieuChi_Click(object sender, EventArgs e)
         {
+            if (!AuthorizationService.KiemTraVaThongBao(AuthorizationService.Permission.PhieuChi)) return;
             if (PhieuChi == null || PhieuChi.IsDisposed)
             {
                 PhieuChi = new frmPhieuChi();
@@ -362,9 +434,73 @@ namespace CuahangNongduoc
                 PhieuChi.Activate();
         }
 
+        private frmHuongDanSuDung HuongDan = null;
         private void mnuTrogiupHuongdan_Click(object sender, EventArgs e)
         {
-           // Help.ShowHelp(this, "CPP.CHM");
+            if (HuongDan == null || HuongDan.IsDisposed)
+            {
+                HuongDan = new frmHuongDanSuDung();
+                HuongDan.Show();
+            }
+            else
+            {
+                HuongDan.Activate();
+            }
+        }
+
+        private void itemDoiMatKhau_Click(object sender, EventArgs e)
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(
+               AuthorizationService.Permission.DoiMatKhau,
+               "Đổi mật khẩu"))
+                return;
+
+            using (var formDoiMatKhau = new frmDoiMatKhau())
+            {
+                formDoiMatKhau.ShowDialog(this);
+            }
+        }
+
+        private void itemDangXuat_Click(object sender, EventArgs e)
+        {
+            DialogResult ketQua = MessageBox.Show(
+                "Bạn có chắc muốn đăng xuất không?",
+                "Xác nhận đăng xuất",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (ketQua != DialogResult.Yes)
+                return;
+
+            new AuthenticationService().DangXuat();
+            Close();
+        }
+
+        private void itemNguoiDung_Click(object sender, EventArgs e)
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(
+               AuthorizationService.Permission.QuanLyTaiKhoan,
+               "Quản lý tài khoản"))
+                return;
+
+            using (var formQuanLyTaiKhoan = new frmQuanLyTaiKhoan())
+            {
+                formQuanLyTaiKhoan.ShowDialog(this);
+            }
+        }
+
+        private void toolNguoiDung_Click(object sender, EventArgs e)
+        {
+            if (!AuthorizationService.KiemTraVaThongBao(
+              AuthorizationService.Permission.QuanLyTaiKhoan,
+              "Quản lý tài khoản"))
+                return;
+
+            using (var formQuanLyTaiKhoan = new frmQuanLyTaiKhoan())
+            {
+                formQuanLyTaiKhoan.ShowDialog(this);
+            }
         }
     }
+
 }

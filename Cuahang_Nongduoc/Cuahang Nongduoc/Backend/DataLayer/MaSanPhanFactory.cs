@@ -1,4 +1,4 @@
-using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
@@ -6,160 +6,181 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
-    // ==================== [R28-BH] REFACTORING ====================
-    // Lỗi (Code smell) : Tight Coupling với OleDb/Access cũ, không tương thích với SQL Server
-    // Kỹ thuật         : Migrate Data Provider
-    // Trước            : Dùng System.Data.OleDb (OleDbCommand, OleDbType), DataService.ExecuteNoneQuery()
-    // Sau              : Chuyển sang System.Data.SqlClient (SqlCommand, SqlDbType), DataService.UpdateDataTable()
-    // Tác giả          : BE2
-    // Hỗ trợ           : BE1
-    // Kiểm tra         : QA1
-    // Ngày chỉnh sửa   : 06/11/2026
-    // ==============================================================
     public class MaSanPhanFactory
     {
         DataService m_Ds = new DataService();
 
-        // ==================== [R35] REFACTORING ====================
-        // Lỗi (Code smell) : Dùng SELECT * và truy vấn rời từng bảng gây N+1 query khi nạp danh sách MaSanPham kèm SanPham/DonViTinh
-        // Kỹ thuật         : Replace Loop with Bulk Query
-        // Trước            : Mọi hàm đều SELECT *, khi duyệt danh sách phải gọi thêm LaySanPham() và LayDVT() cho từng dòng
-        // Sau              : Liệt kê rõ tên cột thay cho SELECT * và bổ sung truy vấn JOIN 1 lần (*DayDu) để nạp đủ MaSanPham + SanPham + DonViTinh
-        // Tác giả          : BE2
-        // Hỗ trợ           : BE1
-        // Kiểm tra         : QA2
-        // Ngày chỉnh sửa   : 12/11/2026
-        // ==============================================================
-        private const string ColMaSanPham = "ID, ID_SAN_PHAM, ID_PHIEU_NHAP, DON_GIA_NHAP, SO_LUONG, NGAY_NHAP, NGAY_SAN_XUAT, NGAY_HET_HAN";
-        private const string SqlMaSanPhamDayDu =
-            "SELECT MSP.ID AS MSP_ID, MSP.SO_LUONG AS MSP_SO_LUONG, MSP.DON_GIA_NHAP AS MSP_DON_GIA_NHAP, " +
-            "MSP.NGAY_NHAP AS MSP_NGAY_NHAP, MSP.NGAY_SAN_XUAT AS MSP_NGAY_SAN_XUAT, MSP.NGAY_HET_HAN AS MSP_NGAY_HET_HAN, " +
-            "SP.ID AS SP_ID, SP.TEN_SAN_PHAM, SP.SO_LUONG AS SP_SO_LUONG, SP.DON_GIA_NHAP AS SP_DON_GIA_NHAP, " +
-            "SP.GIA_BAN_LE, SP.GIA_BAN_SI, DVT.ID AS DVT_ID, DVT.TEN_DON_VI " +
-            "FROM MA_SAN_PHAM MSP LEFT JOIN SAN_PHAM SP ON MSP.ID_SAN_PHAM = SP.ID LEFT JOIN DON_VI_TINH DVT ON SP.ID_DON_VI_TINH = DVT.ID ";
-
-        private static DataTable LoadReadOnly(SqlCommand cmd)
+        public void LoadSchema()
         {
-            DataService ds = new DataService();
-            ds.Load(cmd);
-            return ds.ResultTable;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE ID = '-1'");
+            m_Ds.Load(cmd);
         }
 
-        // ==================== [R19] REFACTORING ====================
-        // Lỗi (Code smell) : Hàm LoadSchema() là mã thừa không được bất kỳ Controller hay Form nào gọi tới
-        // Kỹ thuật         : Remove Dead Code
-        // Trước            : Giữ lại phương thức public void LoadSchema() truy vấn điều kiện ID = '-1' gây dư thừa
-        // Sau              : Xóa bỏ hoàn toàn hàm LoadSchema() khỏi MaSanPhanFactory
-        // Tác giả          : BE2
-        // Hỗ trợ           : BE3
-        // Kiểm tra         : QA2
-        // Ngày chỉnh sửa   : 12/11/2026
-        // ==============================================================
+        public DataTable DanhsachMaSanPham(String sp, bool baoGomHetHan)
+        {
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE ID_SAN_PHAM=@id AND SO_LUONG > 0 " +
+                (baoGomHetHan ? "" : "AND NGAY_HET_HAN >= @ngay"));
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = sp;
+            if (!baoGomHetHan) cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = DateTime.Today;
+            m_Ds.Load(cmd);
+            return m_Ds;
+        }
+
         public DataTable DanhsachMaSanPham(String sp)
         {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = @id AND SO_LUONG > 0");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = sp;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE ID_SAN_PHAM=@id AND SO_LUONG > 0");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = sp;
             m_Ds.Load(cmd);
 
-            return m_Ds.ResultTable;
+            return m_Ds;
         }
-
         public DataTable DanhsachChiTiet(String sp)
         {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = sp;
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP=@id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = sp;
             m_Ds.Load(cmd);
 
-            return m_Ds.ResultTable;
-        }
-
-        public DataTable DanhsachChiTietDayDu(String sp)
-        {
-            SqlCommand cmd = new SqlCommand(SqlMaSanPhamDayDu + "WHERE MSP.ID_PHIEU_NHAP = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = sp;
-            return LoadReadOnly(cmd);
+            return m_Ds;
         }
 
         public DataTable LaySanPham(String idMaSanPham)
         {
-            SqlCommand cmd = new SqlCommand("SELECT SP.ID, SP.TEN_SAN_PHAM, SP.SO_LUONG, SP.DON_GIA_NHAP, SP.GIA_BAN_LE, SP.GIA_BAN_SI, SP.ID_DON_VI_TINH FROM SAN_PHAM SP INNER JOIN MA_SAN_PHAM MSP ON SP.ID = MSP.ID_SAN_PHAM WHERE MSP.ID = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idMaSanPham;
-            m_Ds.Load(cmd);
-            return m_Ds.ResultTable;
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT SP.* FROM SAN_PHAM SP INNER JOIN MA_SAN_PHAM MSP ON SP.ID = MSP.ID_SAN_PHAM WHERE MSP.ID = @id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar,50).Value = idMaSanPham;
+            ds.Load(cmd);
+            return ds;
         }
 
         public DataTable LayMaSanPham(String idMaSanPham)
         {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE ID = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idMaSanPham;
-            m_Ds.Load(cmd);
-            return m_Ds.ResultTable;
-        }
-
-        public DataTable LayMaSanPhamDayDu(String idMaSanPham)
-        {
-            SqlCommand cmd = new SqlCommand(SqlMaSanPhamDayDu + "WHERE MSP.ID = @id");
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idMaSanPham;
-            return LoadReadOnly(cmd);
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM MSP WHERE MSP.ID = @id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar,50).Value = idMaSanPham;
+            ds.Load(cmd);
+            return ds;
         }
 
         public DataTable DanhsachMaSanPhamHetHan(DateTime dt)
         {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE SO_LUONG > 0 AND NGAY_HET_HAN <= @ngay");
-            cmd.Parameters.Add("@ngay", SqlDbType.DateTime).Value = dt;
+            // Chỉ liệt kê các lô vẫn còn tồn và đã hết hạn tính đến ngày chọn.
+            SqlCommand cmd = new SqlCommand(
+                "SELECT MSP.*, SP.TEN_SAN_PHAM " +
+                "FROM MA_SAN_PHAM MSP INNER JOIN SAN_PHAM SP ON MSP.ID_SAN_PHAM=SP.ID " +
+                "WHERE MSP.SO_LUONG > 0 AND MSP.NGAY_HET_HAN <= @ngay " +
+                "ORDER BY SP.TEN_SAN_PHAM, MSP.NGAY_HET_HAN, MSP.ID");
+            cmd.Parameters.Add("ngay", SqlDbType.DateTime).Value = dt.Date;
             m_Ds.Load(cmd);
 
-            return m_Ds.ResultTable;
-        }
-
-        public DataTable DanhsachMaSanPhamHetHanDayDu(DateTime dt)
-        {
-            SqlCommand cmd = new SqlCommand(SqlMaSanPhamDayDu + "WHERE MSP.SO_LUONG > 0 AND MSP.NGAY_HET_HAN <= @ngay");
-            cmd.Parameters.Add("@ngay", SqlDbType.DateTime).Value = dt;
-            return LoadReadOnly(cmd);
+            return m_Ds;
         }
 
         public DataTable DanhsachMaSanPham()
         {
-            SqlCommand cmd = new SqlCommand("SELECT " + ColMaSanPham + " FROM MA_SAN_PHAM WHERE SO_LUONG > 0");
+            SqlCommand cmd = new SqlCommand("SELECT * FROM MA_SAN_PHAM WHERE SO_LUONG > 0");
             m_Ds.Load(cmd);
 
-            return m_Ds.ResultTable;
+            return m_Ds;
         }
 
-        // ==================== [D07] REFACTORING ====================
-        // Lỗi (Code smell) : Cập nhật số lượng kho xong nhưng không báo cho nơi khác biết để ghi nhận hay cảnh báo
-        // Kỹ thuật         : Observer Pattern (GoF)
-        // Trước            : Chỉ chạy mỗi câu SQL UPDATE MA_SAN_PHAM rồi kết thúc
-        // Sau              : Sau khi cập nhật DB, gọi thêm InventoryService.Instance.NotifyInventoryChanged(...) để tự động ghi log kho và cảnh báo hết hàng/hết hạn
-        // Tác giả          : BE2
-        // Hỗ trợ           : BE3
-        // Kiểm tra         : QA1
-        // Ngày chỉnh sửa   : 12/11/2026
-        // ==============================================================
         public static void CapNhatSoLuong(String masp, int so_luong)
         {
             DataService ds = new DataService();
             SqlCommand cmd = new SqlCommand("UPDATE MA_SAN_PHAM SET SO_LUONG = SO_LUONG + @so WHERE ID = @id");
-            cmd.Parameters.Add("@so", SqlDbType.Int).Value = so_luong;
-            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = masp;
+            cmd.Parameters.Add("so", SqlDbType.Int).Value = so_luong;
+            cmd.Parameters.Add("id", SqlDbType.VarChar).Value = masp;
             ds.ExecuteNoneQuery(cmd);
-            CuahangNongduoc.Controller.InventoryService.Instance.NotifyInventoryChanged(masp, so_luong);
         }
 
         public DataRow NewRow()
         {
             return m_Ds.NewRow();
         }
-
         public void Add(DataRow row)
         {
             m_Ds.Rows.Add(row);
         }
-
         public bool Save()
         {
-            return m_Ds.UpdateDataTable() > 0;
+            return m_Ds.ExecuteNoneQuery() > 0;
         }
+
+
+        //Các hàm hỗ trợ Nhập hàng
+
+         public DataService GetDataService()
+        {
+            return m_Ds;
+        }
+
+         public DataTable DanhSachSanPhamTheoPhieuNhap(String idPhieuNhap)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT DISTINCT ID_SAN_PHAM FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP=@id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuNhap;
+            ds.Load(cmd);
+            return ds;
+        }
+
+        public DataTable LayCacLoDaXoa()
+        {
+            DataTable snapshot = new DataTable();
+            snapshot.Columns.Add("ID_SAN_PHAM", typeof(String));
+            snapshot.Columns.Add("SO_LUONG", typeof(Int64));
+            snapshot.Columns.Add("DON_GIA_NHAP", typeof(Int64));
+            DataRow[] rows = m_Ds.Select(String.Empty, String.Empty, DataViewRowState.Deleted);
+            foreach (DataRow row in rows)
+            {
+                DataRow newRow = snapshot.NewRow();
+                newRow["ID_SAN_PHAM"] = Convert.ToString(row["ID_SAN_PHAM", DataRowVersion.Original]);
+                newRow["SO_LUONG"] = Convert.ToInt64(row["SO_LUONG", DataRowVersion.Original]);
+                newRow["DON_GIA_NHAP"] = Convert.ToInt64(row["DON_GIA_NHAP", DataRowVersion.Original]);
+                snapshot.Rows.Add(newRow);
+            }
+            return snapshot;
+        }
+
+
+        public bool CoLoDaBanTrongPhieuNhap(String idPhieuNhap)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN CT INNER JOIN MA_SAN_PHAM MSP ON CT.ID_MA_SAN_PHAM=MSP.ID WHERE MSP.ID_PHIEU_NHAP=@id");
+            cmd.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = idPhieuNhap;
+            object result = ds.ExecuteScalar(cmd);
+            return result != null && result != DBNull.Value && Convert.ToInt64(result) > 0;
+        }
+
+        // Tổng số lượng của lô đã bán (để suy ra số lượng nhập gốc = tồn còn lại + đã bán).
+        public long LaySoLuongDaBan(String idMaLo)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT SUM(SO_LUONG) FROM CHI_TIET_PHIEU_BAN WHERE ID_MA_SAN_PHAM=@id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idMaLo;
+            object result = ds.ExecuteScalar(cmd);
+            return (result == null || result == DBNull.Value) ? 0 : Convert.ToInt64(result);
+        }
+
+         public bool CoLoDaBan(String idMaLo)
+        {
+            DataService ds = new DataService();
+            SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM CHI_TIET_PHIEU_BAN WHERE ID_MA_SAN_PHAM=@id");
+            cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = idMaLo;
+            object result = ds.ExecuteScalar(cmd);
+            return result != null && result != DBNull.Value && Convert.ToInt64(result) > 0;
+        }
+
+        // Sao chup cac lo moi them truoc khi Save() AcceptChanges lam mat RowState.Added.
+        public DataTable LayCacLoMoi()
+        {
+            DataTable snapshot = m_Ds.Clone();
+            DataRow[] rows = m_Ds.Select(String.Empty, String.Empty, DataViewRowState.Added);
+            foreach (DataRow row in rows)
+                snapshot.Rows.Add((object[])row.ItemArray.Clone());
+            return snapshot;
+        }
+    }
+
+    public class MaSanPhamFactory : MaSanPhanFactory
+    {
     }
 }

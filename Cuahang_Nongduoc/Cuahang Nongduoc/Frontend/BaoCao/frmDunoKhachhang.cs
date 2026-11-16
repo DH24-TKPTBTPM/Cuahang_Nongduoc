@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 using CuahangNongduoc.BusinessObject;
 using CuahangNongduoc.Controller;
-using CuahangNongduoc.DataLayer; // FE3-[FE-CN] Dùng Factory trực tiếp cho Form tự binding
 
 
 namespace CuahangNongduoc
@@ -20,17 +19,12 @@ namespace CuahangNongduoc
         }
         DuNoKhachHangController ctrl = new DuNoKhachHangController();
         KhachHangController ctrlKH = new KhachHangController();
-        DuNoKhachHangFactory factory = new DuNoKhachHangFactory(); // FE3-[FE-CN] Khởi tạo Factory
         private void frmDunoKhachhang_Load(object sender, EventArgs e)
         {
 
             this.toolThang.SelectedIndex = DateTime.Now.Month - 1;
             this.toolNam.Text = DateTime.Now.Year.ToString();
-            colKhachHang.DataSource = ctrlKH.HienthiKhachHangChungDataGridviewComboBox();
-            colKhachHang.DisplayMember = "HO_TEN";
-            colKhachHang.ValueMember = "ID";
-            colKhachHang.DataPropertyName = "ID_KHACH_HANG";
-            colKhachHang.HeaderText = "Khách hàng";
+            ctrlKH.HienthiKhachHangChungDataGridviewComboBox(colKhachHang);
 
         }
 
@@ -57,90 +51,22 @@ namespace CuahangNongduoc
             }
             if (!ok)
             {
-                // ==================== [FE-11] REFACTORING ====================
-                // Lỗi (Code smell) : Sai tiêu đề thông báo MessageBox (không dấu)
-                // Kỹ thuật         : Fix Bug
-                // Trước            : MessageBox.Show("Thông tin năm không hợp lệ!", "Tong Hop Du No", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Sau              : MessageBox.Show("Thông tin năm không hợp lệ!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-                // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
-                // Ngày chỉnh sửa   : 03/11/2026
-                // Ngày kiểm thử    : 07/11/2026
-                // ============================================================
-                MessageBox.Show("Thông tin năm không hợp lệ!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Thông tin năm không hợp lệ!", "Tong Hop Du No", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 e.Cancel = true;
             }
         }
 
-        // ==================== [FE-CN] REFACTORING ====================
-        // Lỗi (Code smell) : Controller nhận trực tiếp các control UI (ToolStripProgressBar, DataGridView, BindingNavigator)
-        // Kỹ thuật         : Move Method (Chuyển logic hiển thị tiến trình và binding lưới về Form giao diện)
-        // Trước            : ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
-        // Sau              : TongHopDuNo(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
-        // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-        // Hỗ trợ           : BE2 (Task R24)
-        // Kiểm tra         : QA1 – Huỳnh Lư Anh Minh
-        // Ngày chỉnh sửa   : 08/11/2026
-        // =============================================================
-        private void TongHopDuNo(int thang, int nam)
-        {
-            int ThangTruoc = 0, NamTruoc = 0;
-            ThamSo.PreMonth(ref ThangTruoc, ref NamTruoc, thang, nam);
-            factory.Clear(thang, nam);
-
-            BindingSource bs = new BindingSource();
-            bs.DataSource = factory.LayDuNoKhachHang("-1", 0, 0);
-            bindingNavigator.BindingSource = bs;
-            dataGridView.DataSource = bs;
-
-            KhachHangFactory factoryKH = new KhachHangFactory();
-            DataTable tbl = factoryKH.DanhsachKhachHang();
-            long dauky = 0, phatsinh = 0, datra = 0, cuoiky = 0;
-
-            toolProgress.Minimum = 0;
-            toolProgress.Value = 0;
-            toolProgress.Maximum = tbl.Rows.Count;
-
-            foreach (DataRow row in tbl.Rows)
-            {
-                DataRow r = factory.NewRow();
-                String kh = Convert.ToString(row["ID"]);
-
-                dauky = DuNoKhachHangFactory.LayDuNo(kh, ThangTruoc, NamTruoc);
-                phatsinh = PhieuBanFactory.LayConNo(kh, thang, nam);
-                datra = PhieuThanhToanFactory.LayTongTien(kh, thang, nam);
-                cuoiky = (dauky + phatsinh - datra);
-
-                r["ID_KHACH_HANG"] = kh;
-                r["THANG"] = thang;
-                r["NAM"] = nam;
-                r["DAU_KY"] = dauky;
-                r["PHAT_SINH"] = phatsinh;
-                r["DA_TRA"] = datra;
-                r["CUOI_KY"] = cuoiky;
-
-                factory.Add(r);
-                toolProgress.Value++;
-            }
-        }
         private void toolTongHop_Click(object sender, EventArgs e)
         {
             toolProgress.Visible = true;
-            DataTable data = ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text));
-            BindingSource bs = new BindingSource();
-            bs.DataSource = data;
-            bindingNavigator.BindingSource = bs;
-            dataGridView.DataSource = bs;
-            toolProgress.Maximum = data.Rows.Count;
-            toolProgress.Value = data.Rows.Count;
+            ctrl.Tonghop(toolThang.SelectedIndex + 1, Convert.ToInt32(toolNam.Text), toolProgress, dataGridView, bindingNavigator);
             toolProgress.Visible = false;
         }
 
-        private void toolLuu_Click(object sender, EventArgs e)
+        // Ô Khách hàng (combobox) gặp mã không có trong danh sách thì bỏ hộp thoại lỗi mặc định của DataGridView.
+        private void dataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            toolThang.Focus();
-            //ctrl.Save();
-            factory.Save(); // FE3-[FE-CN] Thay cho ctrl.Save()
+            e.ThrowException = false;
         }
 
         private void toolThoat_Click(object sender, EventArgs e)
@@ -148,34 +74,47 @@ namespace CuahangNongduoc
             this.Close();
         }
 
+        private static long LaySoNguyen(object v)
+        {
+            return (v == null || v == DBNull.Value) ? 0 : Convert.ToInt64(v);
+        }
+
         private void toolIn_Click(object sender, EventArgs e)
         {
-            // ==================== [FE-BC] REFACTORING ====================
-            // Lỗi (Code smell) : Bấm nút In khi chưa tổng hợp dữ liệu gây lỗi NullReferenceException
-            // Kỹ thuật         : Introduce Guard Clause (Kiểm tra điều kiện biên trước khi in)
-            // Tác giả          : FE3 – Nguyễn Thị Ngân Huệ
-            // Kiểm tra         : QA2 – Dư Thị Trúc Hòa
-            // Ngày chỉnh sửa   : 12/11/2026
-            // =============================================================
-            if (bindingNavigator.BindingSource == null || bindingNavigator.BindingSource.Current == null)
+            BindingSource bs = bindingNavigator.BindingSource;
+            DataRowView row = bs == null ? null : bs.Current as DataRowView;
+            if (row == null || row.Row == null || row.Row.RowState == DataRowState.Deleted)
             {
-                MessageBox.Show("Vui lòng tổng hợp dư nợ trước khi in!", "Tổng hợp dư nợ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Vui lòng bấm Tổng hợp và chọn một dòng dư nợ cần in.", "In dư nợ khách hàng",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            DataRowView row = (DataRowView)bindingNavigator.BindingSource.Current;
-            KhachHangController ctrlKH = new KhachHangController();
-            DuNoKhachHang dn = new DuNoKhachHang();
 
-            dn.Thang = Convert.ToInt32(row["THANG"]);
-            dn.Nam = Convert.ToInt32(row["NAM"]);
-            dn.DauKy = Convert.ToInt64(row["DAU_KY"]);
-            dn.PhatSinh = Convert.ToInt64(row["PHAT_SINH"]);
-            dn.DaTra = Convert.ToInt64(row["DA_TRA"]);
-            dn.CuoiKy = Convert.ToInt64(row["CUOI_KY"]);
-            dn.KhachHang = ctrlKH.LayKhachHang(Convert.ToString(row["ID_KHACH_HANG"]));
+            try
+            {
+                DuNoKhachHang dn = new DuNoKhachHang();
+                dn.Thang = (int)LaySoNguyen(row["THANG"]);
+                dn.Nam = (int)LaySoNguyen(row["NAM"]);
+                dn.DauKy = LaySoNguyen(row["DAU_KY"]);
+                dn.PhatSinh = LaySoNguyen(row["PHAT_SINH"]);
+                dn.DaTra = LaySoNguyen(row["DA_TRA"]);
+                dn.CuoiKy = LaySoNguyen(row["CUOI_KY"]);
+                dn.KhachHang = ctrlKH.LayKhachHang(Convert.ToString(row["ID_KHACH_HANG"]));
+                if (dn.KhachHang == null)
+                {
+                    MessageBox.Show("Không tìm thấy thông tin khách hàng của dòng đang chọn.", "In dư nợ khách hàng",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            frmInDunoKhachHang InDuNo = new frmInDunoKhachHang(dn);
-            InDuNo.Show();
+                frmInDunoKhachHang InDuNo = new frmInDunoKhachHang(dn);
+                InDuNo.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể mở trang in dư nợ khách hàng: " + ex.Message, "Lỗi in dư nợ",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

@@ -42,58 +42,65 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(26, 44);
+            this.label1.Location = new System.Drawing.Point(35, 54);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 13);
+            this.label1.Size = new System.Drawing.Size(89, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "Tên cửa hàng";
             // 
             // txtTenCuaHang
             // 
-            this.txtTenCuaHang.Location = new System.Drawing.Point(106, 44);
+            this.txtTenCuaHang.Location = new System.Drawing.Point(141, 54);
+            this.txtTenCuaHang.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtTenCuaHang.Name = "txtTenCuaHang";
-            this.txtTenCuaHang.Size = new System.Drawing.Size(184, 20);
+            this.txtTenCuaHang.Size = new System.Drawing.Size(244, 22);
             this.txtTenCuaHang.TabIndex = 1;
             // 
             // txtDienThoai
             // 
-            this.txtDienThoai.Location = new System.Drawing.Point(106, 70);
+            this.txtDienThoai.Location = new System.Drawing.Point(141, 86);
+            this.txtDienThoai.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtDienThoai.Name = "txtDienThoai";
-            this.txtDienThoai.Size = new System.Drawing.Size(184, 20);
+            this.txtDienThoai.Size = new System.Drawing.Size(244, 22);
             this.txtDienThoai.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(26, 70);
+            this.label2.Location = new System.Drawing.Point(35, 86);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 13);
+            this.label2.Size = new System.Drawing.Size(66, 16);
             this.label2.TabIndex = 2;
             this.label2.Text = "Điện thoại";
             // 
             // txtDiaChi
             // 
-            this.txtDiaChi.Location = new System.Drawing.Point(106, 96);
+            this.txtDiaChi.Location = new System.Drawing.Point(141, 118);
+            this.txtDiaChi.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtDiaChi.Multiline = true;
             this.txtDiaChi.Name = "txtDiaChi";
-            this.txtDiaChi.Size = new System.Drawing.Size(184, 45);
+            this.txtDiaChi.Size = new System.Drawing.Size(244, 54);
             this.txtDiaChi.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(26, 111);
+            this.label3.Location = new System.Drawing.Point(35, 137);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(40, 13);
+            this.label3.Size = new System.Drawing.Size(47, 16);
             this.label3.TabIndex = 4;
             this.label3.Text = "Địa chỉ";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(0, 9);
+            this.label4.Location = new System.Drawing.Point(0, 11);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(330, 13);
+            this.label4.Size = new System.Drawing.Size(399, 16);
             this.label4.TabIndex = 6;
             this.label4.Text = "Chú ý: Thông tin này sẽ được hiển thị trên Tiêu đề của các Báo cáo";
             // 
@@ -101,9 +108,10 @@
             // 
             this.btnOK.Image = global::CuahangNongduoc.Properties.Resources.Ok;
             this.btnOK.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnOK.Location = new System.Drawing.Point(123, 151);
+            this.btnOK.Location = new System.Drawing.Point(164, 186);
+            this.btnOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(71, 31);
+            this.btnOK.Size = new System.Drawing.Size(95, 38);
             this.btnOK.TabIndex = 7;
             this.btnOK.Text = "Ok";
             this.btnOK.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -112,9 +120,9 @@
             // 
             // frmThongtinCuahang
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(330, 187);
+            this.ClientSize = new System.Drawing.Size(440, 230);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtDiaChi);
@@ -125,9 +133,11 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmThongtinCuahang";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "THONG TIN CUA HANG";
             this.Load += new System.EventHandler(this.frmThongtinCuahang_Load);
             this.ResumeLayout(false);

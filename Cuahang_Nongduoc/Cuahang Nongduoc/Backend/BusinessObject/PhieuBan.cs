@@ -43,17 +43,23 @@ namespace CuahangNongduoc.BusinessObject
             get { return m_DaTra; }
             set { m_DaTra = value; }
         }
-// ==================== [R34] REFACTORING ====================
-// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
-// Kỹ thuật         : Encapsulate Field + Rename Field
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 11/11/2026
-// ==============================================================
+        private long m_ConNo;
+
         public long ConNo
         {
-            get { return m_TongTien - m_DaTra; }
+            get { return m_ConNo; }
+            set { m_ConNo = value; }
         }
+
+        public long TienHang { get; set; }
+        public long TongDichVu { get; set; }
+        public bool GiaoHang { get; set; }
+        public decimal KhoangCachKm { get; set; }
+        public long PhiVanChuyen { get; set; }
+        public string LoaiGiamGia { get; set; }
+        public decimal TyLeGiamGia { get; set; }
+        public long TienGiamGia { get; set; }
+        public IList<DichVuPhieuBan> DichVu { get; set; }
 
         private IList<ChiTietPhieuBan> m_ChiTiet;
 
@@ -63,6 +69,19 @@ namespace CuahangNongduoc.BusinessObject
             set { m_ChiTiet = value; }
         }
 
-	
+        public string TenKhachHang
+        {
+            get { return m_KH != null ? m_KH.HoTen : "Khách bán lẻ"; }
+        }
+
+        public string DiaChiKhachHang
+        {
+            get { return m_KH != null ? m_KH.DiaChi : "-"; }
+        }
+
+        public string DienThoaiKhachHang
+        {
+            get { return m_KH != null ? m_KH.DienThoai : "-"; }
+        }
     }
 }

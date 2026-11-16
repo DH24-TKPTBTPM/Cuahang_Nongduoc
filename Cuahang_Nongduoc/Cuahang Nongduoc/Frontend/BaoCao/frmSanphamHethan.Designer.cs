@@ -54,17 +54,19 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(803, 55);
+            this.panel1.Size = new System.Drawing.Size(983, 68);
             this.panel1.TabIndex = 1;
             // 
             // btnXem
             // 
             this.btnXem.Image = global::CuahangNongduoc.Properties.Resources.reload;
             this.btnXem.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnXem.Location = new System.Drawing.Point(434, 17);
+            this.btnXem.Location = new System.Drawing.Point(579, 21);
+            this.btnXem.Margin = new System.Windows.Forms.Padding(4);
             this.btnXem.Name = "btnXem";
-            this.btnXem.Size = new System.Drawing.Size(60, 24);
+            this.btnXem.Size = new System.Drawing.Size(80, 30);
             this.btnXem.TabIndex = 4;
             this.btnXem.Text = "Xem";
             this.btnXem.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -75,17 +77,19 @@
             // 
             this.dt.CustomFormat = "dd/MM/yyyy";
             this.dt.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dt.Location = new System.Drawing.Point(321, 19);
+            this.dt.Location = new System.Drawing.Point(428, 23);
+            this.dt.Margin = new System.Windows.Forms.Padding(4);
             this.dt.Name = "dt";
-            this.dt.Size = new System.Drawing.Size(107, 20);
+            this.dt.Size = new System.Drawing.Size(141, 22);
             this.dt.TabIndex = 3;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(226, 20);
+            this.label1.Location = new System.Drawing.Point(301, 25);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.Size = new System.Drawing.Size(92, 16);
             this.label1.TabIndex = 2;
             this.label1.Text = "Tính đến ngày";
             // 
@@ -93,9 +97,10 @@
             // 
             this.panel2.Controls.Add(this.reportViewer);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 55);
+            this.panel2.Location = new System.Drawing.Point(0, 68);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(803, 487);
+            this.panel2.Size = new System.Drawing.Size(983, 599);
             this.panel2.TabIndex = 2;
             // 
             // reportViewer
@@ -106,20 +111,25 @@
             this.reportViewer.LocalReport.DataSources.Add(reportDataSource1);
             this.reportViewer.LocalReport.ReportEmbeddedResource = "CuahangNongduoc.Report.rptSanPhamHetHan.rdlc";
             this.reportViewer.Location = new System.Drawing.Point(0, 0);
+            this.reportViewer.Margin = new System.Windows.Forms.Padding(4);
             this.reportViewer.Name = "reportViewer";
-            this.reportViewer.Size = new System.Drawing.Size(803, 487);
+            this.reportViewer.ServerReport.BearerToken = null;
+            this.reportViewer.Size = new System.Drawing.Size(983, 599);
             this.reportViewer.TabIndex = 0;
             // 
             // frmSanphamHethan
             // 
             this.AcceptButton = this.btnXem;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(803, 542);
+            this.ClientSize = new System.Drawing.Size(983, 667);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmSanphamHethan";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SAN PHAM HET HAN";
             this.Load += new System.EventHandler(this.frmSanphamHethan_Load);
             ((System.ComponentModel.ISupportInitialize)(this.MaSanPhamBindingSource)).EndInit();

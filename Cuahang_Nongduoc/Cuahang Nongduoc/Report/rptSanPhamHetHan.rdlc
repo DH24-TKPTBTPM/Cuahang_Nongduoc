@@ -57,6 +57,18 @@
           <DataField>SanPham</DataField>
           <rd:TypeName>CuahangNongduoc.BusinessObject.SanPham</rd:TypeName>
         </Field>
+        <Field Name="TenSanPham">
+          <DataField>TenSanPham</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TenSanPhamHienThi">
+          <DataField>TenSanPhamHienThi</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LaDongCuoiNhom">
+          <DataField>LaDongCuoiNhom</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
         <Field Name="SoLuong">
           <DataField>SoLuong</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
@@ -88,32 +100,73 @@
           <TableGroup>
             <Grouping Name="sanpham">
               <GroupExpressions>
-                <GroupExpression>=Fields!SanPham.Value.TenSanPham</GroupExpression>
+                <GroupExpression>=Fields!TenSanPham.Value</GroupExpression>
               </GroupExpressions>
             </Grouping>
-            <Header>
+            <Footer>
               <TableRows>
                 <TableRow>
                   <TableCells>
                     <TableCell>
-                      <ColSpan>7</ColSpan>
+                      <ColSpan>4</ColSpan>
                       <ReportItems>
-                        <Textbox Name="textbox5">
-                          <rd:DefaultName>textbox5</rd:DefaultName>
+                        <Textbox Name="TongSoLuongNhan">
+                          <rd:DefaultName>TongSoLuongNhan</rd:DefaultName>
                           <Style>
-                            <BorderStyle>
-                              <Default>Solid</Default>
-                            </BorderStyle>
+                            <BorderStyle><Default>Solid</Default></BorderStyle>
                             <FontWeight>700</FontWeight>
-                            <TextAlign>Left</TextAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
                           </Style>
-                          <ZIndex>7</ZIndex>
                           <CanGrow>true</CanGrow>
-                          <Value>=Fields!SanPham.Value.TenSanPham</Value>
+                          <Value>T&#7892;NG S&#7888; L&#431;&#7906;NG:</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TongSoLuong">
+                          <rd:DefaultName>TongSoLuong</rd:DefaultName>
+                          <Style>
+                            <BorderStyle><Default>Solid</Default></BorderStyle>
+                            <FontWeight>700</FontWeight>
+                            <Format>#,###0</Format>
+                            <TextAlign>Right</TextAlign>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                          <CanGrow>true</CanGrow>
+                          <Value>=Sum(Fields!SoLuong.Value)</Value>
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TongSoLuongNgayNhap">
+                          <rd:DefaultName>TongSoLuongNgayNhap</rd:DefaultName>
+                          <Style><BorderStyle><Default>Solid</Default></BorderStyle></Style>
+                          <Value />
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TongSoLuongNgaySanXuat">
+                          <rd:DefaultName>TongSoLuongNgaySanXuat</rd:DefaultName>
+                          <Style><BorderStyle><Default>Solid</Default></BorderStyle></Style>
+                          <Value />
+                        </Textbox>
+                      </ReportItems>
+                    </TableCell>
+                    <TableCell>
+                      <ReportItems>
+                        <Textbox Name="TongSoLuongNgayHetHan">
+                          <rd:DefaultName>TongSoLuongNgayHetHan</rd:DefaultName>
+                          <Style><BorderStyle><Default>Solid</Default></BorderStyle></Style>
+                          <Value />
                         </Textbox>
                       </ReportItems>
                     </TableCell>
@@ -121,13 +174,28 @@
                   <Height>0.63492cm</Height>
                 </TableRow>
               </TableRows>
-            </Header>
+            </Footer>
           </TableGroup>
         </TableGroups>
         <Details>
           <TableRows>
             <TableRow>
               <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TenSanPham">
+                      <rd:DefaultName>TenSanPham</rd:DefaultName>
+                      <Style>
+                        <BorderStyle><Left>Solid</Left><Right>Solid</Right><Bottom>=IIF(Fields!LaDongCuoiNhom.Value, "Solid", "None")</Bottom></BorderStyle>
+                        <FontWeight>700</FontWeight><VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!TenSanPhamHienThi.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
                 <TableCell>
                   <ReportItems>
                     <Textbox Name="textbox4">
@@ -278,7 +346,7 @@
             <TableRow>
               <TableCells>
                 <TableCell>
-                  <ColSpan>7</ColSpan>
+                  <ColSpan>8</ColSpan>
                   <ReportItems>
                     <Textbox Name="textbox15">
                       <rd:DefaultName>textbox15</rd:DefaultName>
@@ -305,7 +373,7 @@
             <TableRow>
               <TableCells>
                 <TableCell>
-                  <ColSpan>7</ColSpan>
+                  <ColSpan>8</ColSpan>
                   <ReportItems>
                     <Textbox Name="textbox17">
                       <rd:DefaultName>textbox17</rd:DefaultName>
@@ -354,6 +422,21 @@
                       <ZIndex>21</ZIndex>
                       <CanGrow>true</CanGrow>
                       <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textboxSanPhamKe">
+                      <rd:DefaultName>textboxSanPhamKe</rd:DefaultName>
+                      <Style>
+                        <BorderColor><Bottom>Black</Bottom></BorderColor>
+                        <BorderStyle><Bottom>Solid</Bottom></BorderStyle>
+                        <BorderWidth><Bottom>1pt</Bottom></BorderWidth>
+                        <FontWeight>700</FontWeight><TextAlign>Center</TextAlign><VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <CanGrow>true</CanGrow><Value />
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -532,6 +615,19 @@
               <TableCells>
                 <TableCell>
                   <ReportItems>
+                    <Textbox Name="textboxSanPham">
+                      <rd:DefaultName>textboxSanPham</rd:DefaultName>
+                      <Style>
+                        <BorderStyle><Default>Solid</Default></BorderStyle>
+                        <FontWeight>700</FontWeight><TextAlign>Center</TextAlign><VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <CanGrow>true</CanGrow><Value>Sản phẩm</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
                     <Textbox Name="textbox1">
                       <rd:DefaultName>textbox1</rd:DefaultName>
                       <Style>
@@ -570,7 +666,7 @@
                       </Style>
                       <ZIndex>13</ZIndex>
                       <CanGrow>true</CanGrow>
-                      <Value>Mã sản phẩm</Value>
+                      <Value>Mã lô</Value>
                     </Textbox>
                   </ReportItems>
                 </TableCell>
@@ -693,25 +789,28 @@ hết hạn</Value>
         </Header>
         <TableColumns>
           <TableColumn>
-            <Width>1.5cm</Width>
+            <Width>2.6cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>3.5cm</Width>
+            <Width>1.2cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2cm</Width>
+            <Width>2.5cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2cm</Width>
+            <Width>1.8cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.25cm</Width>
+            <Width>1.8cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.25cm</Width>
+            <Width>2.8cm</Width>
           </TableColumn>
           <TableColumn>
-            <Width>2.25cm</Width>
+            <Width>2.8cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>2.8cm</Width>
           </TableColumn>
         </TableColumns>
       </Table>

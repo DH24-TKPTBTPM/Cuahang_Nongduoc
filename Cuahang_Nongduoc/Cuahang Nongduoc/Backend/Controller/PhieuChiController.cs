@@ -3,24 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using CuahangNongduoc.DataLayer;
 using CuahangNongduoc.BusinessObject;
+using System.Windows.Forms;
 using System.Data;
 
 namespace CuahangNongduoc.Controller
 {
-    // ==================== [R26] REFACTORING ====================
-    // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
-    // Kỹ thuật         : Introduce Parameter Object
-    // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-    // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
-    // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-    // Ngày chỉnh sửa   : 08/11/2026
-    // ==============================================================
-    public class PhieuChiSearchParam
-    {
-        public int LyDo { get; set; }
-        public DateTime Ngay { get; set; }
-    }
-
     
     public class PhieuChiController
     {
@@ -35,17 +22,9 @@ namespace CuahangNongduoc.Controller
         {
             factory.Add(row);
         }
-        // ==================== [R33] REFACTORING ====================
-        // Lỗi (Code smell) : Controller trả về kiểu dữ liệu không nhất quán
-        // Kỹ thuật         : Standardize API Contract
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : BE2 - Trần Tuấn Anh
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        public bool Save()
+        public void Save()
         {
-            return factory.Save();
+            factory.Save();
         }
 
         public PhieuChi LayPhieuChi(String id)
@@ -65,30 +44,56 @@ namespace CuahangNongduoc.Controller
             return ph;
         }
         
-        // ==================== [R26] REFACTORING ====================
-        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
-        // Kỹ thuật         : Introduce Parameter Object
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        public DataTable HienthiPhieuChi()
+        public void HienthiPhieuChi(BindingNavigator bn, DataGridView dg,ComboBox cmb, TextBox txt, DateTimePicker dt, NumericUpDown numTongTien, TextBox txtGhichu)
         {
-            return factory.DanhsachPhieuChi();
+            BindingSource bs = new BindingSource();
+            bs.DataSource = factory.DanhsachPhieuChi();
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
+
+            
+            txt.DataBindings.Clear();
+            txt.DataBindings.Add("Text", bs, "ID");
+
+            cmb.DataBindings.Clear();
+            cmb.DataBindings.Add("SelectedValue", bs, "ID_LY_DO_CHI");
+
+            dt.DataBindings.Clear();
+            dt.DataBindings.Add("Value", bs, "NGAY_CHI");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhichu.DataBindings.Clear();
+            txtGhichu.DataBindings.Add("Text", bs, "GHI_CHU");
+
+
         }
 
-        // ==================== [R26] REFACTORING ====================
-        // Lỗi (Code smell) : Phương thức nhận quá nhiều tham số (Long Parameter List)
-        // Kỹ thuật         : Introduce Parameter Object
-        // Tác giả          : BE3 - Bùi Lê Tuấn Anh
-        // Hỗ trợ           : FE3 - Nguyễn Thị Ngân Huệ
-        // Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-        // Ngày chỉnh sửa   : 08/11/2026
-        // ==============================================================
-        public DataTable TimPhieuChi(PhieuChiSearchParam param)
+        public void TimPhieuChi(BindingNavigator bn, DataGridView dg, ComboBox cmb, TextBox txt, DateTimePicker dt, NumericUpDown numTongTien, TextBox txtGhichu,
+            int lydo, DateTime ngay)
         {
-            return factory.TimPhieuChi(param.LyDo, param.Ngay);
+            
+            BindingSource bs = new BindingSource();
+            bs.DataSource = factory.TimPhieuChi(lydo, ngay);
+            bn.BindingSource = bs;
+            dg.DataSource = bs;
+
+
+            txt.DataBindings.Clear();
+            txt.DataBindings.Add("Text", bs, "ID");
+
+            cmb.DataBindings.Clear();
+            cmb.DataBindings.Add("SelectedValue", bs, "ID_LY_DO_CHI");
+
+            dt.DataBindings.Clear();
+            dt.DataBindings.Add("Value", bs, "NGAY_CHI");
+
+            numTongTien.DataBindings.Clear();
+            numTongTien.DataBindings.Add("Value", bs, "TONG_TIEN");
+
+            txtGhichu.DataBindings.Clear();
+            txtGhichu.DataBindings.Add("Text", bs, "GHI_CHU");
         }
     }
 }

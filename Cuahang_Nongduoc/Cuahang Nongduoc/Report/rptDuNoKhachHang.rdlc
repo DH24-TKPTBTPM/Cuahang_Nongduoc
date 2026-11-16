@@ -1,48 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="DummyDataSource">
-      <rd:DataSourceID>ca600eff-cb8b-4485-b493-6db21e2f77d8</rd:DataSourceID>
       <ConnectionProperties>
         <DataProvider>SQL</DataProvider>
         <ConnectString />
       </ConnectionProperties>
+      <rd:DataSourceID>ca600eff-cb8b-4485-b493-6db21e2f77d8</rd:DataSourceID>
     </DataSource>
   </DataSources>
-  <InteractiveHeight>29.7cm</InteractiveHeight>
-  <ReportParameters>
-    <ReportParameter Name="ten_cua_hang">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>ten_cua_hang</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="dia_chi">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>dia_chi</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="dien_thoai">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>dien_thoai</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="bang_chu">
-      <DataType>String</DataType>
-      <AllowBlank>true</AllowBlank>
-      <Prompt>bang_chu</Prompt>
-    </ReportParameter>
-  </ReportParameters>
-  <rd:DrawGrid>true</rd:DrawGrid>
-  <InteractiveWidth>21cm</InteractiveWidth>
-  <rd:GridSpacing>0.25cm</rd:GridSpacing>
-  <rd:SnapToGrid>true</rd:SnapToGrid>
-  <RightMargin>2.5cm</RightMargin>
-  <LeftMargin>2.5cm</LeftMargin>
-  <BottomMargin>2.5cm</BottomMargin>
-  <rd:ReportID>010be0be-5637-48c8-b973-4c4547477b85</rd:ReportID>
-  <PageWidth>21cm</PageWidth>
   <DataSets>
     <DataSet Name="CuahangNongduoc_BusinessObject_DuNoKhachHang">
+      <Query>
+        <DataSourceName>DummyDataSource</DataSourceName>
+        <CommandText />
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
       <Fields>
         <Field Name="CuoiKy">
           <DataField>CuoiKy</DataField>
@@ -73,11 +47,6 @@
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
       </Fields>
-      <Query>
-        <DataSourceName>DummyDataSource</DataSourceName>
-        <CommandText />
-        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
-      </Query>
       <rd:DataSetInfo>
         <rd:DataSetName>CuahangNongduoc.BusinessObject</rd:DataSetName>
         <rd:TableName>DuNoKhachHang</rd:TableName>
@@ -85,351 +54,695 @@
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
-  <Width>11cm</Width>
-  <Body>
-    <ColumnSpacing>1cm</ColumnSpacing>
-    <ReportItems>
-      <Textbox Name="textbox12">
-        <Top>7.5cm</Top>
-        <Style>
-          <FontStyle>Italic</FontStyle>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>19</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Value>="Bằng chữ: " &amp; Parameters!bang_chu.Value &amp; " đồng"</Value>
-      </Textbox>
-      <Textbox Name="textbox2">
-        <Top>6.75cm</Top>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <Format>#,###0</Format>
-          <TextAlign>Right</TextAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>18</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>8.5cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!DaTra.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox5">
-        <Top>6.75cm</Top>
-        <Width>1.75cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>17</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>6.75cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Đã trả:</Value>
-      </Textbox>
-      <Textbox Name="textbox10">
-        <Top>6.13228cm</Top>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <Format>#,###0</Format>
-          <TextAlign>Right</TextAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>16</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>8.5cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!PhatSinh.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox11">
-        <Top>6.13228cm</Top>
-        <Width>1.75cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>15</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>6.75cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Phát sinh:</Value>
-      </Textbox>
-      <Textbox Name="textbox6">
-        <Top>6.75cm</Top>
-        <Width>2.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <FontWeight>700</FontWeight>
-          <Format>#,###0</Format>
-          <TextAlign>Right</TextAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>14</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!CuoiKy.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox7">
-        <Top>6.75cm</Top>
-        <Width>2cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>13</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Cuối kỳ:</Value>
-      </Textbox>
-      <Textbox Name="textbox8">
-        <Top>6.13228cm</Top>
-        <Width>2.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <Format>#,###0</Format>
-          <TextAlign>Right</TextAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>12</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!DauKy.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox9">
-        <Top>6.13228cm</Top>
-        <Width>2cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>11</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Đầu kỳ:</Value>
-      </Textbox>
-      <Textbox Name="textbox1">
-        <rd:DefaultName>textbox1</rd:DefaultName>
-        <Top>2.75cm</Top>
-        <Width>3.75cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>8pt</FontSize>
-          <FontWeight>700</FontWeight>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>10</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>5.25cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>="Tháng " &amp; Fields!Thang.Value &amp; "/" &amp; Fields!Nam.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox21">
-        <Top>5.25cm</Top>
-        <Width>6.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>9</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3.5cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!KhachHang.Value.DienThoai</Value>
-      </Textbox>
-      <Textbox Name="textbox22">
-        <Top>5.25cm</Top>
-        <Width>2.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>8</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Điện thoại:</Value>
-      </Textbox>
-      <Textbox Name="textbox19">
-        <Top>4.60582cm</Top>
-        <Width>6.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>7</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3.5cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!KhachHang.Value.DiaChi</Value>
-      </Textbox>
-      <Textbox Name="textbox20">
-        <Top>4.60582cm</Top>
-        <Width>2.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>6</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Địa chỉ:</Value>
-      </Textbox>
-      <Textbox Name="textbox14">
-        <Top>2cm</Top>
-        <Width>6.25cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>14pt</FontSize>
-          <FontWeight>700</FontWeight>
-          <TextAlign>Center</TextAlign>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>5</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3.75cm</Left>
-        <Height>0.75cm</Height>
-        <Value>DƯ NỢ KHÁCH HÀNG</Value>
-      </Textbox>
-      <Textbox Name="textbox15">
-        <Top>1.2619cm</Top>
-        <Width>10.25cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontWeight>700</FontWeight>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>4</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Height>0.63228cm</Height>
-        <Value>="Điện thoại: " &amp; Parameters!dien_thoai.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox16">
-        <Top>0.64418cm</Top>
-        <Width>10.25cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontWeight>700</FontWeight>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>3</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Height>0.63228cm</Height>
-        <Value>="Địa chỉ: " &amp; Parameters!dia_chi.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox17">
-        <Width>10.25cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontWeight>700</FontWeight>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>2</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Height>0.63228cm</Height>
-        <Value>=Parameters!ten_cua_hang.Value</Value>
-      </Textbox>
-      <Textbox Name="textbox4">
-        <Top>3.9881cm</Top>
-        <Width>6.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <FontSize>11pt</FontSize>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <ZIndex>1</ZIndex>
-        <CanGrow>true</CanGrow>
-        <Left>3.5cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>=Fields!KhachHang.Value.HoTen</Value>
-      </Textbox>
-      <Textbox Name="textbox3">
-        <Top>3.9881cm</Top>
-        <Width>2.5cm</Width>
-        <Style>
-          <FontFamily>Times New Roman</FontFamily>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-        <CanGrow>true</CanGrow>
-        <Left>1cm</Left>
-        <Height>0.63492cm</Height>
-        <Value>Khách hàng:</Value>
-      </Textbox>
-    </ReportItems>
-    <Height>8.13228cm</Height>
-  </Body>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="textbox3">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Khách hàng:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>3.9881cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox4">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!kh_ho_ten.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>3.9881cm</Top>
+            <Left>3.5cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>6.5cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox17">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!ten_cua_hang.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Height>0.63228cm</Height>
+            <Width>10.25cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox16">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Địa chỉ: " &amp; Parameters!dia_chi.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.64418cm</Top>
+            <Height>0.63228cm</Height>
+            <Width>10.25cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox15">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Điện thoại: " &amp; Parameters!dien_thoai.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>1.2619cm</Top>
+            <Height>0.63228cm</Height>
+            <Width>10.25cm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox14">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>DƯ NỢ KHÁCH HÀNG</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>14pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>2cm</Top>
+            <Left>3.75cm</Left>
+            <Height>0.75cm</Height>
+            <Width>6.25cm</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox20">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Địa chỉ:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>4.60582cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox19">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!kh_dia_chi.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>4.60582cm</Top>
+            <Left>3.5cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>6.5cm</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox22">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Điện thoại:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>5.25cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox21">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!kh_dien_thoai.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>5.25cm</Top>
+            <Left>3.5cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>6.5cm</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox1">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Tháng " &amp; Fields!Thang.Value &amp; "/" &amp; Fields!Nam.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>textbox1</rd:DefaultName>
+            <Top>2.75cm</Top>
+            <Left>5.25cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>3.75cm</Width>
+            <ZIndex>10</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox9">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Đầu kỳ:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.13228cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2cm</Width>
+            <ZIndex>11</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox8">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!DauKy.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <Format>#,###0</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.13228cm</Top>
+            <Left>3cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>12</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox7">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Cuối kỳ:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.75cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2cm</Width>
+            <ZIndex>13</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox6">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!CuoiKy.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Format>#,###0</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.75cm</Top>
+            <Left>3cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox11">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Phát sinh:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.13228cm</Top>
+            <Left>6.75cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>1.75cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox10">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!PhatSinh.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <Format>#,###0</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.13228cm</Top>
+            <Left>8.5cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox5">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Đã trả:</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.75cm</Top>
+            <Left>6.75cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>1.75cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox2">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Fields!DaTra.Value</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <Format>#,###0</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>6.75cm</Top>
+            <Left>8.5cm</Left>
+            <Height>0.63492cm</Height>
+            <Width>2.5cm</Width>
+            <ZIndex>18</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="textbox12">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Bằng chữ: " &amp; Parameters!bang_chu.Value &amp; " đồng"</Value>
+                    <Style>
+                      <FontStyle>Italic</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>7.5cm</Top>
+            <Left>1cm</Left>
+            <Height>0.63228cm</Height>
+            <Width>10cm</Width>
+            <ZIndex>19</ZIndex>
+            <Style>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>8.13228cm</Height>
+        <Style />
+      </Body>
+      <Width>11cm</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>2.5cm</LeftMargin>
+        <RightMargin>2.5cm</RightMargin>
+        <TopMargin>2.5cm</TopMargin>
+        <BottomMargin>2.5cm</BottomMargin>
+        <ColumnSpacing>1cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="ten_cua_hang">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ten_cua_hang</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="dia_chi">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>dia_chi</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="dien_thoai">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>dien_thoai</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="bang_chu">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>bang_chu</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="kh_ho_ten">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>kh_ho_ten</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="kh_dia_chi">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>kh_dia_chi</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="kh_dien_thoai">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>kh_dien_thoai</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>2</NumberOfColumns>
+      <NumberOfRows>4</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ten_cua_hang</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>dia_chi</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>dien_thoai</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>bang_chu</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>kh_ho_ten</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>kh_dia_chi</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>kh_dien_thoai</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
   <Language>en-US</Language>
-  <TopMargin>2.5cm</TopMargin>
-  <PageHeight>29.7cm</PageHeight>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>010be0be-5637-48c8-b973-4c4547477b85</rd:ReportID>
 </Report>

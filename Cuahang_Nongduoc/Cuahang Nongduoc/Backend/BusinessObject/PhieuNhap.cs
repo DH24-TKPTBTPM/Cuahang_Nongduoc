@@ -7,69 +7,65 @@ namespace CuahangNongduoc.BusinessObject
     public class PhieuNhap
     {
         public PhieuNhap() { }
+
         public PhieuNhap(String id)
         {
             m_Id = id;
         }
-        private String m_Id;
 
+        private String m_Id;
         public String Id
         {
             get { return m_Id; }
             set { m_Id = value; }
         }
-        private DateTime m_NgayNhap;
 
+        private DateTime m_NgayNhap;
         public DateTime NgayNhap
         {
             get { return m_NgayNhap; }
             set { m_NgayNhap = value; }
         }
-        private long m_TongTien;
 
+        private long m_TongTien;
         public long TongTien
         {
             get { return m_TongTien; }
             set { m_TongTien = value; }
         }
-        private long m_Datra;
 
+        private long m_Datra;
         public long DaTra
         {
             get { return m_Datra; }
             set { m_Datra = value; }
         }
 
-// ==================== [R34] REFACTORING ====================
-// Lỗi (Code smell) : Thuộc tính dẫn xuất chưa tự tính, tên biến sai ngữ nghĩa
-// Kỹ thuật         : Encapsulate Field + Rename Field
-// Tác giả          : BE3 - Bùi Lê Tuấn Anh
-// Kiểm duyệt       : QA2 - Dư Thị Trúc Hòa
-// Ngày chỉnh sửa   : 11/11/2026
-// ==============================================================
+        private long m_ConNo;
         public long ConNo
         {
-            get { return m_TongTien - m_Datra; }
+            get { return m_ConNo; }
+            set { m_ConNo = value; }
         }
 
         private NhaCungCap m_NCC;
-
         public NhaCungCap NhaCungCap
         {
             get { return m_NCC; }
             set { m_NCC = value; }
         }
 
-	
+        // Tên nhà cung cấp dạng chuỗi phẳng cho báo cáo RDLC (truy cập thuộc tính của đối tượng lồng nhau trong RDLC bị #Error).
+        public String TenNhaCungCap
+        {
+            get { return (m_NCC == null || m_NCC.HoTen == null) ? String.Empty : m_NCC.HoTen; }
+        }
 
         private IList<MaSanPham> m_ChiTiet;
-
         public IList<MaSanPham> ChiTiet
         {
             get { return m_ChiTiet; }
             set { m_ChiTiet = value; }
         }
-
-	
     }
 }
