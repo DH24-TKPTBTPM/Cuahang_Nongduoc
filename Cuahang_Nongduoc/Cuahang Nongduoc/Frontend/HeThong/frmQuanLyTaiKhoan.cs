@@ -1,16 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
 using System.Windows.Forms;
 using CuahangNongduoc.Auth;
 
 namespace CuahangNongduoc
 {
-    /// <summary>
-    /// Form quản lý tài khoản người dùng - chỉ dành cho Admin.
-    /// Cho phép xem, thêm, sửa, khóa, mở khóa và đặt lại mật khẩu tài khoản.
-    /// </summary>
     public partial class frmQuanLyTaiKhoan : Form
     {
         private readonly NguoiDungData _data;
@@ -27,7 +22,6 @@ namespace CuahangNongduoc
 
         private void frmQuanLyTaiKhoan_Load(object sender, EventArgs e)
         {
-            // Kiểm tra quyền Admin
             if (!AuthorizationService.CoQuyen(AuthorizationService.Permission.QuanLyTaiKhoan))
             {
                 MessageBox.Show("Chỉ Quản trị viên mới có quyền truy cập chức năng này.",
@@ -36,7 +30,6 @@ namespace CuahangNongduoc
                 return;
             }
 
-            // Cấu hình DataGridView
             CauHinhGrid();
             TaiDanhSach();
         }
@@ -45,99 +38,39 @@ namespace CuahangNongduoc
         {
             dgvTaiKhoan.AutoGenerateColumns = false;
             dgvTaiKhoan.Columns.Clear();
-            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colId", HeaderText = "ID", DataPropertyName = "Id", Width = 45, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
-            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colTen", HeaderText = "Tên đăng nhập", DataPropertyName = "TenDangNhap", Width = 150, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
-            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colHoTen", HeaderText = "Họ tên", DataPropertyName = "HoTen", Width = 200, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
-            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colRole", HeaderText = "Vai trò", DataPropertyName = "RoleDisplayName", Width = 160, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
-            dgvTaiKhoan.Columns.Add(new DataGridViewCheckBoxColumn { Name = "colActive", HeaderText = "Hoạt động", DataPropertyName = "IsActive", Width = 90, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
+            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colId", HeaderText = "ID", DataPropertyName = "Id", Width = 55, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
+            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colTen", HeaderText = "Tên đăng nhập", DataPropertyName = "TenDangNhap", Width = 160, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
+            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colHoTen", HeaderText = "Họ tên", DataPropertyName = "HoTen", Width = 220, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
+            dgvTaiKhoan.Columns.Add(new DataGridViewTextBoxColumn { Name = "colRole", HeaderText = "Vai trò", DataPropertyName = "RoleDisplayName", Width = 170, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
+            dgvTaiKhoan.Columns.Add(new DataGridViewCheckBoxColumn { Name = "colActive", HeaderText = "Hoạt động", DataPropertyName = "IsActive", Width = 95, ReadOnly = true, SortMode = DataGridViewColumnSortMode.Programmatic });
             dgvTaiKhoan.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvTaiKhoan.MultiSelect = false;
             dgvTaiKhoan.ReadOnly = true;
             dgvTaiKhoan.AllowUserToAddRows = false;
             dgvTaiKhoan.RowHeadersVisible = false;
             dgvTaiKhoan.BackgroundColor = Color.White;
-            dgvTaiKhoan.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 255, 245);
             dgvTaiKhoan.SelectionChanged += new EventHandler(dgvTaiKhoan_SelectionChanged);
-            dgvTaiKhoan.ColumnHeaderMouseClick += dgvTaiKhoan_ColumnHeaderMouseClick;
         }
 
-        private void TaiDanhSach(string tuKhoa = null)
+        private void TaiDanhSach()
         {
             try
             {
                 _danhSach = _data.LayTatCa();
-                if (!string.IsNullOrEmpty(tuKhoa))
-                {
-                    string kw = tuKhoa.ToLower();
-                    _danhSach = _danhSach.FindAll(x =>
-                        (x.TenDangNhap ?? "").ToLower().Contains(kw) ||
-                        (x.HoTen ?? "").ToLower().Contains(kw));
-                }
-                SapXepDanhSach();
-                dgvTaiKhoan.DataSource = null;
-                dgvTaiKhoan.DataSource = _danhSach;
-                lblSoLuong.Text = string.Format("Tổng: {0} tài khoản", _danhSach.Count);
-                CapNhatTrangThaiNut();
+                HienThiDanhSach(_danhSach);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải danh sách: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi tải danh sách người dùng: " + ex.Message,
+                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void dgvTaiKhoan_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void HienThiDanhSach(List<NguoiDung> list)
         {
-            if (e.ColumnIndex < 0) return;
-
-            if (_sortColumnIndex == e.ColumnIndex)
-                _sortAscending = !_sortAscending;
-            else
-            {
-                _sortColumnIndex = e.ColumnIndex;
-                _sortAscending = true;
-            }
-
-            SapXepDanhSach();
             dgvTaiKhoan.DataSource = null;
-            dgvTaiKhoan.DataSource = _danhSach;
-
-            foreach (DataGridViewColumn column in dgvTaiKhoan.Columns)
-                column.HeaderCell.SortGlyphDirection = SortOrder.None;
-            dgvTaiKhoan.Columns[_sortColumnIndex].HeaderCell.SortGlyphDirection =
-                _sortAscending ? SortOrder.Ascending : SortOrder.Descending;
-        }
-
-        private void SapXepDanhSach()
-        {
-            if (_danhSach == null || _sortColumnIndex < 0 || _sortColumnIndex >= dgvTaiKhoan.Columns.Count)
-                return;
-
-            string propertyName = dgvTaiKhoan.Columns[_sortColumnIndex].DataPropertyName;
-            PropertyInfo property = typeof(NguoiDung).GetProperty(propertyName);
-            if (property == null) return;
-
-            _danhSach.Sort(delegate(NguoiDung left, NguoiDung right)
-            {
-                object leftValue = property.GetValue(left, null);
-                object rightValue = property.GetValue(right, null);
-                int result;
-
-                if (leftValue == null || rightValue == null)
-                    result = leftValue == rightValue ? 0 : (leftValue == null ? -1 : 1);
-                else if (leftValue is string && rightValue is string)
-                    result = string.Compare((string)leftValue, (string)rightValue, StringComparison.CurrentCultureIgnoreCase);
-                else
-                    result = ((IComparable)leftValue).CompareTo(rightValue);
-
-                return _sortAscending ? result : -result;
-            });
-        }
-
-        private void dgvTaiKhoan_SelectionChanged(object sender, EventArgs e)
-        {
-            _taiKhoanDangChon = null;
-            if (dgvTaiKhoan.SelectedRows.Count > 0)
-                _taiKhoanDangChon = dgvTaiKhoan.SelectedRows[0].DataBoundItem as NguoiDung;
+            dgvTaiKhoan.DataSource = list;
+            lblSoLuong.Text = "Tổng: " + (list != null ? list.Count : 0) + " tài khoản";
             CapNhatTrangThaiNut();
         }
 
@@ -147,98 +80,32 @@ namespace CuahangNongduoc
             btnSua.Enabled = coChon;
             btnKhoaMoKhoa.Enabled = coChon;
             btnDatLaiMatKhau.Enabled = coChon;
+            btnXoaNguoiDung.Enabled = coChon;
 
-            if (coChon && _taiKhoanDangChon != null)
+            if (coChon)
             {
-                btnKhoaMoKhoa.Text = _taiKhoanDangChon.IsActive ? "Khóa tài khoản" : "Mở khóa tài khoản";
-                btnKhoaMoKhoa.BackColor = _taiKhoanDangChon.IsActive
-                    ? Color.FromArgb(220, 38, 38)
-                    : Color.FromArgb(16, 149, 93);
+                btnKhoaMoKhoa.Text = _taiKhoanDangChon.IsActive ? "Khóa tài khoản" : "Mở khóa";
             }
-        }
-
-        private void btnThemMoi_Click(object sender, EventArgs e)
-        {
-            using (var frm = new frmTaiKhoanChiTiet(null))
+            else
             {
-                if (frm.ShowDialog(this) == DialogResult.OK)
-                    TaiDanhSach(txtTimKiem.Text);
-            }
-        }
-
-        private void btnSua_Click(object sender, EventArgs e)
-        {
-            if (_taiKhoanDangChon == null) return;
-            // Load đầy đủ thông tin (không có hash)
-            using (var frm = new frmTaiKhoanChiTiet(_taiKhoanDangChon))
-            {
-                if (frm.ShowDialog(this) == DialogResult.OK)
-                    TaiDanhSach(txtTimKiem.Text);
-            }
-        }
-
-        private void btnKhoaMoKhoa_Click(object sender, EventArgs e)
-        {
-            if (_taiKhoanDangChon == null) return;
-
-            bool moiTrangThai = !_taiKhoanDangChon.IsActive;
-
-            // Ngăn không cho khóa tài khoản Admin đang đăng nhập
-            if (!moiTrangThai && _taiKhoanDangChon.Id == UserSession.UserId)
-            {
-                MessageBox.Show("Không thể khóa tài khoản đang đăng nhập của chính bạn.",
-                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Kiểm tra không để hệ thống mất Admin cuối cùng
-            if (!moiTrangThai && string.Equals(_taiKhoanDangChon.Role, "admin", StringComparison.OrdinalIgnoreCase))
-            {
-                int soAdmin = _data.DemAdminDangHoatDong();
-                if (soAdmin <= 1)
-                {
-                    MessageBox.Show("Không thể khóa tài khoản Admin cuối cùng đang hoạt động.\nHệ thống cần ít nhất một Admin để quản trị.",
-                        "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-            }
-
-            string hanhDong = moiTrangThai ? "mở khóa" : "khóa";
-            if (MessageBox.Show(
-                string.Format("Bạn có chắc muốn {0} tài khoản '{1}'?", hanhDong, _taiKhoanDangChon.TenDangNhap),
-                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                try
-                {
-                    _data.DatTrangThai(_taiKhoanDangChon.Id, moiTrangThai);
-                    TaiDanhSach(txtTimKiem.Text);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnDatLaiMatKhau_Click(object sender, EventArgs e)
-        {
-            if (_taiKhoanDangChon == null) return;
-
-            using (var frm = new frmDatLaiMatKhau(_taiKhoanDangChon.Id, _taiKhoanDangChon.TenDangNhap))
-            {
-                frm.ShowDialog(this);
+                btnKhoaMoKhoa.Text = "Khóa / Mở khóa";
             }
         }
 
         private void btnTimKiem_Click(object sender, EventArgs e)
         {
-            TaiDanhSach(txtTimKiem.Text);
-        }
+            string tuKhoa = txtTimKiem.Text.Trim();
+            if (string.IsNullOrEmpty(tuKhoa))
+            {
+                HienThiDanhSach(_danhSach);
+                return;
+            }
 
-        private void txtTimKiem_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-                TaiDanhSach(txtTimKiem.Text);
+            string kw = tuKhoa.ToLower();
+            var ketQua = (_danhSach ?? _data.LayTatCa()).FindAll(x =>
+                (x.TenDangNhap != null && x.TenDangNhap.ToLower().Contains(kw)) ||
+                (x.HoTen != null && x.HoTen.ToLower().Contains(kw)));
+            HienThiDanhSach(ketQua);
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)
@@ -247,44 +114,172 @@ namespace CuahangNongduoc
             TaiDanhSach();
         }
 
+        private void txtTimKiem_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnTimKiem_Click(sender, e);
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void btnThemMoi_Click(object sender, EventArgs e)
+        {
+            using (var form = new frmTaiKhoanChiTiet())
+            {
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    TaiDanhSach();
+                }
+            }
+        }
+
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            if (_taiKhoanDangChon == null) return;
+
+            using (var form = new frmTaiKhoanChiTiet(_taiKhoanDangChon))
+            {
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    TaiDanhSach();
+                }
+            }
+        }
+
+        private void btnKhoaMoKhoa_Click(object sender, EventArgs e)
+        {
+            if (_taiKhoanDangChon == null) return;
+
+            if (_taiKhoanDangChon.Id == UserSession.UserId)
+            {
+                MessageBox.Show("Bạn không thể tự khóa tài khoản của chính mình.",
+                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            bool trangThaiMoi = !_taiKhoanDangChon.IsActive;
+            string hanhDong = trangThaiMoi ? "mở khóa" : "khóa";
+
+            if (MessageBox.Show("Bạn có chắc muốn " + hanhDong + " tài khoản [" + _taiKhoanDangChon.TenDangNhap + "]?",
+                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                _data.DatTrangThai(_taiKhoanDangChon.Id, trangThaiMoi);
+                TaiDanhSach();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi cập nhật trạng thái: " + ex.Message, "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnDatLaiMatKhau_Click(object sender, EventArgs e)
+        {
+            if (_taiKhoanDangChon == null) return;
+
+            using (var form = new frmDatLaiMatKhau(_taiKhoanDangChon))
+            {
+                form.ShowDialog(this);
+            }
+        }
+
+        private void btnXoaNguoiDung_Click(object sender, EventArgs e)
+        {
+            if (_taiKhoanDangChon == null) return;
+
+            if (_taiKhoanDangChon.Id == UserSession.UserId)
+            {
+                MessageBox.Show("Bạn không thể tự xóa tài khoản của chính mình đang đăng nhập.",
+                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (MessageBox.Show("Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản [" + _taiKhoanDangChon.TenDangNhap + "]?\nHành động này không thể hoàn tác!",
+                "Cảnh báo xóa tài khoản", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                _data.XoaNguoiDung(_taiKhoanDangChon.Id);
+                TaiDanhSach();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi xóa tài khoản: " + ex.Message, "Lỗi",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void btnDong_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void dgvTaiKhoan_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (_taiKhoanDangChon == null) return;
+            if (e.RowIndex < 0 || e.RowIndex >= dgvTaiKhoan.Rows.Count) return;
 
-            if ( _taiKhoanDangChon.Id == UserSession.UserId)
+            var nd = dgvTaiKhoan.Rows[e.RowIndex].DataBoundItem as NguoiDung;
+            if (nd != null && !nd.IsActive)
             {
-                MessageBox.Show("Không thể xóa tài khoản đang đăng nhập của chính bạn.",
-                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                e.CellStyle.ForeColor = Color.FromArgb(148, 163, 184);
+                e.CellStyle.Font = new Font(dgvTaiKhoan.Font, FontStyle.Italic);
+            }
+        }
+
+        private void dgvTaiKhoan_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (_danhSach == null || _danhSach.Count == 0) return;
+
+            if (_sortColumnIndex == e.ColumnIndex)
+                _sortAscending = !_sortAscending;
+            else
+            {
+                _sortColumnIndex = e.ColumnIndex;
+                _sortAscending = true;
             }
 
-            if (_taiKhoanDangChon.IsActive &&
-                string.Equals(_taiKhoanDangChon.Role, "admin", StringComparison.OrdinalIgnoreCase) &&
-                _data.DemAdminDangHoatDong() <= 1)
+            string propName = dgvTaiKhoan.Columns[e.ColumnIndex].DataPropertyName;
+            if (!string.IsNullOrEmpty(propName))
             {
-                MessageBox.Show("Không thể xóa tài khoản Admin cuối cùng đang hoạt động.\nHệ thống cần ít nhất một Admin để quản trị.",
-                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                _danhSach.Sort((a, b) =>
+                {
+                    var prop = typeof(NguoiDung).GetProperty(propName);
+                    if (prop == null) return 0;
+                    var valA = prop.GetValue(a, null) as IComparable;
+                    var valB = prop.GetValue(b, null) as IComparable;
+                    if (valA == null && valB == null) return 0;
+                    if (valA == null) return _sortAscending ? -1 : 1;
+                    if (valB == null) return _sortAscending ? 1 : -1;
+                    return _sortAscending ? valA.CompareTo(valB) : valB.CompareTo(valA);
+                });
+                HienThiDanhSach(_danhSach);
             }
+        }
 
-            if (MessageBox.Show(
-                string.Format("Bạn có chắc muốn xóa tài khoản '{0}'?", _taiKhoanDangChon.TenDangNhap),
-                "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        private void dgvTaiKhoan_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvTaiKhoan.CurrentRow != null && dgvTaiKhoan.CurrentRow.Index >= 0)
             {
-                try
-                {
-                    if (_data.XoaNguoiDung(_taiKhoanDangChon.Id) != null)
-                        TaiDanhSach(txtTimKiem.Text);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                _taiKhoanDangChon = dgvTaiKhoan.CurrentRow.DataBoundItem as NguoiDung;
+            }
+            else
+            {
+                _taiKhoanDangChon = null;
+            }
+            CapNhatTrangThaiNut();
+        }
+
+        private void dgvTaiKhoan_DoubleClick(object sender, EventArgs e)
+        {
+            if (_taiKhoanDangChon != null)
+            {
+                btnSua_Click(sender, e);
             }
         }
     }

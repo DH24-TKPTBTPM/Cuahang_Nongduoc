@@ -1,4 +1,4 @@
-
+﻿
 namespace CuahangNongduoc
 {
     partial class frmMain
@@ -636,15 +636,16 @@ namespace CuahangNongduoc
             this.toolHuongDan.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolHuongDan.Name = "toolHuongDan";
             this.toolHuongDan.Size = new System.Drawing.Size(76, 48);
-            this.toolHuongDan.Text = "HÆ°á»›ng dáº«n";
+            this.toolHuongDan.Text = "Hướng dẫn";
             this.toolHuongDan.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolHuongDan.Click += new System.EventHandler(this.mnuTrogiupHuongdan_Click);
             // 
             // taskPane
             // 
-            this.taskPane.AutoScrollMargin = new System.Drawing.Size(12, 12);
-            this.taskPane.CustomSettings.GradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.taskPane.CustomSettings.GradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.taskPane.AutoScroll = true;
+            this.taskPane.AutoScrollMargin = new System.Drawing.Size(12, 24);
+            this.taskPane.CustomSettings.GradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(234)))), ((int)(((byte)(246)))));
+            this.taskPane.CustomSettings.GradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(244)))), ((int)(((byte)(248)))));
             this.taskPane.Dock = System.Windows.Forms.DockStyle.Left;
             this.taskPane.Expandos.AddRange(new XPExplorerBar.Expando[] {
             this.expando1,
@@ -663,13 +664,13 @@ namespace CuahangNongduoc
             // 
             this.expando1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando1.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(77)))), ((int)(((byte)(58)))));
-            this.expando1.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(44)))), ((int)(((byte)(34)))));
+            this.expando1.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando1.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando1.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando1.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(243)))), ((int)(((byte)(208)))));
+            this.expando1.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando1.CustomHeaderSettings.TitleGradient = true;
             this.expando1.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando1.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
+            this.expando1.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando1.ExpandedHeight = 170;
             this.expando1.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando1.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -690,7 +691,7 @@ namespace CuahangNongduoc
             this.itemDaiLy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemDaiLy.BackColor = System.Drawing.Color.Transparent;
-            this.itemDaiLy.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemDaiLy.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemDaiLy.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemDaiLy.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemDaiLy.Image = ((System.Drawing.Image)(resources.GetObject("itemDaiLy.Image")));
@@ -708,7 +709,7 @@ namespace CuahangNongduoc
             this.itemKhachHang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemKhachHang.BackColor = System.Drawing.Color.Transparent;
-            this.itemKhachHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemKhachHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemKhachHang.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemKhachHang.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemKhachHang.Image = ((System.Drawing.Image)(resources.GetObject("itemKhachHang.Image")));
@@ -726,7 +727,7 @@ namespace CuahangNongduoc
             this.itemSanPham.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemSanPham.BackColor = System.Drawing.Color.Transparent;
-            this.itemSanPham.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemSanPham.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemSanPham.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemSanPham.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemSanPham.Image = ((System.Drawing.Image)(resources.GetObject("itemSanPham.Image")));
@@ -745,7 +746,7 @@ namespace CuahangNongduoc
             this.itemNhaCungCap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemNhaCungCap.BackColor = System.Drawing.Color.Transparent;
-            this.itemNhaCungCap.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemNhaCungCap.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemNhaCungCap.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemNhaCungCap.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemNhaCungCap.Image = ((System.Drawing.Image)(resources.GetObject("itemNhaCungCap.Image")));
@@ -763,7 +764,7 @@ namespace CuahangNongduoc
             this.itemNguoiDung.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemNguoiDung.BackColor = System.Drawing.Color.Transparent;
-            this.itemNguoiDung.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemNguoiDung.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemNguoiDung.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemNguoiDung.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemNguoiDung.Image = ((System.Drawing.Image)(resources.GetObject("itemNguoiDung.Image")));
@@ -780,13 +781,13 @@ namespace CuahangNongduoc
             // 
             this.expando2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando2.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(77)))), ((int)(((byte)(58)))));
-            this.expando2.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(44)))), ((int)(((byte)(34)))));
+            this.expando2.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando2.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando2.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando2.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(243)))), ((int)(((byte)(208)))));
+            this.expando2.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando2.CustomHeaderSettings.TitleGradient = true;
             this.expando2.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando2.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
+            this.expando2.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando2.ExpandedHeight = 190;
             this.expando2.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando2.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -807,7 +808,7 @@ namespace CuahangNongduoc
             this.itemNhapHang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemNhapHang.BackColor = System.Drawing.Color.Transparent;
-            this.itemNhapHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemNhapHang.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemNhapHang.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemNhapHang.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemNhapHang.Image = ((System.Drawing.Image)(resources.GetObject("itemNhapHang.Image")));
@@ -825,7 +826,7 @@ namespace CuahangNongduoc
             this.itemBanSi.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemBanSi.BackColor = System.Drawing.Color.Transparent;
-            this.itemBanSi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemBanSi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemBanSi.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemBanSi.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemBanSi.Image = ((System.Drawing.Image)(resources.GetObject("itemBanSi.Image")));
@@ -843,7 +844,7 @@ namespace CuahangNongduoc
             this.itemBanLe.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemBanLe.BackColor = System.Drawing.Color.Transparent;
-            this.itemBanLe.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemBanLe.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemBanLe.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemBanLe.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemBanLe.Image = ((System.Drawing.Image)(resources.GetObject("itemBanLe.Image")));
@@ -861,7 +862,7 @@ namespace CuahangNongduoc
             this.itemThanhToan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemThanhToan.BackColor = System.Drawing.Color.Transparent;
-            this.itemThanhToan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemThanhToan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemThanhToan.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemThanhToan.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemThanhToan.Image = ((System.Drawing.Image)(resources.GetObject("itemThanhToan.Image")));
@@ -879,7 +880,7 @@ namespace CuahangNongduoc
             this.itemPhieuChi.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemPhieuChi.BackColor = System.Drawing.Color.Transparent;
-            this.itemPhieuChi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemPhieuChi.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemPhieuChi.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemPhieuChi.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemPhieuChi.Image = ((System.Drawing.Image)(resources.GetObject("itemPhieuChi.Image")));
@@ -896,13 +897,13 @@ namespace CuahangNongduoc
             // 
             this.expando3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando3.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(77)))), ((int)(((byte)(58)))));
-            this.expando3.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(44)))), ((int)(((byte)(34)))));
+            this.expando3.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando3.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando3.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando3.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(243)))), ((int)(((byte)(208)))));
+            this.expando3.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando3.CustomHeaderSettings.TitleGradient = true;
             this.expando3.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando3.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
+            this.expando3.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando3.ExpandedHeight = 170;
             this.expando3.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando3.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -921,7 +922,7 @@ namespace CuahangNongduoc
             this.itemTonghopDoanhthu.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemTonghopDoanhthu.BackColor = System.Drawing.Color.Transparent;
-            this.itemTonghopDoanhthu.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemTonghopDoanhthu.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemTonghopDoanhthu.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemTonghopDoanhthu.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemTonghopDoanhthu.Image = ((System.Drawing.Image)(resources.GetObject("itemTonghopDoanhthu.Image")));
@@ -939,7 +940,7 @@ namespace CuahangNongduoc
             this.itemTonKho.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemTonKho.BackColor = System.Drawing.Color.Transparent;
-            this.itemTonKho.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemTonKho.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemTonKho.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemTonKho.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemTonKho.Image = ((System.Drawing.Image)(resources.GetObject("itemTonKho.Image")));
@@ -956,7 +957,7 @@ namespace CuahangNongduoc
             this.taskItem1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.taskItem1.BackColor = System.Drawing.Color.Transparent;
-            this.taskItem1.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.taskItem1.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.taskItem1.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.taskItem1.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.taskItem1.Image = ((System.Drawing.Image)(resources.GetObject("taskItem1.Image")));
@@ -973,13 +974,13 @@ namespace CuahangNongduoc
             // 
             this.expando4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.expando4.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(77)))), ((int)(((byte)(58)))));
-            this.expando4.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(44)))), ((int)(((byte)(34)))));
+            this.expando4.CustomHeaderSettings.NormalGradientEndColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.expando4.CustomHeaderSettings.NormalGradientStartColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.expando4.CustomHeaderSettings.NormalTitleColor = System.Drawing.Color.White;
-            this.expando4.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(243)))), ((int)(((byte)(208)))));
+            this.expando4.CustomHeaderSettings.NormalTitleHotColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando4.CustomHeaderSettings.TitleGradient = true;
             this.expando4.CustomSettings.NormalBackColor = System.Drawing.Color.White;
-            this.expando4.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
+            this.expando4.CustomSettings.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.expando4.ExpandedHeight = 170;
             this.expando4.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.expando4.Items.AddRange(new System.Windows.Forms.Control[] {
@@ -998,7 +999,7 @@ namespace CuahangNongduoc
             this.itemDoiMatKhau.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemDoiMatKhau.BackColor = System.Drawing.Color.Transparent;
-            this.itemDoiMatKhau.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemDoiMatKhau.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemDoiMatKhau.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemDoiMatKhau.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemDoiMatKhau.Image = null;
@@ -1016,7 +1017,7 @@ namespace CuahangNongduoc
             this.itemDangXuat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemDangXuat.BackColor = System.Drawing.Color.Transparent;
-            this.itemDangXuat.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemDangXuat.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemDangXuat.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemDangXuat.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemDangXuat.Image = null;
@@ -1034,7 +1035,7 @@ namespace CuahangNongduoc
             this.itemHuongDan.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.itemHuongDan.BackColor = System.Drawing.Color.Transparent;
-            this.itemHuongDan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(149)))), ((int)(((byte)(93)))));
+            this.itemHuongDan.CustomSettings.HotLinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.itemHuongDan.CustomSettings.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.itemHuongDan.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.itemHuongDan.Image = global::CuahangNongduoc.Properties.Resources.help;
@@ -1042,7 +1043,7 @@ namespace CuahangNongduoc
             this.itemHuongDan.Name = "itemHuongDan";
             this.itemHuongDan.Size = new System.Drawing.Size(117, 20);
             this.itemHuongDan.TabIndex = 9;
-            this.itemHuongDan.Text = "HÆ°á»›ng dáº«n";
+            this.itemHuongDan.Text = "Hướng dẫn";
             this.itemHuongDan.TextAlign = System.Drawing.ContentAlignment.TopLeft;
             this.itemHuongDan.UseVisualStyleBackColor = false;
             this.itemHuongDan.Click += new System.EventHandler(this.mnuTrogiupHuongdan_Click);

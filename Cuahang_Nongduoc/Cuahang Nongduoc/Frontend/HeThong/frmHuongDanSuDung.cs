@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -54,30 +55,29 @@ namespace CuahangNongduoc
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("<!DOCTYPE html>");
-            sb.Append("<html lang='vi'><head><meta charset='utf-8'>");
+            sb.Append("<html lang='vi'><head>");
+            sb.Append("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />");
             sb.Append("<style>");
-            sb.Append("body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 24px 32px; color: #1e293b; background: #ffffff; line-height: 1.6; }");
-            sb.Append("h1 { color: #102c22; font-size: 22px; margin-top: 0; padding-bottom: 8px; border-bottom: 2px solid #10b981; }");
-            sb.Append("h2 { color: #047857; font-size: 17px; margin-top: 24px; margin-bottom: 8px; }");
+            sb.Append("body { font-family: 'Segoe UI', Arial, sans-serif; margin: 24px 32px; color: #1e293b; background: #ffffff; line-height: 1.6; }");
+            sb.Append("h1 { color: #1e3a8a; font-size: 22px; margin-top: 0; padding-bottom: 8px; border-bottom: 2px solid #3b82f6; }");
+            sb.Append("h2 { color: #1d4ed8; font-size: 17px; margin-top: 24px; margin-bottom: 8px; }");
             sb.Append("p, li { font-size: 14px; color: #334155; }");
             sb.Append("ul, ol { padding-left: 24px; }");
-            sb.Append(".badge { display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: bold; border-radius: 4px; background: #e0f2fe; color: #0369a1; }");
-            sb.Append(".badge-green { background: #dcfce7; color: #15803d; }");
+            sb.Append(".badge { display: inline-block; padding: 4px 10px; font-size: 12px; font-weight: bold; border-radius: 4px; background: #dbeafe; color: #1e40af; }");
             sb.Append(".card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0; }");
-            sb.Append(".alert-tip { background: #ecfdf5; border-left: 4px solid #10b981; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; color: #065f46; font-size: 13.5px; }");
+            sb.Append(".alert-tip { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; color: #1e40af; font-size: 13.5px; }");
             sb.Append(".alert-warn { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 6px 6px 0; margin: 16px 0; color: #92400e; font-size: 13.5px; }");
             sb.Append("table { border-collapse: collapse; width: 100%; margin: 16px 0; }");
-            sb.Append("th { background: #f1f5f9; color: #334155; text-align: left; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; }");
+            sb.Append("th { background: #f1f5f9; color: #1e3a8a; text-align: left; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; }");
             sb.Append("td { padding: 9px 12px; font-size: 13.5px; border: 1px solid #e2e8f0; }");
             sb.Append("tr:nth-child(even) { background: #f8fafc; }");
-            sb.Append("code { font-family: Consolas, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; color: #0f766e; font-size: 13px; }");
-            sb.Append(".step-box { display: flex; align-items: flex-start; margin: 12px 0; }");
-            sb.Append(".step-num { min-width: 26px; height: 26px; border-radius: 50%; background: #102c22; color: #fff; text-align: center; line-height: 26px; font-weight: bold; margin-right: 12px; font-size: 13px; }");
+            sb.Append("code { font-family: Consolas, monospace; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; color: #0369a1; font-size: 13px; font-weight: bold; }");
             sb.Append("</style></head><body>");
             sb.Append(htmlBody);
             sb.Append("</body></html>");
 
-            wbNoiDung.DocumentText = sb.ToString();
+            byte[] bytes = Encoding.UTF8.GetBytes(sb.ToString());
+            wbNoiDung.DocumentStream = new MemoryStream(bytes);
         }
 
         private void lstChuDe_DrawItem(object sender, DrawItemEventArgs e)
@@ -87,10 +87,10 @@ namespace CuahangNongduoc
             HuongDanItem item = lstChuDe.Items[e.Index] as HuongDanItem;
             bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 
-            Color bgColor = isSelected ? Color.FromArgb(220, 252, 231) : Color.FromArgb(241, 245, 249);
-            Color borderColor = isSelected ? Color.FromArgb(16, 185, 129) : Color.Transparent;
-            Color titleColor = isSelected ? Color.FromArgb(6, 78, 59) : Color.FromArgb(15, 23, 42);
-            Color descColor = isSelected ? Color.FromArgb(4, 120, 87) : Color.FromArgb(100, 116, 139);
+            Color bgColor = isSelected ? Color.FromArgb(219, 234, 254) : Color.FromArgb(239, 246, 255);
+            Color borderColor = isSelected ? Color.FromArgb(37, 99, 235) : Color.Transparent;
+            Color titleColor = isSelected ? Color.FromArgb(30, 58, 138) : Color.FromArgb(15, 23, 42);
+            Color descColor = isSelected ? Color.FromArgb(29, 78, 216) : Color.FromArgb(100, 116, 139);
 
             e.Graphics.FillRectangle(new SolidBrush(bgColor), e.Bounds);
 
@@ -112,7 +112,7 @@ namespace CuahangNongduoc
                 TextRenderer.DrawText(e.Graphics, item.MoTa, descFont, descRect, descColor, TextFormatFlags.WordEllipsis);
             }
 
-            using (Pen borderPen = new Pen(Color.FromArgb(226, 232, 240), 1))
+            using (Pen borderPen = new Pen(Color.FromArgb(219, 234, 254), 1))
             {
                 e.Graphics.DrawLine(borderPen, e.Bounds.Left + 10, e.Bounds.Bottom - 1, e.Bounds.Right - 10, e.Bounds.Bottom - 1);
             }
@@ -128,7 +128,7 @@ namespace CuahangNongduoc
                 MoTa = "Khởi động, tài khoản mặc định, giao diện",
                 NoiDungHtml = @"
                     <h1>1. Bắt đầu & Đăng nhập Hệ thống</h1>
-                    <p>Hệ thống Quản lý Cửa hàng Nông Dược phiên bản mới hỗ trợ phân quyền người dùng và quản lý toàn diện hàng hóa, kho bãi, doanh số.</p>
+                    <p>Hệ thống Quản lý Cửa hàng Nông Dược hỗ trợ quản lý toàn diện hàng hóa, kho bãi, xuất nhập khẩu, doanh số và phân quyền chặt chẽ.</p>
                     
                     <div class='card'>
                         <h2>Thông tin tài khoản đăng nhập mặc định</h2>
@@ -142,13 +142,13 @@ namespace CuahangNongduoc
                             <tr>
                                 <td><b>vodichbatphuong</b></td>
                                 <td><code>vodichbatphuong123</code></td>
-                                <td><span class='badge badge-green'>Quản trị viên (Admin)</span></td>
+                                <td><span class='badge'>Quản trị viên (Admin)</span></td>
                                 <td>Tài khoản chính có toàn quyền quản trị</td>
                             </tr>
                             <tr>
                                 <td><b>admin</b></td>
                                 <td><code>vodichbatphuong123</code></td>
-                                <td><span class='badge badge-green'>Quản trị viên (Admin)</span></td>
+                                <td><span class='badge'>Quản trị viên (Admin)</span></td>
                                 <td>Tài khoản quản trị dự phòng</td>
                             </tr>
                         </table>
@@ -156,13 +156,13 @@ namespace CuahangNongduoc
 
                     <h2>Các tính năng trên màn hình đăng nhập</h2>
                     <ul>
-                        <li><b>3 nút điều khiển cửa sổ chuẩn Windows:</b> Hỗ trợ Thu nhỏ (-), Phóng to toàn màn hình (□) và Đóng (X). Khi phóng to, bảng đăng nhập tự động căn giữa khung nhìn.</li>
+                        <li><b>3 nút điều khiển cửa sổ chuẩn Windows:</b> Thu nhỏ (-), Phóng to toàn màn hình (□) và Đóng (X). Bảng đăng nhập tự động căn giữa khung nhìn khi phóng to.</li>
                         <li><b>Hiển thị mật khẩu:</b> Đánh dấu chọn ô <i>Hiển thị mật khẩu</i> để kiểm tra ký tự đã gõ.</li>
                         <li><b>Tự động ghi nhớ:</b> Trường tên đăng nhập được chuẩn bị sẵn tài khoản quản trị để đăng nhập nhanh.</li>
                     </ul>
 
                     <div class='alert-tip'>
-                        <b>Mẹo:</b> Nhấn phím <b>Enter</b> bất kỳ lúc nào tại ô Tên đăng nhập hoặc Mật khẩu để đăng nhập ngay mà không cần dùng chuột.
+                        <b>Mẹo:</b> Nhấn phím <b>Enter</b> tại ô Mật khẩu để đăng nhập ngay mà không cần dùng chuột.
                     </div>"
             });
 
@@ -182,8 +182,8 @@ namespace CuahangNongduoc
                         <li><b>Thêm người dùng mới:</b> Bấm nút <i>+ Thêm tài khoản</i>. Điền Tên đăng nhập (viết liền không dấu), Họ và tên, Mật khẩu khởi tạo, và chọn Vai trò phù hợp.</li>
                         <li><b>Sửa thông tin:</b> Chọn dòng người dùng trong danh sách và bấm nút <i>Sửa thông tin</i> để cập nhật Họ tên hoặc Vai trò.</li>
                         <li><b>Khóa / Mở khóa tài khoản:</b> Ngăn chặn tạm thời người dùng đăng nhập mà không cần xóa dữ liệu.</li>
-                        <li><b>Đặt lại mật khẩu:</b> Cung cấp mật khẩu mới cho nhân viên khi quên mật khẩu. Mật khẩu được mã hóa an toàn theo tiêu chuẩn PBKDF2 (SHA-256 kèm muối ngẫu nhiên).</li>
-                        <li><b>Xóa tài khoản:</b> Xóa vĩnh viễn tài khoản (không thể xóa tài khoản Admin đang đăng nhập).</li>
+                        <li><b>Đặt lại mật khẩu:</b> Cấp lại mật khẩu mới cho nhân viên khi quên mật khẩu. Mật khẩu được mã hóa an toàn theo tiêu chuẩn PBKDF2 (SHA-256 kèm muối ngẫu nhiên).</li>
+                        <li><b>Xóa tài khoản:</b> Xóa tài khoản nhân viên đã nghỉ việc (không thể xóa tài khoản Admin đang đăng nhập).</li>
                     </ol>
 
                     <div class='alert-warn'>
@@ -271,7 +271,7 @@ namespace CuahangNongduoc
                     <p>Lập khi đại lý hoặc khách hàng thanh toán tiền nợ mua hàng trước đó. Tiền nợ của đối tác sẽ giảm tương ứng.</p>
 
                     <h2>2. Phiếu Chi tiền mặt</h2>
-                    <p>Lập khi thanh toán tiền hàng cho nhà cung cấp hoặc các khoản chi phí phát sinh tại cửa hàng (tiền điện thoại, xăng xe giao hàng, bao bì...).</p>
+                    <p>Lập khi thanh toán tiền hàng cho nhà cung cấp hoặc các khoản chi phí phát sinh tại cửa hàng.</p>
 
                     <h2>3. Tra cứu Dư nợ</h2>
                     <p>Xem nhanh tổng nợ của từng đại lý và lịch sử các lần mua hàng, thanh toán qua chức năng <i>Dư nợ khách hàng</i>.</p>"
@@ -289,7 +289,7 @@ namespace CuahangNongduoc
                     <ul>
                         <li><b>Số lượng bán:</b> Tổng hợp sản lượng tiêu thụ từng mặt hàng theo khoảng thời gian tùy chọn.</li>
                         <li><b>Số lượng tồn kho:</b> Kiểm tra số lượng tồn thực tế của từng sản phẩm tại kho.</li>
-                        <li><b>Sản phẩm hết hạn / Cận hạn:</b> Liệt kê danh sách các loại thuốc BVTV đã quá hạn hoặc sắp đến ngày hết hạn để có kế hoạch trả nhà cung cấp hoặc thanh lý.</li>
+                        <li><b>Sản phẩm hết hạn / Cận hạn:</b> Liệt kê danh sách các loại thuốc BVTV đã quá hạn hoặc sắp đến ngày hết hạn để có kế hoạch xử lý kịp thời.</li>
                         <li><b>Báo cáo Doanh thu & Lợi nhuận:</b> Tính toán doanh thu thuần và lợi nhuận gộp theo giá vốn bình quân gia quyền.</li>
                     </ul>"
             });
@@ -304,7 +304,7 @@ namespace CuahangNongduoc
 
                     <h2>Cấu trúc tệp CSDL</h2>
                     <ul>
-                        <li><b>Tệp CSDL chính:</b> <code>cuahang.dll</code> (đây là tệp định dạng Access MDB được đổi đuôi thành dll để bảo vệ).</li>
+                        <li><b>Tệp CSDL chính:</b> <code>cuahang.dll</code> (tệp định dạng Access MDB được đổi đuôi thành dll để bảo vệ).</li>
                         <li><b>Vị trí tệp:</b> Nằm cùng thư mục chạy ứng dụng hoặc trong thư mục <code>Database\cuahang.dll</code>.</li>
                     </ul>
 

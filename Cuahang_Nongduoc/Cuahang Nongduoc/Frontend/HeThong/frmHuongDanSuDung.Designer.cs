@@ -1,4 +1,4 @@
-namespace CuahangNongduoc
+﻿namespace CuahangNongduoc
 {
     partial class frmHuongDanSuDung
     {
@@ -32,7 +32,7 @@ namespace CuahangNongduoc
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(44)))), ((int)(((byte)(34)))));
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.panelTop.Controls.Add(this.lblSubTitle);
             this.panelTop.Controls.Add(this.lblTitle);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
@@ -46,12 +46,12 @@ namespace CuahangNongduoc
             // 
             this.lblSubTitle.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblSubTitle.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSubTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(243)))), ((int)(((byte)(208)))));
+            this.lblSubTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(191)))), ((int)(((byte)(219)))), ((int)(((byte)(254)))));
             this.lblSubTitle.Location = new System.Drawing.Point(24, 43);
             this.lblSubTitle.Name = "lblSubTitle";
             this.lblSubTitle.Size = new System.Drawing.Size(1036, 20);
             this.lblSubTitle.TabIndex = 1;
-            this.lblSubTitle.Text = "TÃ i liá»‡u quy trÃ¬nh nghiá»‡p vá»¥ & váº­n hÃ nh Há»‡ thá»‘ng Quáº£n lÃ½ Cá»­a hÃ ng NÃ´ng DÆ°á»£c";
+            this.lblSubTitle.Text = "Tài liệu quy trình nghiệp vụ & vận hành Hệ thống Quản lý Cửa hàng Nông Dược";
             // 
             // lblTitle
             // 
@@ -62,11 +62,11 @@ namespace CuahangNongduoc
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(1036, 30);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "HÆ¯á»šNG DáºªN Sá»¬ Dá»¤NG Há»† THá» NG";
+            this.lblTitle.Text = "HƯỚNG DẪN SỬ DỤNG HỆ THỐNG";
             // 
             // panelLeft
             // 
-            this.panelLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.panelLeft.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(246)))), ((int)(((byte)(255)))));
             this.panelLeft.Controls.Add(this.lstChuDe);
             this.panelLeft.Controls.Add(this.lblMucLuc);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Left;
@@ -95,12 +95,12 @@ namespace CuahangNongduoc
             // 
             this.lblMucLuc.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblMucLuc.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMucLuc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.lblMucLuc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(58)))), ((int)(((byte)(138)))));
             this.lblMucLuc.Location = new System.Drawing.Point(12, 12);
             this.lblMucLuc.Name = "lblMucLuc";
             this.lblMucLuc.Size = new System.Drawing.Size(276, 30);
             this.lblMucLuc.TabIndex = 0;
-            this.lblMucLuc.Text = "CHá»¦ Ä á»€ HÆ¯á»šNG DáºªN";
+            this.lblMucLuc.Text = "CHỦ ĐỀ HƯỚNG DẪN";
             this.lblMucLuc.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // panelRight
@@ -135,7 +135,7 @@ namespace CuahangNongduoc
             this.MinimumSize = new System.Drawing.Size(900, 600);
             this.Name = "frmHuongDanSuDung";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "HÆ°á»›ng dáº«n sá»­ dá»¥ng - Quáº£n lÃ½ Cá»­a hÃ ng NÃ´ng dÆ°á»£c";
+            this.Text = "Hướng dẫn sử dụng - Quản lý Cửa hàng Nông Dược";
             this.Load += new System.EventHandler(this.frmHuongDanSuDung_Load);
             this.panelTop.ResumeLayout(false);
             this.panelLeft.ResumeLayout(false);
