@@ -36,7 +36,7 @@ namespace CuahangNongduoc
         {
             // [Sửa build 15/11/2026] Controller (R23) trả DataTable, Form tự gắn vào cột ComboBox;
             // Bán sỉ dùng danh sách Đại lý như bản gốc frmDanhsachPhieuBanSi (trước đây gộp nhầm thành Khách hàng).
-            // Sửa: BE1 – Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 – <Họ tên>
+            // Sửa: BE1 - Nguyễn Tuấn Anh | Hỗ trợ: Claude (AI) | Kiểm tra: QA1 - <Họ tên>
             bool laBanLe = (_loaiPhieu == LoaiPhieuBan.BanLe);
             colKhachhang.DataSource = laBanLe ? ctrlKH.HienthiKhachHangDataGridviewComboBox() : ctrlKH.HienthiDaiLyDataGridviewComboBox();
             colKhachhang.DisplayMember = "HO_TEN";
@@ -75,12 +75,22 @@ namespace CuahangNongduoc
         {
             if (BanLe == null || BanLe.IsDisposed)
             {
-                BanLe = new frmBanHang();
+                if (_loaiPhieu == LoaiPhieuBan.BanLe)
+                {
+                    BanLe = new frmBanHang(new BanLeStrategy());
+                }
+                else
+                {
+                    BanLe = new frmBanHang(new BanSiStrategy());
+                }
                 BanLe.Show();
             }
             else
+            {
                 BanLe.Activate();
+            }
         }
+
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
@@ -96,8 +106,10 @@ namespace CuahangNongduoc
                 foreach (ChiTietPhieuBan ct in ds)
                 {
                     CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
+                  
                 }
                 ctrl.Save();
+               
             }
         }
 
@@ -114,10 +126,12 @@ namespace CuahangNongduoc
                      foreach (ChiTietPhieuBan ct in ds)
                      {
                          CuahangNongduoc.DataLayer.MaSanPhanFactory.CapNhatSoLuong(ct.MaSanPham.Id, ct.SoLuong);
-                     }
+                        
+                    }
                      bindingNavigator.BindingSource.RemoveCurrent();
                      ctrl.Save();
-                 }
+                    
+                }
              }
         }
 
@@ -129,14 +143,14 @@ namespace CuahangNongduoc
                 PhieuBanController ctrlPB = new PhieuBanController();
                 String ma_phieu = row["ID"].ToString();
                 CuahangNongduoc.BusinessObject.PhieuBan ph = ctrlPB.LayPhieuBan(ma_phieu);
-                frmInPhieuBan PhieuBan = new frmInPhieuBan(ph);
-                PhieuBan.Show();
+                frmInPhieuBan frmIn = new frmInPhieuBan(ph);
+                frmIn.Show();
             }
         }
 
         private void toolTimKiem_Click(object sender, EventArgs e)
         {
-            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(false);
+            frmTimPhieuBanLe Tim = new frmTimPhieuBanLe(_loaiPhieu == LoaiPhieuBan.BanSi);
             Point p = PointToScreen(toolTimKiem.Bounds.Location);
             p.X += toolTimKiem.Width;
             p.Y += toolTimKiem.Height;
