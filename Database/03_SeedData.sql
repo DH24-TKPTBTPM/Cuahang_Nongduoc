@@ -1,4 +1,4 @@
-﻿-- =============================================================
+-- =============================================================
 -- 03 - Nạp dữ liệu từ Access
 -- Nguồn  : cuahang.dll (Access) -> SQL Server. Sinh bởi Database/tools/gen_sql.py
 -- Việc   : SQL-02
@@ -111,6 +111,12 @@ INSERT INTO dbo.PHIEU_THANH_TOAN ([ID], [NGAY_THANH_TOAN], [TONG_TIEN], [ID_KHAC
 INSERT INTO dbo.DU_NO_KH ([ID_KHACH_HANG], [THANG], [NAM], [DAU_KY], [PHAT_SINH], [DA_TRA], [CUOI_KY]) VALUES (N'1', 11, 2007, 0, 0, 0, 100000);
 INSERT INTO dbo.DU_NO_KH ([ID_KHACH_HANG], [THANG], [NAM], [DAU_KY], [PHAT_SINH], [DA_TRA], [CUOI_KY]) VALUES (N'3', 11, 2007, 0, 0, 0, 200000);
 INSERT INTO dbo.DU_NO_KH ([ID_KHACH_HANG], [THANG], [NAM], [DAU_KY], [PHAT_SINH], [DA_TRA], [CUOI_KY]) VALUES (N'2', 11, 2007, 0, 0, 0, 300000);
+
+-- Đồng bộ số lượng tồn kho SAN_PHAM khớp với tổng các lô MA_SAN_PHAM
+UPDATE SP
+SET SP.SO_LUONG = (SELECT ISNULL(SUM(SO_LUONG), 0) FROM dbo.MA_SAN_PHAM MA WHERE MA.ID_SAN_PHAM = SP.ID)
+FROM dbo.SAN_PHAM SP
+WHERE EXISTS (SELECT 1 FROM dbo.MA_SAN_PHAM MA WHERE MA.ID_SAN_PHAM = SP.ID);
 
 COMMIT TRANSACTION;
 GO

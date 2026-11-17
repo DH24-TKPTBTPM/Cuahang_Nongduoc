@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -584,6 +584,12 @@ namespace CuahangNongduoc.DataLayer
             cmd.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maLo;
             if (cmd.ExecuteNonQuery() != 1)
                 throw new InvalidOperationException("Tồn kho lô đã thay đổi hoặc không đủ. Hãy tải lại phiếu.");
+
+            // Đồng bộ tổng tồn kho vào bảng SAN_PHAM để khớp chính xác với tổng tồn các lô
+            string sqlDongBoSp = "UPDATE SAN_PHAM SET SO_LUONG = (SELECT ISNULL(SUM(SO_LUONG), 0) FROM MA_SAN_PHAM WHERE ID_SAN_PHAM = (SELECT ID_SAN_PHAM FROM MA_SAN_PHAM WHERE ID = @id)) WHERE ID = (SELECT ID_SAN_PHAM FROM MA_SAN_PHAM WHERE ID = @id)";
+            SqlCommand cmdDongBoSp = new SqlCommand(sqlDongBoSp, connection, transaction);
+            cmdDongBoSp.Parameters.Add("id", SqlDbType.VarChar, 50).Value = maLo;
+            cmdDongBoSp.ExecuteNonQuery();
         }
 
         public void XoaPhieu(string maPhieu, bool hoanTon)

@@ -41,3 +41,11 @@ BEGIN
     PRINT N'Đã tạo bảng CHI_TIET_DICH_VU_PHIEU_BAN thành công.';
 END
 GO
+
+-- 3. Đồng bộ tồn kho SAN_PHAM khớp với tổng tồn các lô thực tế trong MA_SAN_PHAM
+UPDATE SP
+SET SP.SO_LUONG = (SELECT ISNULL(SUM(SO_LUONG), 0) FROM dbo.MA_SAN_PHAM MA WHERE MA.ID_SAN_PHAM = SP.ID)
+FROM dbo.SAN_PHAM SP
+WHERE EXISTS (SELECT 1 FROM dbo.MA_SAN_PHAM MA WHERE MA.ID_SAN_PHAM = SP.ID);
+PRINT N'Đã đồng bộ số lượng tồn kho SAN_PHAM khớp với MA_SAN_PHAM.';
+GO
