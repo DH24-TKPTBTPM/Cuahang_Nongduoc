@@ -1,4 +1,4 @@
-﻿-- =============================================================
+-- =============================================================
 -- 02 - Tạo bảng, khóa chính, khóa ngoại, chỉ mục
 -- Nguồn  : cuahang.dll (Access) -> SQL Server. Sinh bởi Database/tools/gen_sql.py
 -- Việc   : SQL-01
@@ -115,6 +115,7 @@ CREATE TABLE dbo.MA_SAN_PHAM (
     [NGAY_NHAP] DATETIME NULL,
     [NGAY_SAN_XUAT] DATETIME NULL,
     [NGAY_HET_HAN] DATETIME NULL,
+    [SO_LO] NVARCHAR(50) NULL,
     CONSTRAINT PK_MA_SAN_PHAM PRIMARY KEY ([ID])
 );
 GO
@@ -181,7 +182,7 @@ ALTER TABLE dbo.MA_SAN_PHAM ADD CONSTRAINT FK_MA_SAN_PHAM_SAN_PHAM FOREIGN KEY (
 GO
 
 -- Khóa ngoại BỔ SUNG (Access thiếu, dữ liệu đã kiểm tra không có dòng mồ côi). NO ACTION: chặn xóa bản ghi cha đang được dùng.
-ALTER TABLE dbo.PHIEU_BAN ADD CONSTRAINT FK_PHIEU_BAN_KHACH_HANG FOREIGN KEY ([ID_KHACH_HANG]) REFERENCES dbo.KHACH_HANG([ID]);
+-- Lưu ý: Không tạo FK_PHIEU_BAN_KHACH_HANG vì cột ID_KHACH_HANG của PHIEU_BAN vừa lưu ID Khách hàng (Bán lẻ) vừa lưu ID Đại lý (Bán sỉ).
 ALTER TABLE dbo.CHI_TIET_PHIEU_BAN ADD CONSTRAINT FK_CHI_TIET_PHIEU_BAN_MA_SAN_PHAM FOREIGN KEY ([ID_MA_SAN_PHAM]) REFERENCES dbo.MA_SAN_PHAM([ID]);
 ALTER TABLE dbo.PHIEU_NHAP ADD CONSTRAINT FK_PHIEU_NHAP_NHA_CUNG_CAP FOREIGN KEY ([ID_NHA_CUNG_CAP]) REFERENCES dbo.NHA_CUNG_CAP([ID]);
 ALTER TABLE dbo.SAN_PHAM ADD CONSTRAINT FK_SAN_PHAM_DON_VI_TINH FOREIGN KEY ([ID_DON_VI_TINH]) REFERENCES dbo.DON_VI_TINH([ID]);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -569,7 +569,8 @@ namespace CuahangNongduoc
                 row["NGAY_NHAP"] = dtNgayNhap.Value.Date;
                 row["NGAY_SAN_XUAT"] = dtNgaySanXuat.Value.Date;
                 row["NGAY_HET_HAN"] = dtNgayHetHan.Value.Date;
-                row["SO_LO"] = soLo;
+                if (row.Table.Columns.Contains("SO_LO"))
+                    row["SO_LO"] = soLo;
 
                 ctrlMaSP.Add(row);
 
@@ -750,9 +751,12 @@ namespace CuahangNongduoc
 
                 if (loMoi)
                 {
-                    string soLo = Convert.ToString(drv["SO_LO"]).Trim();
-                    if (String.IsNullOrEmpty(soLo))
-                        throw new InvalidOperationException("Số lô (số in trên bao bì) của lô mới không được để trống.");
+                    if (drv.Row.Table.Columns.Contains("SO_LO"))
+                    {
+                        string soLo = Convert.ToString(drv["SO_LO"]).Trim();
+                        if (String.IsNullOrEmpty(soLo))
+                            throw new InvalidOperationException("Số lô (số in trên bao bì) của lô mới không được để trống.");
+                    }
                     // Chỉ lô mới mới bắt buộc SL > 0; lô cũ có thể đã bán hết (SL còn lại = 0).
                     if (Convert.ToDecimal(drv["DON_GIA_NHAP"]) <= 0M || Convert.ToDecimal(drv["SO_LUONG"]) <= 0M)
                         throw new InvalidOperationException("Đơn giá và số lượng của mỗi lô mới phải lớn hơn 0.");
