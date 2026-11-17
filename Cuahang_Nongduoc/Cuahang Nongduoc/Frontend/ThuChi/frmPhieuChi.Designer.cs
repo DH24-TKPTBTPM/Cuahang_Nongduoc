@@ -382,7 +382,6 @@ namespace CuahangNongduoc
             // 
             this.bindingNavigatorPositionItem.AccessibleName = "Position";
             this.bindingNavigatorPositionItem.AutoSize = false;
-            this.bindingNavigatorPositionItem.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.bindingNavigatorPositionItem.Name = "bindingNavigatorPositionItem";
             this.bindingNavigatorPositionItem.Size = new System.Drawing.Size(65, 23);
             this.bindingNavigatorPositionItem.Text = "0";
@@ -422,7 +421,7 @@ namespace CuahangNongduoc
             this.toolAdd.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolAdd.Name = "toolAdd";
             this.toolAdd.RightToLeftAutoMirrorImage = true;
-            this.toolAdd.Size = new System.Drawing.Size(50, 48);
+            this.toolAdd.Size = new System.Drawing.Size(80, 48);
             this.toolAdd.Text = "Thêm mới";
             this.toolAdd.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolAdd.Click += new System.EventHandler(this.toolAdd_Click);
@@ -433,7 +432,7 @@ namespace CuahangNongduoc
             this.toolDelete.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolDelete.Name = "toolDelete";
             this.toolDelete.RightToLeftAutoMirrorImage = true;
-            this.toolDelete.Size = new System.Drawing.Size(55, 48);
+            this.toolDelete.Size = new System.Drawing.Size(39, 48);
             this.toolDelete.Text = "Xóa";
             this.toolDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolDelete.Click += new System.EventHandler(this.toolDelete_Click);
@@ -444,8 +443,8 @@ namespace CuahangNongduoc
             this.toolSave.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.toolSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolSave.Name = "toolSave";
-            this.toolSave.Size = new System.Drawing.Size(65, 48);
-            this.toolSave.Text = "Chỉnh sửa";
+            this.toolSave.Size = new System.Drawing.Size(37, 48);
+            this.toolSave.Text = "Lưu";
             this.toolSave.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.toolSave.Click += new System.EventHandler(this.toolSave_Click);
             // 
@@ -482,7 +481,7 @@ namespace CuahangNongduoc
             this.btnReload.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(53, 48);
+            this.btnReload.Size = new System.Drawing.Size(63, 48);
             this.btnReload.Text = "Xem lại";
             this.btnReload.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
             this.btnReload.Click += new System.EventHandler(this.toolStripButton1_Click);
