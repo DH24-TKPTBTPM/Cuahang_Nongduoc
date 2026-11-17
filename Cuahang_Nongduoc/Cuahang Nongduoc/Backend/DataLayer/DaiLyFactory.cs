@@ -6,12 +6,13 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
+    /// <summary>Data Access Layer truy vấn bảng DAI_LY và kiểm tra ràng buộc giao dịch đại lý.</summary>
     public class DaiLyFactory
     {
         DataService m_Ds = new DataService();
 
         /// <summary>
-        /// Lấy danh sách tất cả đại lý từ bảng DAI_LY.
+        /// Tải danh sách đại lý hiện hành từ SQL Server.
         /// </summary>
         public DataTable DanhsachDaiLy()
         {
@@ -20,8 +21,7 @@ namespace CuahangNongduoc.DataLayer
             return m_Ds;
         }
 
-        // Dùng riêng cho Bán sỉ: giữ được các đại lý cũ từng lưu trong
-        // KHACH_HANG, đồng thời thêm các đại lý mới của bảng DAI_LY.
+        /// Tạo danh sách tương thích bán sỉ, bao gồm đại lý hiện hành và dữ liệu đại lý lịch sử trong KHACH_HANG.
         public DataTable DanhsachDaiLyBanSi()
         {
             DataService ds = new DataService();
@@ -34,7 +34,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Tìm đại lý theo tên.
+        /// Tìm đại lý theo tên bằng tham số SQL để an toàn với ký tự đặc biệt.
         /// </summary>
         public DataTable TimHoTen(String hoten)
         {
@@ -45,7 +45,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Tìm đại lý theo địa chỉ.
+        /// Tìm đại lý theo địa chỉ bằng tham số SQL.
         /// </summary>
         public DataTable TimDiaChi(String diachi)
         {
@@ -56,7 +56,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Tìm đại lý theo tên – trả về DataTable mới (dùng gán cho BindingSource bên ngoài).
+        /// Tìm đại lý theo tên và trả về DataTable độc lập cho BindingSource bên ngoài.
         /// </summary>
         public DataTable TimHoTenMoi(String hoten)
         {
@@ -68,7 +68,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Tìm đại lý theo địa chỉ – trả về DataTable mới (dùng gán cho BindingSource bên ngoài).
+        /// Tìm đại lý theo địa chỉ và trả về DataTable độc lập cho BindingSource bên ngoài.
         /// </summary>
         public DataTable TimDiaChiMoi(String diachi)
         {
@@ -80,7 +80,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Lấy 1 đại lý theo ID.
+        /// Đọc một đại lý theo khóa chính để nạp thông tin chi tiết.
         /// </summary>
         public DataTable LayDaiLy(String id)
         {
@@ -92,8 +92,9 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Kiểm tra Đại lý có phát sinh Phiếu bán hoặc Dư nợ chưa trước khi xóa.
-        /// Trả về true nếu được phép xóa, false nếu đang có ràng buộc.
+        /// Kiểm tra PHIEU_BAN và DU_NO_KH trước khi xóa để bảo toàn lịch sử giao dịch.
+        /// <param name="idDaiLy">ID đại lý được tham chiếu trong các bảng nghiệp vụ.</param>
+        /// <returns>True khi không phát sinh giao dịch/công nợ; false khi còn ràng buộc.</returns>
         /// </summary>
         public bool KiemTraRangBuocXoa(String idDaiLy)
         {
@@ -113,7 +114,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Hủy tất cả thay đổi chưa lưu trên DataTable nội bộ.
+        /// Hoàn nguyên thay đổi trong bộ nhớ khi người dùng hủy thao tác hoặc ghi DB thất bại.
         /// </summary>
         public void RejectChanges()
         {
@@ -121,7 +122,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Tạo dòng mới tương thích cấu trúc bảng.
+        /// Tạo DataRow theo schema đã tải từ bảng DAI_LY.
         /// </summary>
         public DataRow NewRow()
         {
@@ -129,7 +130,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Thêm 1 DataRow vào DataTable nội bộ.
+        /// Đưa DataRow mới vào DataTable để Controller xử lý trong lần Save kế tiếp.
         /// </summary>
         public void Add(DataRow row)
         {
@@ -137,7 +138,7 @@ namespace CuahangNongduoc.DataLayer
         }
 
         /// <summary>
-        /// Lưu các thay đổi (Thêm / Sửa / Xóa) xuống CSDL Access bảng DAI_LY.
+        /// Ghi các thay đổi Add/Edit/Delete xuống bảng DAI_LY trong SQL Server.
         /// </summary>
         public bool Save()
         {

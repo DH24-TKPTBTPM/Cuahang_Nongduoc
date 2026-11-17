@@ -8,6 +8,7 @@ using System.Data;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối phiếu nhập, chi tiết lô hàng và Data Binding của màn hình nhập hàng.</summary>
     public class PhieuNhapController
     {
         PhieuNhapFactory factory = new PhieuNhapFactory();
@@ -30,7 +31,7 @@ namespace CuahangNongduoc.Controller
 
         public bool Update()
         {
-            // Khong MoveNext truoc khi save: thao tac do co the chuyen sang phieu khac.
+            // Không di chuyển BindingSource trước Save để tránh ghi nhầm phiếu khác với phiếu người dùng đang sửa.
             return factory.Save();
         }
 
@@ -67,7 +68,7 @@ namespace CuahangNongduoc.Controller
                 ph.NgayNhap = Convert.ToDateTime(tbl.Rows[0]["NGAY_NHAP"]);
                 ph.TongTien = Convert.ToInt64(tbl.Rows[0]["TONG_TIEN"]);
 
-                // Đã sửa lại đúng tên cột cho DaTra và ConNo
+                // Ánh xạ đúng các cột thanh toán để công nợ hiển thị và tính lại chính xác.
                 ph.DaTra = Convert.ToInt64(tbl.Rows[0]["DA_TRA"]);
                 ph.ConNo = Convert.ToInt64(tbl.Rows[0]["CON_NO"]);
 
@@ -87,8 +88,7 @@ namespace CuahangNongduoc.Controller
 
         public void HienthiPhieuNhap(BindingNavigator bn, TextBox txt, ComboBox cmb, DateTimePicker dt, NumericUpDown numTongTien, NumericUpDown numDaTra, NumericUpDown numConNo)
         {
-            // Constructor chỉ nạp bảng rỗng (ID='-1'). Phải nạp danh sách phiếu trước khi bind,
-            // nếu không form nhập hàng thấy danh sách rỗng và luôn mở ra một phiếu mới.
+            // Constructor chỉ có schema; phải tải danh sách thật trước Data Binding để form không hiểu nhầm là phiếu mới.
             bs.DataSource = factory.DanhsachPhieuNhap();
             bn.BindingSource = bs;
 
@@ -126,7 +126,7 @@ namespace CuahangNongduoc.Controller
         {
             if (bs == null || bs.Count == 0 || String.IsNullOrEmpty(id))
                 return false;
-            // Duyệt trực tiếp thay vì bs.Find: cột ID là số nguyên nên so khớp với chuỗi qua Find không đáng tin cậy.
+            // Duyệt và chuyển đổi chuỗi rõ ràng vì kiểu ID trong DataTable có thể khác kiểu ID từ hộp tìm kiếm.
             for (int i = 0; i < bs.Count; i++)
             {
                 DataRowView drv = bs[i] as DataRowView;
@@ -146,7 +146,7 @@ namespace CuahangNongduoc.Controller
      
         public void KiemTraHopLe(long soLuong, long donGia)
         {
-            // Bắn ngoại lệ (Throw Exception) từ lớp BUS theo đúng báo cáo
+            // Ném lỗi nghiệp vụ tại Controller để UI hiển thị cảnh báo trước khi ghi dữ liệu không hợp lệ.
             if (soLuong <= 0)
             {
                 throw new ArgumentException("Số lượng nhập phải lớn hơn 0!");

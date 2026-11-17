@@ -10,6 +10,10 @@ using CuahangNongduoc.BusinessObject;
 
 namespace CuahangNongduoc
 {
+    /// <summary>
+    /// Màn hình lập, xem, chỉnh sửa và xóa phiếu nhập cùng các lô hàng nhập vào kho.
+    /// Phiếu và chi tiết được lưu theo transaction để tồn kho không bị lệch khi có lỗi.
+    /// </summary>
     public partial class frmNhapHang : Form
     {
         private SanPhamController ctrlSanPham = new SanPhamController();
@@ -22,29 +26,28 @@ namespace CuahangNongduoc
         private string m_InitialInvoiceId;
         private bool m_MoTrucTiepCheDoChinhSua;
         private int m_ViTriDangSua = -1;
+        private FormEditState editState = FormEditState.View;
 
         public frmNhapHang()
         {
             InitializeComponent();
 
-            // Các cột TONG_TIEN, DA_TRA, CON_NO, DON_GIA_NHAP, SO_LUONG trong Access đều là Long Integer (Int32),
-            // tối đa 2.147.483.647. Designer cho nhập tới 10^13 nên tổng tiền vượt ngưỡng này sẽ lỗi tràn số lúc lưu
-            // -> đặt giới hạn đúng bằng giới hạn của cơ sở dữ liệu cho mọi ô tiền.
+            // Giới hạn NumericUpDown theo kiểu dữ liệu SQL Server để tránh tràn số chỉ được phát hiện khi Save.
             numTongTien.Maximum = Int32.MaxValue;
             numDaTra.Maximum = Int32.MaxValue;
             numConNo.Maximum = Int32.MaxValue;
             numThanhTien.Maximum = Int32.MaxValue;
 
-            // Các trường tiền không được sửa tay; chỉ số tiền đã trả được nhập.
+            // Tổng tiền và công nợ phải do chi tiết tính; người dùng chỉ nhập số tiền đã trả.
             numTongTien.ReadOnly = true;
             numConNo.ReadOnly = true;
             numThanhTien.ReadOnly = true;
-            // ReadOnly vẫn cho phép bấm nút tăng/giảm của NumericUpDown; tắt tương tác tay hoàn toàn.
+            // ReadOnly vẫn còn cho phép spinner hoạt động, nên Enabled cũng phải tắt với các giá trị tính tự động.
             numTongTien.Enabled = false;
             numConNo.Enabled = false;
             numThanhTien.Enabled = false;
             txtMaPhieu.ReadOnly = true;
-            // Mã số do hệ thống tự sinh (tên sản phẩm + số thứ tự) nên không cho gõ tay.
+            // Mã lô là khóa dùng khi bán hàng, được sinh theo sản phẩm và thứ tự nên không cho nhập tay.
             txtMaSo.ReadOnly = true;
 
             // Quy ước bước tăng của các trường tiền theo yêu cầu tester.
@@ -68,7 +71,7 @@ namespace CuahangNongduoc
             dataGridView.AllowUserToDeleteRows = false;
             dataGridView.ReadOnly = true;
 
-            // Cập nhật tổng tiền xem trước khi người dùng nhập/sửa dữ liệu của dòng hiện tại.
+            // Tính trước tổng tiền để người dùng nhận biết tác động của lô đang nhập trước khi Save.
             txtMaSo.TextChanged += new EventHandler(DongBoTongTienKhiNhap);
             txtSoLo.TextChanged += new EventHandler(DongBoTongTienKhiNhap);
             cmbSanPham.SelectedValueChanged += new EventHandler(DongBoTongTienKhiNhap);
@@ -77,9 +80,6 @@ namespace CuahangNongduoc
             ThietLapHuongDanMaSoVaSoLo();
         }
 
-        // ===== Hướng dẫn phân biệt "Mã số" và "Số lô" cho người nhập =====
-        // Mã số  = mã nội bộ do hệ thống TỰ SINH (tên sản phẩm + số thứ tự, VD: Nuti001), mỗi lần nhập một mã, không trùng (cũng là mã chọn lô khi bán hàng).
-        // Số lô  = số lô sản xuất do nhà sản xuất in trên bao bì/nhãn sản phẩm.
         private const int EM_SETCUEBANNER = 0x1501;
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -100,7 +100,7 @@ namespace CuahangNongduoc
 
         private static void DatGoiYChoO(TextBox o, string goiY)
         {
-            // Chữ mờ gợi ý hiện khi ô còn trống (EM_SETCUEBANNER, wParam = 1: vẫn hiện cả khi ô đang được chọn).
+            // Cue banner giải thích định dạng nhập mà không thay đổi giá trị Data Binding của TextBox.
             EventHandler apDung = delegate(object s, EventArgs e) { SendMessage(o.Handle, EM_SETCUEBANNER, (IntPtr)1, goiY); };
             if (o.IsHandleCreated)
                 apDung(o, EventArgs.Empty);
@@ -109,13 +109,13 @@ namespace CuahangNongduoc
 
         private void ThietLapHuongDanMaSoVaSoLo()
         {
-            // Ô Số lô rộng hơn để đọc được chữ gợi ý (vẫn nằm trong khung Thông tin).
+            // Mở rộng ô số lô để hướng dẫn không bị cắt, tránh nhập nhầm mã nội bộ vào số lô nhà sản xuất.
             txtSoLo.Width = 150;
 
             DatGoiYChoO(txtMaSo, GoiYMaSo);
             DatGoiYChoO(txtSoLo, GoiYSoLo);
 
-            // Một dòng nhắc cố định ngay dưới các ô nhập.
+            // Nhắc ngắn trên form để QA và người dùng phân biệt mã nội bộ với số lô sản xuất.
             Label lblHuongDan = new Label();
             lblHuongDan.AutoSize = true;
             lblHuongDan.ForeColor = System.Drawing.SystemColors.GrayText;
@@ -123,7 +123,7 @@ namespace CuahangNongduoc
             lblHuongDan.Text = "Mã số: tự sinh theo tên sản phẩm.   Số lô: nhập số in trên bao bì.";
             grpThongtin.Controls.Add(lblHuongDan);
 
-            // Rê chuột vào nhãn/ô nhập/tiêu đề cột để xem giải thích đầy đủ.
+            // Tooltip cung cấp quy tắc đầy đủ mà không làm chật bố cục màn hình.
             ToolTip goiY = new ToolTip();
             goiY.AutoPopDelay = 20000;
             goiY.InitialDelay = 300;
@@ -262,14 +262,14 @@ namespace CuahangNongduoc
         {
             if (ctrlPN != null)
             {
-                // Lưu mã phiếu đang chọn trước khi nạp lại danh sách bằng Controller mới.
+                // Giữ ID hiện tại để lần nạp lại vẫn hiển thị đúng phiếu mà người dùng đã chọn.
                 m_InitialInvoiceId = ctrlPN.LayMaPhieuHienTai();
                 ctrl = ctrlPN;
                 status = Controll.Normal;
             }
         }
 
-        // Dùng cho nút "Chỉnh sửa" ở danh sách phiếu nhập: mở form và vào chế độ chỉnh sửa ngay.
+        /// <summary>Mở phiếu từ danh sách và tùy chọn chuyển ngay sang UI State Edit.</summary>
         public frmNhapHang(PhieuNhapController ctrlPN, bool moTrucTiepCheDoChinhSua)
             : this(ctrlPN)
         {
@@ -278,7 +278,8 @@ namespace CuahangNongduoc
 
         private void frmNhapHang_Load(object sender, EventArgs e)
         {
-            // Nút Xem lại cũng dùng handler Load. Tránh khởi tạo/bind form lặp lại vô tình.
+            SetState(FormEditState.View);
+            // Handler Load cũng được dùng cho Xem lại; cờ này ngăn việc tạo BindingSource lặp và mất trạng thái hiện tại.
             if (m_FormInitialized)
             {
                 if (status == Controll.Normal)
@@ -430,8 +431,7 @@ namespace CuahangNongduoc
 
             if (status == Controll.Edit)
             {
-                // Đang sửa: nút điều hướng có thể tự bật lại khi dữ liệu đổi, nên kéo về đúng phiếu đang sửa
-                // (nếu không phần đầu phiếu hiện phiếu mới còn lưới vẫn là lô của phiếu cũ).
+                // Giữ vị trí phiếu đang sửa để header và lưới chi tiết không trỏ tới hai phiếu khác nhau.
                 if (m_ViTriDangSua >= 0 && m_ViTriDangSua < bs.Count && bs.Position != m_ViTriDangSua)
                     bs.Position = m_ViTriDangSua;
                 return;
@@ -439,7 +439,7 @@ namespace CuahangNongduoc
 
             if (status == Controll.Normal)
             {
-                // Lấy mã từ dòng hiện tại của BindingSource, không đọc txtMaPhieu (có thể chưa kịp cập nhật).
+                // Lấy khóa từ BindingSource vì TextBox có thể chưa nhận xong giá trị sau sự kiện chuyển dòng.
                 DataRowView drv = bs.Current as DataRowView;
                 string maPhieu = (drv != null) ? Convert.ToString(drv["ID"]) : txtMaPhieu.Text;
                 if (!String.IsNullOrEmpty(maPhieu))
@@ -987,34 +987,52 @@ namespace CuahangNongduoc
             e.Cancel = true;
         }
 
+        /// <summary>
+        /// Áp dụng UI State cho header phiếu và lưới chi tiết; View khóa dữ liệu đã lưu,
+        /// Add/Edit cho phép thay đổi nhưng vẫn khóa các giá trị được tính tự động.
+        /// </summary>
+        /// <param name="val">True khi form đang tạo hoặc chỉnh sửa phiếu.</param>
         private void Allow(bool val)
         {
+            SetState(val ? (status == Controll.Edit ? FormEditState.Edit : FormEditState.Add) : FormEditState.View);
+        }
+
+        /// <summary>Đồng bộ trạng thái nút, control nhập liệu và trạng thái nghiệp vụ của phiếu nhập.</summary>
+        /// <param name="state">View, Add hoặc Edit.</param>
+        private void SetState(FormEditState state)
+        {
+            editState = state;
+            status = state == FormEditState.View ? Controll.Normal :
+                (state == FormEditState.Add ? Controll.AddNew : Controll.Edit);
+            bool editing = state != FormEditState.View;
             txtMaPhieu.ReadOnly = true;
             txtMaPhieu.Enabled = true;
-            cmbNhaCungCap.Enabled = val;
+            cmbNhaCungCap.Enabled = editing;
             // Ngày nhập luôn bị khóa: phiếu mới tự lấy ngày hiện tại, phiếu đã lưu giữ nguyên ngày cũ.
             dtNgayNhap.Enabled = false;
             numTongTien.ReadOnly = true;
             numTongTien.Enabled = false;
             numConNo.ReadOnly = true;
             numConNo.Enabled = false;
-            numDaTra.Enabled = val;
-            cmbSanPham.Enabled = val;
-            txtMaSo.Enabled = val;
-            txtSoLo.Enabled = val;
-            numGiaNhap.Enabled = val;
-            numSoLuong.Enabled = val;
-            dtNgaySanXuat.Enabled = val;
-            dtNgayHetHan.Enabled = val;
+            numDaTra.Enabled = editing;
+            cmbSanPham.Enabled = editing;
+            txtMaSo.Enabled = editing;
+            txtSoLo.Enabled = editing;
+            numGiaNhap.Enabled = editing;
+            numSoLuong.Enabled = editing;
+            dtNgaySanXuat.Enabled = editing;
+            dtNgayHetHan.Enabled = editing;
             numThanhTien.ReadOnly = true;
             numThanhTien.Enabled = false;
-            btnAdd.Enabled = val;
-            btnRemove.Enabled = val;
+            btnAdd.Enabled = editing;
+            btnRemove.Enabled = editing;
             dataGridView.Enabled = true;
-            toolChinhsua.Enabled = status == Controll.Normal;
-            toolXoa.Enabled = status == Controll.Normal;
-            // Đang chỉnh sửa phiếu có sẵn thì khóa nút Thêm (tránh lưu dở rồi nhảy sang phiếu mới).
-            toolLuuThem.Enabled = status != Controll.Edit;
+            toolChinhsua.Enabled = state == FormEditState.View;
+            toolXoa.Enabled = state == FormEditState.View;
+            toolLuuThoat.Enabled = editing;
+            toolSavePrint.Enabled = state == FormEditState.View;
+            // Không cho tạo phiếu mới trong lúc Edit để tránh bỏ dở transaction của phiếu hiện tại.
+            toolLuuThem.Enabled = state != FormEditState.Edit;
         }
 
         private void DatTrangThaiNutDieuHuong(bool enabled)
@@ -1038,8 +1056,7 @@ namespace CuahangNongduoc
                 return;
             }
             m_ViTriDangSua = bs.Position;
-            status = Controll.Edit;
-            Allow(true);
+            SetState(FormEditState.Edit);
             CapNhatMaSoTuDong(this, EventArgs.Empty);   // Thêm lô mới khi sửa phiếu cũng dùng mã tự sinh.
             DatTrangThaiNutDieuHuong(false);
         }
@@ -1052,6 +1069,11 @@ namespace CuahangNongduoc
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
+                if (numDaTra.Value > 0M && MessageBox.Show(
+                    "Phiếu nhập đã có thanh toán. Bạn vẫn muốn xóa phiếu và toàn bộ chi tiết trong transaction?",
+                    "Cảnh báo xóa phiếu đã thanh toán", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                    return;
             if (dataGridView.CurrentRow == null || dataGridView.CurrentRow.IsNewRow)
             {
                 MessageBox.Show("Vui lòng chọn lô hàng cần xóa.", "Xóa lô hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1111,7 +1133,7 @@ namespace CuahangNongduoc
 
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            // Xóa dòng chỉ được thực hiện qua nút btnRemove_Click để bảo đảm kiểm tra lô đã bán.
+            // Chỉ cho xóa chi tiết qua handler có kiểm tra lô đã bán và giới hạn công nợ.
             e.Cancel = true;
         }
 
@@ -1136,6 +1158,7 @@ namespace CuahangNongduoc
 
             try
             {
+                // Kiểm tra trước khi xóa: lô đã bán là dữ liệu lịch sử, không thể xóa mà không phá liên kết hóa đơn.
                 if (ctrlMaSP.CoLoDaBanTrongPhieuNhap(maPhieu))
                 {
                     MessageBox.Show("Không thể xóa phiếu vì có lô đã được sử dụng trong hóa đơn bán.", "Không thể xóa",
@@ -1152,6 +1175,7 @@ namespace CuahangNongduoc
                         idsSanPham.Add(id);
                 }
 
+                // Factory thực hiện xóa chi tiết/lô và phiếu trong một transaction để rollback toàn bộ nếu có lỗi.
                 int affected = ctrl.XoaPhieuNhapVaCacLo(maPhieu, idsSanPham);
                 if (affected <= 0)
                     throw new InvalidOperationException("Không có phiếu nhập nào được xóa.");

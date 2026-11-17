@@ -9,10 +9,13 @@ using CuahangNongduoc.DataLayer;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối nghiệp vụ sản phẩm giữa giao diện, Data Binding và Data Access Layer.</summary>
     public class SanPhamController
     {
         SanPhamFactory factory = new SanPhamFactory();
 
+        /// <summary>Tải danh sách sản phẩm vào ComboBox để các nghiệp vụ khác chọn theo khóa ID.</summary>
+        /// <param name="cmb">ComboBox nhận nguồn dữ liệu sản phẩm.</param>
         public void HienthiAutoComboBox(System.Windows.Forms.ComboBox cmb)
         {
             DataTable tbl = factory.DanhsachSanPham(); 
@@ -22,6 +25,8 @@ namespace CuahangNongduoc.Controller
             cmb.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             cmb.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
         }
+        /// <summary>Thiết lập cột ComboBox sản phẩm trong lưới chi tiết phiếu nhập.</summary>
+        /// <param name="cmb">Cột lưới cần liên kết dữ liệu.</param>
         public void HienthiDataGridViewComboBoxColumn(System.Windows.Forms.DataGridViewComboBoxColumn cmb)
         {
             cmb.DataSource = factory.DanhsachSanPham();
@@ -38,6 +43,9 @@ namespace CuahangNongduoc.Controller
             factory.TimTenSanPham(ten);
         }
 
+        /// <summary>Nạp dữ liệu sản phẩm từ SQL Server và liên kết đồng nhất các control với BindingSource.</summary>
+        /// <param name="dg">Lưới hiển thị danh sách sản phẩm.</param>
+        /// <param name="bn">BindingNavigator điều hướng bản ghi.</param>
         public void HienthiDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn,
             TextBox txtMaSp, TextBox txtTenSp, ComboBox cmbDVT, NumericUpDown numSL, NumericUpDown numDonGiaNhap, NumericUpDown numGiaBanSi, NumericUpDown numGiaBanLe)
         {
@@ -69,6 +77,8 @@ namespace CuahangNongduoc.Controller
 
             
         }
+        /// <summary>Cập nhật giá nhập bình quân và số lượng tổng khi phát sinh lô nhập mới.</summary>
+        /// <param name="id">Mã sản phẩm cần cập nhật.</param><param name="gia_moi">Đơn giá lô mới.</param><param name="so_luong">Số lượng lô mới.</param>
         public void CapNhatGiaNhap(String id, long gia_moi ,long so_luong)
         {
             DataTable tbl = factory.LaySanPham(id);
@@ -88,6 +98,8 @@ namespace CuahangNongduoc.Controller
 
         }
     
+        /// <summary>Đọc một sản phẩm và đơn vị tính tương ứng từ Data Access Layer.</summary>
+        /// <param name="id">Mã sản phẩm.</param><returns>Đối tượng sản phẩm; đối tượng rỗng nếu không tìm thấy.</returns>
         public SanPham LaySanPham(String id)
         {
             DataTable tbl = factory.LaySanPham(id);
@@ -143,14 +155,15 @@ namespace CuahangNongduoc.Controller
         {
             factory.Add(row);
         }
+        /// <summary>Ghi các thay đổi Add/Edit/Delete đang nằm trong DataTable xuống SQL Server.</summary>
+        /// <returns>True khi Data Access Layer ghi nhận thành công.</returns>
         public bool Save()
         {
             return factory.Save();
         }
 
         /// <summary>
-        /// Hoan nguyen toan bo thay doi chua commit (undo AddNew/Delete chua luu).
-        /// Goi sau khi Save() that bai de khoi phuc trang thai nhat quan.
+        /// Hoàn nguyên toàn bộ thay đổi chưa commit để UI trở về trạng thái nhất quán sau lỗi ghi dữ liệu.
         /// </summary>
         public void RejectChanges()
         {

@@ -8,10 +8,13 @@ using CuahangNongduoc.DataLayer;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối tải, tìm kiếm, kiểm tra trùng và lưu nhà cung cấp giữa UI và Data Access Layer.</summary>
     public class NhaCungCapController
     {
         NhaCungCapFactory factory = new  NhaCungCapFactory();
 
+        /// <summary>Nạp nhà cung cấp vào ComboBox bằng khóa ID để form nhập hàng chọn đúng đối tượng.</summary>
+        /// <param name="cmb">ComboBox nhận dữ liệu.</param>
         public void HienthiAutoComboBox(System.Windows.Forms.ComboBox cmb)
         {
             cmb.DataSource = factory.DanhsachNCC();
@@ -29,6 +32,8 @@ namespace CuahangNongduoc.Controller
 
         }
 
+        /// <summary>Nạp danh sách nhà cung cấp vào lưới và BindingNavigator.</summary>
+        /// <param name="dg">Lưới hiển thị danh sách.</param><param name="bn">Bộ điều hướng dữ liệu.</param>
         public void HienthiDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn)
         {
             System.Windows.Forms.BindingSource bs = new System.Windows.Forms.BindingSource();
@@ -38,6 +43,7 @@ namespace CuahangNongduoc.Controller
             dg.DataSource = bs;
         }
 
+        /// <summary>Nạp danh sách và tạo Data Binding cho các ô thông tin nhà cung cấp.</summary>
         public void HienthiDataGridview(System.Windows.Forms.DataGridView dg, System.Windows.Forms.BindingNavigator bn,
             System.Windows.Forms.TextBox txtMa, System.Windows.Forms.TextBox txtTen,
             System.Windows.Forms.TextBox txtDiaChi, System.Windows.Forms.TextBox txtSDT)
@@ -169,7 +175,8 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Kiểm tra số điện thoại có bị trùng với nhà cung cấp khác hay không.
+        /// Kiểm tra trùng số điện thoại trong dữ liệu đang chỉnh sửa và dữ liệu SQL Server.
+        /// Hai nguồn được kiểm tra để không bỏ sót bản ghi do lưới đang được lọc.
         /// </summary>
         /// <param name="sdt">Số điện thoại cần kiểm tra</param>
         /// <param name="currentId">Mã nhà cung cấp hiện tại (bỏ qua khi đang sửa chính mình)</param>
@@ -188,7 +195,7 @@ namespace CuahangNongduoc.Controller
             string cleanPhone = sdt.Trim();
             string cleanCurrentId = (currentId ?? string.Empty).Trim();
 
-            // 1. Kiểm tra trên DataTable trong bộ nhớ (bao gồm các dòng mới thêm/chỉnh sửa chưa lưu)
+            // Kiểm tra bộ nhớ trước để phản hồi ngay với dòng mới chưa tồn tại trong SQL Server.
             if (tbl != null)
             {
                 foreach (DataRow row in tbl.Rows)
@@ -213,7 +220,7 @@ namespace CuahangNongduoc.Controller
                 }
             }
 
-            // 2. Kiểm tra trong cơ sở dữ liệu (phòng trường hợp tbl bị lọc do tìm kiếm hoặc tbl null)
+            // Kiểm tra SQL Server bổ sung vì DataTable có thể đang là kết quả tìm kiếm bị lọc.
             try
             {
                 DataTable dbTbl = factory.TimTheoDienThoai(cleanPhone);

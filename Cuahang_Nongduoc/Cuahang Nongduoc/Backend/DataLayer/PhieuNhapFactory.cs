@@ -6,6 +6,9 @@ using System.Data.SqlClient;
 
 namespace CuahangNongduoc.DataLayer
 {
+    /// <summary>
+    /// Data Access Layer của PHIEU_NHAP; quản lý đọc/ghi phiếu và transaction xóa phiếu cùng các lô liên quan.
+    /// </summary>
     public class PhieuNhapFactory
     {
         DataService m_Ds = new DataService();
@@ -74,8 +77,7 @@ namespace CuahangNongduoc.DataLayer
 
         public int XoaPhieuNhapVaCacLo(String id, IList<string> idsSanPham)
         {
-            // Kiểm tra lịch sử bán, xóa lô + phiếu và tính lại tồn kho trong CÙNG MỘT transaction.
-            // Dùng DataService.ExecuteTransaction (public) nên không cần sửa DataService.
+            // Kiểm tra lịch sử bán, xóa lô/phiếu và tính lại tồn kho trong cùng transaction để không tạo tồn kho ảo.
             int soPhieuDaXoa = 0;
             DataService.ExecuteTransaction((conn, tr) =>
             {
@@ -89,7 +91,7 @@ namespace CuahangNongduoc.DataLayer
                         throw new InvalidOperationException("Phiếu " + id + " có lô đã được sử dụng trong hóa đơn bán, không thể xóa.");
                 }
 
-                // Xóa các lô trước, rồi mới xóa phiếu (tránh vi phạm ràng buộc quan hệ PHIEU_NHAP - MA_SAN_PHAM).
+                // Xóa bản ghi con trước bản ghi cha để thỏa Foreign Key PHIEU_NHAP - MA_SAN_PHAM.
                 using (SqlCommand xoaLo = new SqlCommand("DELETE FROM MA_SAN_PHAM WHERE ID_PHIEU_NHAP = @id", conn, tr))
                 {
                     xoaLo.Parameters.Add("@id", SqlDbType.VarChar, 50).Value = id;
@@ -118,8 +120,7 @@ namespace CuahangNongduoc.DataLayer
             return soPhieuDaXoa;
         }
 
-        // Tính lại SAN_PHAM.SO_LUONG và giá nhập bình quân từ các lô còn lại.
-        // Cùng quy tắc với phần tính lại tồn trong DataService (hàm đó là private nên không gọi lại được).
+        /// Tính lại tồn và giá nhập bình quân từ các lô còn lại sau khi một phiếu nhập bị xóa.
         private static void TinhLaiTonSanPham(SqlConnection conn, SqlTransaction tr, string idSanPham)
         {
             long tongSoLuong = 0;
@@ -135,7 +136,7 @@ namespace CuahangNongduoc.DataLayer
                         long soLuong = rd.IsDBNull(0) ? 0 : Convert.ToInt64(rd.GetValue(0));
                         long donGia = rd.IsDBNull(1) ? 0 : Convert.ToInt64(rd.GetValue(1));
                         if (soLuong < 0)
-                            soLuong = 0; // lô bán vượt tồn (dữ liệu cũ) coi như 0
+                            soLuong = 0; // Dữ liệu lịch sử có thể âm do đã bán vượt tồn; báo cáo tồn không được âm.
                         tongSoLuong += soLuong;
                         tongGiaTri += (decimal)soLuong * donGia;
                     }

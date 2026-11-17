@@ -8,12 +8,13 @@ using CuahangNongduoc.DataLayer;
 
 namespace CuahangNongduoc.Controller
 {
+    /// <summary>Điều phối danh mục đại lý giữa UI, BindingSource và Data Access Layer.</summary>
     public class DaiLyController
     {
         DaiLyFactory factory = new DaiLyFactory();
 
         /// <summary>
-        /// Đổ danh sách đại lý vào ComboBox (AutoComplete).
+        /// Nạp đại lý vào ComboBox theo ID để các phiếu bán giữ đúng khóa tham chiếu.
         /// </summary>
         public void HienthiAutoComboBox(ComboBox cmb)
         {
@@ -31,7 +32,7 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Hiển thị dữ liệu đại lý lên DataGridView + BindingNavigator.
+        /// Tải dữ liệu đại lý và gắn Data Binding cho lưới cùng BindingNavigator.
         /// </summary>
         public void HienthiDaiLyDataGridview(DataGridView dg, BindingNavigator bn)
         {
@@ -43,7 +44,7 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Đổ danh sách đại lý vào DataGridViewComboBoxColumn.
+        /// Cấu hình cột chọn đại lý trong các lưới bán hàng.
         /// </summary>
         public void HienthiDaiLyDataGridviewComboBox(DataGridViewComboBoxColumn cmb)
         {
@@ -64,7 +65,7 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Tìm đại lý theo tên – gán kết quả trực tiếp vào BindingSource.
+        /// Tìm đại lý theo tên và thay nguồn BindingSource bằng kết quả mới.
         /// </summary>
         public void TimHoTen(String hoten, BindingSource bindingSource)
         {
@@ -72,7 +73,7 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Tìm đại lý theo địa chỉ – gán kết quả trực tiếp vào BindingSource.
+        /// Tìm đại lý theo địa chỉ và thay nguồn BindingSource bằng kết quả mới.
         /// </summary>
         public void TimDiaChi(String diachi, BindingSource bindingSource)
         {
@@ -80,7 +81,7 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Tải lại toàn bộ danh sách đại lý vào BindingSource (dùng khi Hủy thao tác).
+        /// Tải lại dữ liệu gốc sau Hủy hoặc sau khi xóa thành công để UI khớp SQL Server.
         /// </summary>
         public void TaiLaiDaiLy(BindingSource bindingSource)
         {
@@ -88,8 +89,8 @@ namespace CuahangNongduoc.Controller
         }
 
         /// <summary>
-        /// Kiểm tra có ràng buộc ngăn cản xóa hay không.
-        /// Trả về true nếu an toàn để xóa.
+        /// Kiểm tra các giao dịch và công nợ có tham chiếu đại lý trước khi xóa.
+        /// <param name="idDaiLy">ID đại lý cần kiểm tra.</param><returns>True nếu không còn ràng buộc Foreign Key/nghiệp vụ.</returns>
         /// </summary>
         public bool KiemTraRangBuocXoa(String idDaiLy)
         {

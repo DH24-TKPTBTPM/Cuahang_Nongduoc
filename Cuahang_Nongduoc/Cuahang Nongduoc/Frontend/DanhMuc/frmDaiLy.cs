@@ -3,12 +3,15 @@ using System.Data;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Data.SqlClient;
 using CuahangNongduoc.Auth;
 
 namespace CuahangNongduoc
 {
+    /// <summary>Màn hình quản lý đại lý, một đối tượng bán hàng có thể phát sinh công nợ và phiếu bán.</summary>
     public partial class frmDaiLy : Form
     {
+        private FormEditState editState = FormEditState.View;
         private readonly CuahangNongduoc.Controller.DaiLyController ctrl = new CuahangNongduoc.Controller.DaiLyController();
 
         public frmDaiLy()
@@ -16,7 +19,6 @@ namespace CuahangNongduoc
             InitializeComponent();
             CauHinhChiDocDanhSachDaiLy();
 
-            // Đảm bảo Form hiển thị chính giữa màn hình
             this.StartPosition = FormStartPosition.CenterScreen;
         }
 
@@ -24,10 +26,10 @@ namespace CuahangNongduoc
         {
             try
             {
-                // Hiển thị dữ liệu lên DataGridView và BindingNavigator
+                // Lưới và BindingNavigator phải dùng cùng BindingSource để chọn đúng đại lý khi sửa/xóa.
                 ctrl.HienthiDaiLyDataGridview(dataGridView, bindingNavigator);
 
-                // Binding dữ liệu cho các TextBox nhập liệu (cột DAI_LY thay vì HO_TEN)
+                // DAI_LY là tên nghiệp vụ riêng của bảng đại lý, không dùng cột HO_TEN của khách hàng.
                 BindControl(txtMa, "ID");
                 BindControl(txtHoTen, "DAI_LY");
                 BindControl(txtDiaChi, "DIA_CHI");
@@ -37,11 +39,28 @@ namespace CuahangNongduoc
                 txtDiaChi.MaxLength = 255;
                 txtDienThoai.MaxLength = 50;
                 ApDungPhanQuyen();
+                SetState(FormEditState.View);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        /// <summary>Quản lý UI State và khóa dữ liệu đại lý trong chế độ View để tránh sửa ngoài ý muốn.</summary>
+        /// <param name="state">Trạng thái View, Add hoặc Edit.</param>
+        private void SetState(FormEditState state)
+        {
+            editState = state;
+            bool editing = state != FormEditState.View;
+            bindingNavigatorAddNewItem.Enabled = !editing;
+            bindingNavigatorDeleteItem.Enabled = !editing;
+            toolLuu.Enabled = editing;
+            toolHuy.Enabled = editing;
+            txtHoTen.ReadOnly = !editing;
+            txtDiaChi.ReadOnly = !editing;
+            txtDienThoai.ReadOnly = !editing;
+            dataGridView.ReadOnly = true;
         }
 
         private void ApDungPhanQuyen()
@@ -56,7 +75,7 @@ namespace CuahangNongduoc
             txtDienThoai.ReadOnly = !coQuyenSua;
         }
 
-        // Refactoring: Extract Method - tách quy tắc chỉ đọc khỏi phân quyền nhập liệu.
+        /// <summary>Thiết lập lưới chỉ đọc; mọi thay đổi phải đi qua các control nghiệp vụ và Controller.</summary>
         private void CauHinhChiDocDanhSachDaiLy()
         {
             dataGridView.ReadOnly = true;
@@ -70,12 +89,12 @@ namespace CuahangNongduoc
 
         private void dataGridView_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
         {
-            // Chặn cả BeginEdit nếu cấu hình bảng bị mở khóa ở nơi khác.
+            // Bảo vệ bổ sung cho UI State trong trường hợp cấu hình DataGridView bị thay đổi ở nơi khác.
             e.Cancel = true;
         }
 
         /// <summary>
-        /// Gắn DataBindings cho 1 TextBox vào BindingSource thông qua BindingNavigator.
+        /// Liên kết control với cột đại lý tương ứng để duy trì Data Binding nhất quán.
         /// </summary>
         private void BindControl(Control control, string propertyName)
         {
@@ -86,14 +105,12 @@ namespace CuahangNongduoc
             }
         }
 
-        // ============================================================
-        // 1. NÚT THÊM
-        // ============================================================
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(
                 AuthorizationService.Permission.SuaDaiLy, "thêm đại lý")) return;
 
+            SetState(FormEditState.Add);
             if (bindingNavigator.BindingSource != null)
             {
                 long maso = ThamSo.KhachHang;
@@ -103,15 +120,12 @@ namespace CuahangNongduoc
                 row["DIA_CHI"] = "";
                 row["DIEN_THOAI"] = "";
 
-                // Tăng tham số tự động sau khi cấp mã thành công
+                // Tăng bộ cấp mã sau khi tạo DataRow để lần thêm kế tiếp không trùng khóa.
                 ThamSo.KhachHang = maso + 1;
             }
             txtHoTen.Focus();
         }
 
-        // ============================================================
-        // 2. NÚT XÓA
-        // ============================================================
         private void bindingNavigatorDeleteItem_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(
@@ -123,22 +137,30 @@ namespace CuahangNongduoc
                 {
                     DataRowView view = (DataRowView)bindingNavigator.BindingSource.Current;
 
-                    // Kiểm tra ràng buộc – bỏ qua nếu dòng mới chưa lưu
+                    // Chỉ kiểm tra Foreign Key với dữ liệu đã tồn tại; dòng Added chưa có lịch sử giao dịch.
                     if (view.Row.RowState != DataRowState.Added)
                     {
                         string idDaiLy = Convert.ToString(view["ID"]);
-                        if (!ctrl.KiemTraRangBuocXoa(idDaiLy))
+                        using (SqlConnection connection = new SqlConnection(DataService.m_ConnectString))
+                        using (SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM PHIEU_BAN WHERE ID_KHACH_HANG = @id", connection))
                         {
-                            MessageBox.Show("Không thể xóa đại lý này vì đã có phát sinh Phiếu bán hàng hoặc Dư nợ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            command.Parameters.AddWithValue("@id", idDaiLy);
+                            connection.Open();
+                            if (Convert.ToInt32(command.ExecuteScalar()) > 0)
+                            {
+                                MessageBox.Show("Không thể xóa Đại lý này vì đã có lịch sử Mua hàng!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
+                            }
                         }
                     }
 
                     if (MessageBox.Show("Bạn có chắc chắn muốn xóa đại lý này không?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
                         bindingNavigator.BindingSource.RemoveCurrent();
-                        // Lưu ngay xuống DB để xóa khỏi cơ sở dữ liệu
+                        // Ghi xóa xuống SQL Server rồi tải lại BindingSource để lưới phản ánh trạng thái thực tế.
                         ctrl.Save();
+                        ctrl.TaiLaiDaiLy(bindingNavigator.BindingSource);
+                        SetState(FormEditState.View);
                         MessageBox.Show("Đã xóa đại lý thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -149,7 +171,6 @@ namespace CuahangNongduoc
             }
         }
 
-        // Bấm phím Delete trên bàn phím (DataGridView)
         private void dataGridView_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
             if (!AuthorizationService.CoQuyen(AuthorizationService.Permission.SuaDaiLy))
@@ -160,7 +181,7 @@ namespace CuahangNongduoc
 
             try
             {
-                // Kiểm tra ràng buộc trước khi xóa
+                // Kiểm tra trước khi xóa để không để Foreign Key Constraint làm ứng dụng dừng đột ngột.
                 if (e.Row.Cells["colID"].Value != null)
                 {
                     string idDaiLy = e.Row.Cells["colID"].Value.ToString();
@@ -197,9 +218,6 @@ namespace CuahangNongduoc
             }
         }
 
-        // ============================================================
-        // 3. NÚT LƯU
-        // ============================================================
         private void toolLuu_Click(object sender, EventArgs e)
         {
             if (!AuthorizationService.KiemTraVaThongBao(
@@ -241,8 +259,9 @@ namespace CuahangNongduoc
 
                 bindingNavigatorPositionItem.Focus();
 
-                // 6. Gọi lệnh lưu xuống CSDL bảng DAI_LY
+                // Controller ghi bản ghi đã chuẩn hóa xuống bảng DAI_LY qua Data Access Layer.
                 ctrl.Save();
+                SetState(FormEditState.View);
 
                 MessageBox.Show("Đã lưu dữ liệu đại lý thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -252,10 +271,9 @@ namespace CuahangNongduoc
             }
         }
 
-        // Refactoring: Extract Method - tách kiểm tra SĐT khỏi sự kiện Lưu.
+        /// <summary>Trả về thông báo lỗi nghiệp vụ cho số điện thoại đại lý hoặc null nếu hợp lệ.</summary>
         private string LayLoiDienThoai(string sdt)
         {
-            // Refactoring: Replace Nested Conditional with Guard Clauses.
             if (string.IsNullOrWhiteSpace(sdt))
                 return "Số điện thoại không được để trống!";
 
@@ -277,9 +295,6 @@ namespace CuahangNongduoc
             return null;
         }
 
-        // ============================================================
-        // 4. NÚT HỦY THAO TÁC
-        // ============================================================
         private void toolHuy_Click(object sender, EventArgs e)
         {
             try
@@ -289,7 +304,7 @@ namespace CuahangNongduoc
                     BindingSource source = bindingNavigator.BindingSource;
                     source.CancelEdit();
 
-                    // Nạp lại toàn bộ danh sách đại lý (hủy bỏ mọi thay đổi chưa lưu)
+                    // Tải lại dữ liệu gốc để loại bỏ thay đổi trong bộ nhớ mà chưa được SQL Server commit.
                     ctrl.TaiLaiDaiLy(source);
                     source.MoveFirst();
                 }
